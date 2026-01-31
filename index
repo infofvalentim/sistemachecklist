@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Checklists Veiculares</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        /* 🎨 VARIÁVEIS DE CORES - MODO CLARO (PADRÃO) */
+        :root {
+            /* Cores Corporativas */
+            --primary-black: #000000;
+            --primary-red: #ff0000;
+            --red-light: #ff6b6b;
+            --green: #00c853;
+            --green-dark: #009624;
+            --yellow: #ffc107;
+            --yellow-dark: #ff8f00;
+            --orange: #ff9800;
+            --orange-dark: #f57c00;
+            --blue: #2196f3;
+            --blue-dark: #1976d2;
+            --purple: #9c27b0;
+            --purple-dark: #7b1fa2;
+            
+            /* Sistema de Cores */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --gray-light: #f8f9fa;
+            --gray-text: #718096;
+            --gray-dark: #2d3748;
+            
+            /* Layout */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 20px;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0,0,0,0.15);
+            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        /* 🎨 MODO ESCURO */
+        .dark-mode {
+            --bg-primary: #1a1d23;
+            --bg-secondary: #252a33;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --border-color: #3a4556;
+            
+            /* Cores adaptadas para modo escuro */
+            --green: #48bb78;
+            --green-dark: #38a169;
+            --yellow: #ecc94b;
+            --yellow-dark: #d69e2e;
+            --orange: #ed8936;
+            --orange-dark: #dd6b20;
+            --red-light: #fc8181;
+            --blue: #63b3ed;
+            --blue-dark: #4299e1;
+            --purple: #b794f4;
+            --purple-dark: #9f7aea;
+            --gray-light: #2d3748;
+            --gray-text: #a0aec0;
+            --gray-dark: #1a202c;
+            
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-medium: 0 8px 25px rgba(0,0,0,0.4);
+            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 🔤 TIPOGRAFIA */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* 📐 LAYOUT ESTRUTURAL */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-heavy);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            min-height: 90vh;
+            transition: var(--transition);
+        }
+
+        /* 🎭 HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, #2d2d2d 100%);
+            color: white;
+            padding: 25px 30px;
+            position: relative;
+            border-bottom: 4px solid var(--primary-red);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-titles h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* 🎭 CONTROLES */
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* 🎭 BOTÕES */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #cc0000;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--green-dark);
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--yellow);
+            color: black;
+        }
+
+        .btn-warning:hover {
+            background: var(--yellow-dark);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-info {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: var(--blue-dark);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-purple {
+            background: var(--purple);
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background: var(--purple-dark);
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+
+        .file-input-container {
+            position: relative;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-label {
+            background: #8b5cf6;
+            color: white;
+            padding: 12px 25px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        /* 📊 CARDS DE RESUMO */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px 30px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-card {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--primary-red);
+            transition: var(--transition);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card.valid {
+            border-left-color: var(--green);
+        }
+
+        .summary-card.warning {
+            border-left-color: var(--yellow);
+        }
+
+        .summary-card.expired {
+            border-left-color: var(--primary-red);
+        }
+
+        .summary-card.total {
+            border-left-color: var(--gray-dark);
+        }
+
+        .card-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .card-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-subtitle {
+            font-size: 10px;
+            color: var(--gray-text);
+            margin-top: 4px;
+        }
+
+        /* 🔍 FILTROS */
+        .filters {
+            padding: 20px 30px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-select, .filter-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-width: 150px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* 📋 TABELA */
+        .table-container {
+            overflow-x: auto;
+            padding: 20px 30px;
+            max-height: 60vh; /* Aumentado para mostrar mais dispositivos */
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-primary);
+            min-width: 1200px;
+        }
+
+        thead th {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 8px;
+            border-bottom: 3px solid var(--border-color);
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tbody td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: background 0.2s ease;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* 🎯 ESTADOS VISUAIS - LINHAS (CORES MODIFICADAS PARA MODO ESCURO) */
+        tbody tr.vencido {
+            background: #f8d7da !important;
+            border-left: 3px solid var(--primary-red);
+        }
+
+        tbody tr.vencido:hover {
+            background: #f1b0b7 !important;
+        }
+
+        tbody tr.proximo-vencer {
+            background: #fff3cd !important;
+            border-left: 3px solid var(--yellow);
+        }
+
+        tbody tr.proximo-vencer:hover {
+            background: #ffeaa7 !important;
+        }
+
+        /* 🎭 STATUS BADGES */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-valid {
+            background: var(--green);
+            color: white;
+        }
+
+        .status-invalid {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .status-warning {
+            background: var(--yellow);
+            color: black;
+        }
+
+        .vehicle-plate {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* 🎪 PLACAS E TIPOS */
+        .tipo-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .tipo-proprio {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tipo-agregado {
+            background: #f0f9ff;
+            color: #0c4a6e;
+        }
+
+        .tipo-terceiro {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* 🎭 DISPOSITIVOS - AGORA TODOS VISÍVEIS */
+        .status-cell {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 400px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+        }
+
+        .status-item {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+
+        .status-ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-defeito {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #dc2626;
+            box-shadow: 0 0 3px rgba(220, 38, 38, 0.5);
+        }
+
+        /* 🎭 VALIDADE */
+        .validade-badge {
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .validade-vencida {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .validade-proxima {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .validade-ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* 🎭 BOTÕES DE AÇÃO */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            padding: 6px 12px;
+            background: var(--yellow);
+            color: black;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-edit:hover {
+            background: var(--yellow-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            padding: 6px 12px;
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-delete:hover {
+            background: #cc0000;
+            transform: translateY(-1px);
+        }
+
+        /* 🎭 MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-size: 20px;
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-red);
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .dispositivos-container {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dispositivo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dispositivo-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-select {
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: var(--gray-text);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-dark);
+        }
+
+        /* 🎭 FOOTER */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-info {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        /* 🎭 NO DATA */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+
+        /* 🔄 MODO ESCURO ESPECÍFICO - CORES MODIFICADAS */
+        .dark-mode .tipo-proprio {
+            background: #1e3a8a;
+            color: #dbeafe;
+        }
+
+        .dark-mode .tipo-agregado {
+            background: #0c4a6e;
+            color: #e0f2fe;
+        }
+
+        .dark-mode .tipo-terceiro {
+            background: #92400e;
+            color: #fef3c7;
+        }
+
+        .dark-mode .status-ok {
+            background: #065f46;
+            color: #d1fae5;
+        }
+
+        .dark-mode .status-defeito {
+            background: #991b1b;
+            color: #fee2e2;
+            border: 1px solid #fca5a5;
+            box-shadow: 0 0 4px rgba(252, 165, 165, 0.7);
+        }
+
+        .dark-mode .validade-vencida {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        .dark-mode .validade-proxima {
+            background: #92400e;
+            color: #fef3c7;
+        }
+
+        .dark-mode .validade-ok {
+            background: #065f46;
+            color: #d1fae5;
+        }
+
+        /* CORES MELHORADAS PARA MODO ESCURO - VENCIDOS MAIS VISÍVEIS */
+        .dark-mode tbody tr.vencido {
+            background: #4a1e1e !important;
+            border-left: 3px solid #dc2626;
+        }
+
+        .dark-mode tbody tr.vencido:hover {
+            background: #5c2424 !important;
+        }
+
+        .dark-mode tbody tr.proximo-vencer {
+            background: #5a3c05 !important;
+            border-left: 3px solid var(--yellow);
+        }
+
+        .dark-mode tbody tr.proximo-vencer:hover {
+            background: #6b4706 !important;
+        }
+
+        /* 📱 RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr 1fr;
+                padding: 15px 20px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-select, .filter-input {
+                min-width: 100%;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        /* 🎭 BOTÃO FECHAR MODAL */
+        .btn-fechar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        
+        .modal-header {
+            position: relative;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-titles">
+                    <h1>Sistema de Gestão de Checklists Veiculares</h1>
+                    <div class="header-subtitle">Gerencie vistorias, validades e status dos veículos</div>
+                </div>
+                
+                <div class="controls">
+                    <div class="file-input-container">
+                        <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-file-import"></i> Importar Excel
+                        </label>
+                    </div>
+                    <button class="btn btn-info" id="exportBtn">
+                        <i class="fas fa-file-export"></i> Exportar
+                    </button>
+                    <button class="btn btn-purple" id="removerDuplicadosBtn">
+                        <i class="fas fa-filter"></i> Remover Duplicados
+                    </button>
+                    <button class="btn btn-success" id="novoChecklistBtn">
+                        <i class="fas fa-plus"></i> Novo Checklist
+                    </button>
+                    <button class="btn btn-warning" id="btnDarkMode">
+                        <i class="fas fa-moon"></i> Modo Escuro
+                    </button>
+                    <!-- Botão temporário para debug -->
+                    <button class="btn btn-info" id="debugBtn">
+                        <i class="fas fa-bug"></i> Debug
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 📊 CARDS DE RESUMO -->
+        <div class="summary-cards" id="statusBadges">
+            <!-- Badges serão preenchidos via JavaScript -->
+        </div>
+        
+        <!-- 🔍 FILTROS -->
+        <div class="filters">
+            <div class="filter-group">
+                <div class="filter-label">Filtrar por Tipo</div>
+                <select class="filter-select" id="filterTipo">
+                    <option value="">Todos os Tipos</option>
+                    <option value="PROPRIO">Próprio</option>
+                    <option value="AGREGADO">Agregado</option>
+                    <option value="TERCEIRO">Terceiro</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <div class="filter-label">Filtrar por Status</div>
+                <select class="filter-select" id="filterStatus">
+                    <option value="">Todos os Status</option>
+                    <option value="vencido">Vencidos</option>
+                    <option value="proximo">Próximos a Vencer</option>
+                    <option value="ok">OK</option>
+                    <option value="defeito">Com Defeito</option>
+                </select>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por placa, responsável, operador...">
+                <i class="fas fa-search"></i>
+            </div>
+            
+            <button class="btn btn-warning" id="limparFiltrosBtn">
+                <i class="fas fa-filter"></i> Limpar Filtros
+            </button>
+        </div>
+        
+        <!-- 📋 TABELA PRINCIPAL -->
+        <div class="table-container">
+            <table id="checklistTable">
+                <thead>
+                    <tr>
+                        <th>Veículo</th>
+                        <th>Data Realização</th>
+                        <th>Validade</th>
+                        <th>Responsável</th>
+                        <th>Operador</th>
+                        <th>Dispositivos (todos visíveis)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dados serão carregados aqui -->
+                </tbody>
+            </table>
+            
+            <div class="no-data" id="noDataMessage">
+                <i class="fas fa-file-excel"></i>
+                <h3>Nenhum checklist carregado</h3>
+                <p>Importe um arquivo Excel ou crie um novo checklist para começar</p>
+            </div>
+        </div>
+        
+        <!-- 🎭 FOOTER -->
+        <div class="footer">
+            <div class="footer-info">
+                <div>Sistema de Gestão de Checklists</div>
+                <div>Controle veicular completo e integrado</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span id="totalCount">0</span> checklists
+                </div>
+                <div class="stat-item">
+                    <span id="filteredCount">0</span> filtrados
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 🎭 MODAL PARA EDITAR/CRIAR CHECKLIST -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Editar Checklist</h3>
+                <button class="btn-fechar" id="fecharModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="checklistForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editPlaca">Placa do Veículo *</label>
+                            <input type="text" id="editPlaca" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editTipo">Tipo *</label>
+                            <select id="editTipo" class="form-control" required>
+                                <option value="PROPRIO">Próprio</option>
+                                <option value="AGREGADO">Agregado</option>
+                                <option value="TERCEIRO">Terceiro</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDataRealizacao">Data da Realização *</label>
+                            <input type="datetime-local" id="editDataRealizacao" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editValidade">Data de Validade *</label>
+                            <input type="datetime-local" id="editValidade" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editResponsavel">Responsável *</label>
+                            <input type="text" id="editResponsavel" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editTelefone">Telefone</label>
+                            <input type="text" id="editTelefone" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editOperador">Operador *</label>
+                        <input type="text" id="editOperador" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Dispositivos Avaliados</label>
+                        <div class="dispositivos-container" id="dispositivosContainer">
+                            <!-- Dispositivos serão adicionados dinamicamente -->
+                        </div>
+                        <button type="button" class="btn btn-info" id="addDispositivoBtn" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Adicionar Dispositivo
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelarBtn">Cancelar</button>
+                <button class="btn btn-danger" id="excluirChecklistBtn" style="display: none;">Excluir</button>
+                <button class="btn btn-success" id="salvarChecklistBtn">Salvar Checklist</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banco de dados em memória
+        let checklists = [];
+        let editingIndex = -1;
+        let isDarkMode = false;
+        
+        // Dispositivos comuns para referência
+        const dispositivosComuns = [
+            "SETAS", "SENSOR DE PORTA DE MOTORISTA", "SENSOR DE PORTA DE CARONA",
+            "BLOQUEIO", "SIRENE", "GPS", "SENSOR DE PAINEL", "ANTENA SATELITAL",
+            "ANTENA CELULAR (GSM/GPRS)", "TECLADO", "BOTAO DE PANICO", "SENSOR DE IGNICAO",
+            "BATERIA", "SENSOR TEMPERATURA", "VIDROS", "PNEUS", "FAROIS E LANTERNAS",
+            "NIVEL COMBUSTIVEL", "CHICOTE RASTREADOR", "PINTURA / SOLDA PINOS BAU",
+            "SIRENE DE RÉ", "TRAVA DE BAU TRASEIRA", "SENSOR DE BAU TRASEIRO",
+            "SENSOR DE DESENGATE", "TRAVA DE BAU LATERAL", "SENSOR DE BAU LATERAL",
+            "TRAVA DE QUINTA RODA"
+        ];
+        
+        // Elementos DOM
+        const fileInput = document.getElementById('fileInput');
+        const exportBtn = document.getElementById('exportBtn');
+        const removerDuplicadosBtn = document.getElementById('removerDuplicadosBtn');
+        const novoChecklistBtn = document.getElementById('novoChecklistBtn');
+        const searchInput = document.getElementById('searchInput');
+        const filterTipo = document.getElementById('filterTipo');
+        const filterStatus = document.getElementById('filterStatus');
+        const limparFiltrosBtn = document.getElementById('limparFiltrosBtn');
+        const tableBody = document.getElementById('tableBody');
+        const noDataMessage = document.getElementById('noDataMessage');
+        const statusBadges = document.getElementById('statusBadges');
+        const editModal = document.getElementById('editModal');
+        const btnDarkMode = document.getElementById('btnDarkMode');
+        const debugBtn = document.getElementById('debugBtn');
+        const fecharModal = document.getElementById('fecharModal');
+        const cancelarBtn = document.getElementById('cancelarBtn');
+        const salvarChecklistBtn = document.getElementById('salvarChecklistBtn');
+        const excluirChecklistBtn = document.getElementById('excluirChecklistBtn');
+        const addDispositivoBtn = document.getElementById('addDispositivoBtn');
+        const dispositivosContainer = document.getElementById('dispositivosContainer');
+        const checklistForm = document.getElementById('checklistForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const totalCount = document.getElementById('totalCount');
+        const filteredCount = document.getElementById('filteredCount');
+        
+        // ✅ FUNÇÃO SIMPLIFICADA: Extrair datas de colunas separadas
+        function extrairDatasDeColunasSeparadas(cellA, cellB) {
+            console.log("Extraindo datas de colunas separadas:");
+            console.log("Coluna A:", cellA);
+            console.log("Coluna B:", cellB);
+            
+            let dataRealizacao = '';
+            let validade = '';
+            
+            // Extrair data de realização da coluna A
+            if (cellA.includes('Data da Realização:')) {
+                dataRealizacao = cellA.replace('Data da Realização:', '').trim();
+            } else if (cellA) {
+                dataRealizacao = cellA.trim();
+            }
+            
+            // Extrair validade da coluna B
+            if (cellB.includes('Validade:')) {
+                validade = cellB.replace('Validade:', '').trim();
+            } else if (cellB) {
+                validade = cellB.trim();
+            }
+            
+            console.log("Resultado:", { dataRealizacao, validade });
+            return { dataRealizacao, validade };
+        }
+        
+        // ✅ FUNÇÃO MELHORADA: Verificar se uma data é válida
+        function isValidDate(d) {
+            return d instanceof Date && !isNaN(d);
+        }
+        
+        // ✅ FUNÇÃO MELHORADA: Extrair data do formato brasileiro
+        function parseDateBrasil(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return null;
+            
+            dateStr = dateStr.trim();
+            
+            // Casos especiais
+            if (dateStr.includes('Não OK') || dateStr.includes('Checklist Não OK')) {
+                return null;
+            }
+            
+            if (dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido')) {
+                return null;
+            }
+            
+            try {
+                // Padrão: dd/mm/aaaa hh:mm
+                const pattern = /(\d{2})\/(\d{2})\/(\d{4})\s+(\d{1,2}):(\d{2})/;
+                let match = dateStr.match(pattern);
+                
+                if (match) {
+                    const [, day, month, year, hour, minute] = match;
+                    const date = new Date(year, month - 1, day, hour || 0, minute || 0);
+                    return isValidDate(date) ? date : null;
+                }
+                
+                // Padrão alternativo: dd/mm/aaaa
+                const pattern2 = /(\d{2})\/(\d{2})\/(\d{4})/;
+                match = dateStr.match(pattern2);
+                
+                if (match) {
+                    const [, day, month, year] = match;
+                    const date = new Date(year, month - 1, day);
+                    return isValidDate(date) ? date : null;
+                }
+                
+            } catch (e) {
+                console.error("Erro ao processar data:", e, dateStr);
+            }
+            
+            return null;
+        }
+        
+        // ✅ FUNÇÃO MELHORADA: Verificar status da validade
+        function getStatusValidade(validadeStr) {
+            if (!validadeStr) {
+                return 'vencido';
+            }
+            
+            // Casos especiais
+            if (validadeStr.includes('Não OK') || validadeStr.includes('Checklist Não OK')) {
+                return 'vencido';
+            }
+            
+            if (validadeStr.includes('Vencido') || validadeStr.includes('Checklist Vencido')) {
+                return 'vencido';
+            }
+            
+            if (validadeStr.includes('OK até EMBARQUE')) {
+                return 'proximo';
+            }
+            
+            // Tentar extrair data regular
+            const dataValidade = parseDateBrasil(validadeStr);
+            
+            if (!dataValidade) {
+                // Verificar se é uma data sem hora: dd/mm/aaaa
+                const matchSimple = validadeStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+                if (matchSimple) {
+                    const [, day, month, year] = matchSimple;
+                    const data = new Date(year, month - 1, day);
+                    if (isValidDate(data)) {
+                        const hoje = new Date();
+                        hoje.setHours(0, 0, 0, 0);
+                        
+                        const diferencaMs = data.getTime() - hoje.getTime();
+                        const diferencaDias = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
+                        
+                        if (diferencaDias < 0) return 'vencido';
+                        if (diferencaDias <= 7) return 'proximo';
+                        return 'ok';
+                    }
+                }
+                
+                // Se tem texto OK mas não é data, considerar ok
+                if (validadeStr.includes('OK') || validadeStr.includes('Ok')) {
+                    return 'ok';
+                }
+                
+                return 'vencido';
+            }
+            
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            dataValidade.setHours(0, 0, 0, 0);
+            
+            const diferencaMs = dataValidade.getTime() - hoje.getTime();
+            const diferencaDias = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
+            
+            if (diferencaDias < 0) return 'vencido';
+            if (diferencaDias <= 7) return 'proximo';
+            return 'ok';
+        }
+        
+        // ✅ FUNÇÃO NOVA: Remover placas duplicadas
+        function removerPlacasDuplicadas() {
+            if (checklists.length === 0) {
+                showNotification('Não há checklists para processar!', 'warning');
+                return;
+            }
+            
+            const uniquePlacas = new Map();
+            const checklistsRemovidos = [];
+            
+            // Ordenar por data mais recente primeiro
+            const checklistsOrdenados = [...checklists].sort((a, b) => {
+                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
+                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
+                return dataB - dataA; // Mais recente primeiro
+            });
+            
+            // Manter apenas o mais recente de cada placa
+            checklistsOrdenados.forEach(checklist => {
+                const placaNormalizada = checklist.placa.trim().toUpperCase();
+                
+                if (!uniquePlacas.has(placaNormalizada)) {
+                    uniquePlacas.set(placaNormalizada, checklist);
+                } else {
+                    checklistsRemovidos.push(checklist);
+                }
+            });
+            
+            // Atualizar lista de checklists
+            checklists = Array.from(uniquePlacas.values());
+            
+            // Mostrar resultado
+            const removidosCount = checklistsRemovidos.length;
+            showNotification(`${removidosCount} checklists duplicados removidos! Mantidos: ${checklists.length} checklists únicos.`, 'success');
+            
+            // Atualizar interface
+            atualizarTabela();
+            atualizarBadges();
+            atualizarContadores();
+            salvarNoLocalStorage();
+        }
+        
+        // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha (AGORA LÊ COLUNA B CORRETAMENTE)
+        function extrairChecklistDaPlanilha(data, startIndex) {
+            const checklist = {
+                placa: '',
+                tipo: '',
+                dataRealizacao: '',
+                validade: '',
+                responsavel: '',
+                telefone: '',
+                operador: '',
+                dispositivos: []
+            };
+            
+            // Extrair placa e tipo da primeira linha
+            const firstRow = data[startIndex][0]?.toString().trim() || '';
+            
+            if (firstRow.includes('Veículo:') || firstRow.includes('Carreta:')) {
+                console.log("Processando linha do veículo:", firstRow);
+                
+                // Separar por ponto e vírgula
+                if (firstRow.includes(';')) {
+                    const parts = firstRow.split(';');
+                    
+                    // Placa: "Veículo: SVK6F53"
+                    const placaPart = parts[0];
+                    checklist.placa = placaPart.split(':')[1]?.trim() || '';
+                    
+                    // Tipo: "PROPRIO" (segunda parte após o ;)
+                    if (parts.length > 1) {
+                        checklist.tipo = parts[1].trim();
+                    } else {
+                        checklist.tipo = firstRow.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
+                    }
+                } else {
+                    // Formato antigo com pipe
+                    const parts = firstRow.split('|');
+                    checklist.placa = parts[0].split(':')[1]?.trim() || '';
+                    checklist.tipo = parts.length > 1 ? parts[1].trim() : 'PROPRIO';
+                }
+            }
+            
+            console.log(`📋 Checklist para: ${checklist.placa} (${checklist.tipo})`);
+            
+            // Procurar dados nas próximas linhas
+            for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                const cellA = row[0]?.toString().trim() || '';
+                const cellB = row[1]?.toString().trim() || '';
+                
+                // ✅ CORREÇÃO CRÍTICA: Extrair datas de colunas separadas
+                if (cellA.includes('Data da Realização:')) {
+                    console.log("Encontrou linha de datas:");
+                    console.log("Coluna A:", cellA);
+                    console.log("Coluna B:", cellB);
+                    
+                    // Extrair data de realização da coluna A
+                    checklist.dataRealizacao = cellA.replace('Data da Realização:', '').trim();
+                    
+                    // ✅ EXTRAIR VALIDADE DA COLUNA B (PONTO CRÍTICO DO BUG)
+                    if (cellB.includes('Validade:')) {
+                        checklist.validade = cellB.replace('Validade:', '').trim();
+                    } else if (cellB) {
+                        checklist.validade = cellB.trim();
+                    }
+                    
+                    console.log(`Datas extraídas: Realização="${checklist.dataRealizacao}", Validade="${checklist.validade}"`);
+                }
+                
+                // Responsável
+                if (cellA.includes('Responsavel:')) {
+                    console.log("Processando responsável:", cellA);
+                    
+                    if (cellA.includes(';')) {
+                        const parts = cellA.split(';');
+                        checklist.responsavel = parts[0].replace('Responsavel:', '').trim();
+                        if (parts[1]) {
+                            checklist.telefone = parts[1].trim();
+                        }
+                    } else {
+                        checklist.responsavel = cellA.replace('Responsavel:', '').trim();
+                        if (cellB && !cellB.includes('Operador:')) {
+                            checklist.telefone = cellB;
+                        }
+                    }
+                }
+                
+                // Operador
+                if (cellA.includes('Operador:')) {
+                    checklist.operador = cellA.replace('Operador:', '').trim();
+                }
+                
+                // Dispositivos
+                if (cellA === 'Dispositivos Avaliados' || cellA === 'Dispositivos Avaliados;Situação') {
+                    console.log("Iniciando extração de dispositivos...");
+                    let j = i + 1;
+                    while (j < data.length) {
+                        const nextRow = data[j];
+                        if (!nextRow || nextRow.length === 0) break;
+                        
+                        const dispositivoLinha = nextRow[0]?.toString().trim() || '';
+                        
+                        // Parar se encontrar próximo veículo
+                        if (dispositivoLinha.includes('Veículo:') || dispositivoLinha.includes('Carreta:')) {
+                            break;
+                        }
+                        
+                        // Ignorar linha vazia ou cabeçalho
+                        if (dispositivoLinha && dispositivoLinha !== 'Dispositivos Avaliados' && 
+                            dispositivoLinha !== 'Dispositivos Avaliados;Situação') {
+                            
+                            // Dispositivo pode estar no formato "SETAS;Ok"
+                            let dispositivoNome = dispositivoLinha;
+                            let situacao = 'Ok';
+                            
+                            if (dispositivoLinha.includes(';')) {
+                                const parts = dispositivoLinha.split(';');
+                                dispositivoNome = parts[0].trim();
+                                situacao = parts[1]?.trim() || 'Ok';
+                            } else if (nextRow[1]) {
+                                situacao = nextRow[1].toString().trim();
+                            }
+                            
+                            checklist.dispositivos.push({
+                                nome: dispositivoNome,
+                                situacao: situacao
+                            });
+                        }
+                        
+                        j++;
+                    }
+                    
+                    console.log(`Extraídos ${checklist.dispositivos.length} dispositivos`);
+                    break; // Terminou de processar este checklist
+                }
+            }
+            
+            return checklist;
+        }
+        
+        // ✅ FUNÇÃO CORRIGIDA: Processar dados do Excel
+        function processarExcelData(data) {
+            checklists = [];
+            
+            console.log("Iniciando processamento de dados do Excel...");
+            console.log("Total de linhas:", data.length);
+            
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                const cellA = row[0]?.toString().trim() || '';
+                
+                // Encontrou um novo veículo
+                if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
+                    console.log(`\n=== Encontrou novo veículo na linha ${i + 1} ===`);
+                    const checklist = extrairChecklistDaPlanilha(data, i);
+                    if (checklist && checklist.placa) {
+                        checklists.push(checklist);
+                        console.log(`✅ Checklist extraído: ${checklist.placa}`);
+                        console.log(`   Realização: "${checklist.dataRealizacao}"`);
+                        console.log(`   Validade: "${checklist.validade}"`);
+                        console.log(`   Status: ${getStatusValidade(checklist.validade)}`);
+                        
+                        // Pular algumas linhas para evitar processar o mesmo checklist
+                        i += 10;
+                    }
+                }
+            }
+            
+            console.log(`\n✅ Total de checklists extraídos: ${checklists.length}`);
+            salvarNoLocalStorage();
+        }
+        
+        // ✅ FUNÇÃO DE DEBUG: Verificar datas importadas
+        function debugDatasImportadas() {
+            console.log("=== DEBUG DATAS IMPORTADAS ===");
+            console.log(`Total de checklists: ${checklists.length}`);
+            
+            checklists.forEach((checklist, index) => {
+                console.log(`\n${index + 1}. ${checklist.placa} (${checklist.tipo})`);
+                console.log(`   Realização: "${checklist.dataRealizacao}"`);
+                console.log(`   Validade: "${checklist.validade}"`);
+                
+                const dataRealizacao = parseDateBrasil(checklist.dataRealizacao);
+                const dataValidade = parseDateBrasil(checklist.validade);
+                
+                console.log(`   Realização parseada: ${dataRealizacao}`);
+                console.log(`   Validade parseada: ${dataValidade}`);
+                console.log(`   Status: ${getStatusValidade(checklist.validade)}`);
+                console.log(`   Dispositivos: ${checklist.dispositivos.length}`);
+                console.log('---');
+            });
+            
+            // Calcular estatísticas
+            let vencidos = 0;
+            let proximos = 0;
+            let ok = 0;
+            
+            checklists.forEach(checklist => {
+                const status = getStatusValidade(checklist.validade);
+                if (status === 'vencido') vencidos++;
+                if (status === 'proximo') proximos++;
+                if (status === 'ok') ok++;
+            });
+            
+            console.log("=== ESTATÍSTICAS ===");
+            console.log(`Vencidos: ${vencidos}`);
+            console.log(`Próximos a vencer: ${proximos}`);
+            console.log(`OK: ${ok}`);
+            console.log("=== FIM DEBUG ===");
+            
+            showNotification('Debug executado! Verifique o console (F12).', 'info');
+        }
+        
+        // Função para verificar se há dispositivos com defeito
+        function temDefeito(dispositivos) {
+            return dispositivos.some(d => d.situacao && d.situacao.toLowerCase() === 'defeito');
+        }
+        
+        // ✅ FUNÇÃO: Formatar data para exibição
+        function formatarDataParaExibicao(dataStr) {
+            if (!dataStr) return 'N/A';
+            
+            const date = parseDateBrasil(dataStr);
+            if (!date) return dataStr;
+            
+            return date.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // ✅ FUNÇÃO ATUALIZADA: Agora mostra TODOS os dispositivos
+        function atualizarTabela() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const tipoFiltro = filterTipo.value;
+            const statusFiltro = filterStatus.value;
+            
+            // Filtrar checklists
+            let filteredChecklists = checklists.filter(checklist => {
+                // Filtro por tipo
+                if (tipoFiltro && checklist.tipo !== tipoFiltro) return false;
+                
+                // Filtro por status
+                if (statusFiltro) {
+                    const statusValidade = getStatusValidade(checklist.validade);
+                    const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                    
+                    if (statusFiltro === 'vencido' && statusValidade !== 'vencido') return false;
+                    if (statusFiltro === 'proximo' && statusValidade !== 'proximo') return false;
+                    if (statusFiltro === 'ok' && (statusValidade !== 'ok' || temDefeitoChecklist)) return false;
+                    if (statusFiltro === 'defeito' && !temDefeitoChecklist) return false;
+                }
+                
+                // Filtro por busca
+                if (searchTerm) {
+                    const searchFields = [
+                        checklist.placa,
+                        checklist.responsavel,
+                        checklist.operador,
+                        checklist.tipo
+                    ].join(' ').toLowerCase();
+                    
+                    if (!searchFields.includes(searchTerm)) return false;
+                }
+                
+                return true;
+            });
+            
+            // Limpar tabela
+            tableBody.innerHTML = '';
+            
+            // Mostrar/ocultar mensagem de sem dados
+            if (filteredChecklists.length === 0) {
+                noDataMessage.style.display = 'block';
+            } else {
+                noDataMessage.style.display = 'none';
+                
+                // Adicionar linhas à tabela
+                filteredChecklists.forEach((checklist, index) => {
+                    const statusValidade = getStatusValidade(checklist.validade);
+                    const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                    
+                    const row = document.createElement('tr');
+                    if (statusValidade === 'vencido') row.classList.add('vencido');
+                    if (statusValidade === 'proximo') row.classList.add('proximo-vencer');
+                    
+                    // Determinar classe do tipo
+                    let tipoClass = 'tipo-proprio';
+                    if (checklist.tipo === 'AGREGADO') tipoClass = 'tipo-agregado';
+                    if (checklist.tipo === 'TERCEIRO') tipoClass = 'tipo-terceiro';
+                    
+                    // ✅ AGORA MOSTRA TODOS OS DISPOSITIVOS (sem limite)
+                    const dispositivosHTML = checklist.dispositivos.map(d => {
+                        const statusClass = d.situacao && d.situacao.toLowerCase() === 'defeito' ? 'status-defeito' : 'status-ok';
+                        const icon = d.situacao && d.situacao.toLowerCase() === 'defeito' ? '❌' : '✅';
+                        return `<span class="status-item ${statusClass}" title="${d.nome}: ${d.situacao}">${icon} ${d.nome}</span>`;
+                    }).join('');
+                    
+                    // Classe da validade
+                    let validadeClass = 'validade-ok';
+                    if (statusValidade === 'vencido') validadeClass = 'validade-vencida';
+                    if (statusValidade === 'proximo') validadeClass = 'validade-proxima';
+                    
+                    // Formatar data para exibição
+                    const dataFormatada = formatarDataParaExibicao(checklist.dataRealizacao);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div>
+                                <span class="vehicle-plate">${checklist.placa}</span><br>
+                                <span class="tipo-badge ${tipoClass}">${checklist.tipo}</span>
+                            </div>
+                        </td>
+                        <td>${dataFormatada}</td>
+                        <td><span class="validade-badge ${validadeClass}">${checklist.validade || 'N/A'}</span></td>
+                        <td>
+                            <div>${checklist.responsavel}</div>
+                            <small>${checklist.telefone || ''}</small>
+                        </td>
+                        <td>${checklist.operador}</td>
+                        <td>
+                            <div class="status-cell" title="${checklist.dispositivos.length} dispositivos avaliados">
+                                ${dispositivosHTML || '<span class="status-item">Nenhum dispositivo</span>'}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-edit" onclick="editarChecklist(${checklists.indexOf(checklist)})">
+                                    Editar
+                                </button>
+                                <button class="btn-delete" onclick="excluirChecklist(${checklists.indexOf(checklist)})">
+                                    Excluir
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // Atualizar contadores
+            atualizarContadores(filteredChecklists.length);
+        }
+        
+        // Função para atualizar os badges de status
+        function atualizarBadges() {
+            let vencidos = 0;
+            let proximos = 0;
+            let ok = 0;
+            let comDefeito = 0;
+            
+            checklists.forEach(checklist => {
+                const statusValidade = getStatusValidade(checklist.validade);
+                const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                
+                if (statusValidade === 'vencido') vencidos++;
+                if (statusValidade === 'proximo') proximos++;
+                if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
+                if (temDefeitoChecklist) comDefeito++;
+            });
+            
+            statusBadges.innerHTML = `
+                <div class="summary-card total">
+                    <div class="card-number">${checklists.length}</div>
+                    <div class="card-label">Total de Checklists</div>
+                    <div class="card-subtitle">Carregados no sistema</div>
+                </div>
+                <div class="summary-card valid">
+                    <div class="card-number">${ok}</div>
+                    <div class="card-label">Checklists OK</div>
+                    <div class="card-subtitle">Em conformidade</div>
+                </div>
+                <div class="summary-card warning">
+                    <div class="card-number">${proximos}</div>
+                    <div class="card-label">Próximos a Vencer</div>
+                    <div class="card-subtitle">Atenção necessária</div>
+                </div>
+                <div class="summary-card expired">
+                    <div class="card-number">${vencidos}</div>
+                    <div class="card-label">Checklists Vencidos</div>
+                    <div class="card-subtitle">Fora da validade</div>
+                </div>
+            `;
+        }
+        
+        // Função para atualizar contadores
+        function atualizarContadores(filtered = null) {
+            totalCount.textContent = checklists.length;
+            filteredCount.textContent = filtered !== null ? filtered : checklists.length;
+        }
+        
+        // Função para abrir modal de edição
+        window.editarChecklist = function(index) {
+            editingIndex = index;
+            const checklist = checklists[index];
+            
+            modalTitle.textContent = 'Editar Checklist';
+            excluirChecklistBtn.style.display = 'block';
+            
+            // Preencher formulário
+            document.getElementById('editPlaca').value = checklist.placa;
+            document.getElementById('editTipo').value = checklist.tipo;
+            
+            // Converter datas para formato datetime-local
+            const dataRealizacao = converterParaDateTimeLocal(checklist.dataRealizacao);
+            const dataValidade = converterParaDateTimeLocal(checklist.validade);
+            
+            document.getElementById('editDataRealizacao').value = dataRealizacao;
+            document.getElementById('editValidade').value = dataValidade;
+            document.getElementById('editResponsavel').value = checklist.responsavel;
+            document.getElementById('editTelefone').value = checklist.telefone || '';
+            document.getElementById('editOperador').value = checklist.operador;
+            
+            // Limpar e adicionar dispositivos
+            dispositivosContainer.innerHTML = '';
+            checklist.dispositivos.forEach(dispositivo => {
+                adicionarDispositivoInput(dispositivo.nome, dispositivo.situacao);
+            });
+            
+            // Abrir modal
+            editModal.style.display = 'flex';
+        };
+        
+        // Função para converter data para formato datetime-local
+        function converterParaDateTimeLocal(dataStr) {
+            const date = parseDateBrasil(dataStr);
+            if (!date) return '';
+            
+            try {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            } catch (e) {
+                console.error("Erro ao converter data:", e);
+                return '';
+            }
+        }
+        
+        // Função para converter datetime-local para formato do sistema
+        function converterParaFormatoSistema(datetimeStr) {
+            if (!datetimeStr) return '';
+            
+            try {
+                const date = new Date(datetimeStr);
+                if (!isValidDate(date)) return '';
+                
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (e) {
+                console.error("Erro ao converter datetime:", e);
+                return datetimeStr;
+            }
+        }
+        
+        // Função para adicionar input de dispositivo
+        function adicionarDispositivoInput(nome = '', situacao = 'Ok') {
+            const dispositivoDiv = document.createElement('div');
+            dispositivoDiv.className = 'dispositivo-item';
+            
+            const selectOptions = dispositivosComuns.map(d => 
+                `<option value="${d}" ${d === nome ? 'selected' : ''}>${d}</option>`
+            ).join('');
+            
+            dispositivoDiv.innerHTML = `
+                <select class="form-control dispositivo-nome" style="flex: 2;">
+                    <option value="">Selecione ou digite...</option>
+                    ${selectOptions}
+                    <option value="OUTRO" ${!dispositivosComuns.includes(nome) && nome ? 'selected' : ''}>OUTRO (personalizado)</option>
+                </select>
+                <input type="text" class="form-control dispositivo-nome-outro" 
+                       placeholder="Nome do dispositivo" 
+                       value="${!dispositivosComuns.includes(nome) && nome ? nome : ''}"
+                       style="flex: 2; ${dispositivosComuns.includes(nome) ? 'display: none;' : ''}">
+                <select class="status-select dispositivo-situacao" style="flex: 1;">
+                    <option value="Ok" ${situacao === 'Ok' ? 'selected' : ''}>Ok</option>
+                    <option value="Defeito" ${situacao === 'Defeito' ? 'selected' : ''}>Defeito</option>
+                </select>
+                <button type="button" class="btn-delete" onclick="this.parentElement.remove()" style="padding: 5px 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            dispositivosContainer.appendChild(dispositivoDiv);
+            
+            // Adicionar evento para mostrar/ocultar input personalizado
+            const select = dispositivoDiv.querySelector('.dispositivo-nome');
+            const outroInput = dispositivoDiv.querySelector('.dispositivo-nome-outro');
+            
+            select.addEventListener('change', function() {
+                if (this.value === 'OUTRO') {
+                    outroInput.style.display = 'block';
+                } else {
+                    outroInput.style.display = 'none';
+                }
+            });
+        }
+        
+        // Evento para adicionar dispositivo
+        addDispositivoBtn.addEventListener('click', function() {
+            adicionarDispositivoInput();
+        });
+        
+        // Evento para salvar checklist
+        salvarChecklistBtn.addEventListener('click', function() {
+            // Validar formulário
+            if (!checklistForm.checkValidity()) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            // Coletar dados do formulário
+            const novoChecklist = {
+                placa: document.getElementById('editPlaca').value.toUpperCase(),
+                tipo: document.getElementById('editTipo').value,
+                dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
+                validade: converterParaFormatoSistema(document.getElementById('editValidade').value),
+                responsavel: document.getElementById('editResponsavel').value,
+                telefone: document.getElementById('editTelefone').value,
+                operador: document.getElementById('editOperador').value,
+                dispositivos: []
+            };
+            
+            // Coletar dispositivos
+            const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
+            dispositivoItems.forEach(item => {
+                const select = item.querySelector('.dispositivo-nome');
+                const outroInput = item.querySelector('.dispositivo-nome-outro');
+                const situacaoSelect = item.querySelector('.dispositivo-situacao');
+                
+                let nome;
+                if (select.value === 'OUTRO') {
+                    nome = outroInput.value.trim();
+                } else {
+                    nome = select.value;
+                }
+                
+                if (nome) {
+                    novoChecklist.dispositivos.push({
+                        nome: nome,
+                        situacao: situacaoSelect.value
+                    });
+                }
+            });
+            
+            // Adicionar ou atualizar
+            if (editingIndex === -1) {
+                // Novo checklist
+                checklists.unshift(novoChecklist);
+                showNotification('Checklist criado com sucesso!', 'success');
+            } else {
+                // Editar checklist existente
+                checklists[editingIndex] = novoChecklist;
+                showNotification('Checklist atualizado com sucesso!', 'success');
+            }
+            
+            // Fechar modal
+            editModal.style.display = 'none';
+            
+            // Atualizar interface
+            atualizarTabela();
+            atualizarBadges();
+            atualizarContadores();
+            salvarNoLocalStorage();
+            
+            // Resetar índice de edição
+            editingIndex = -1;
+        });
+        
+        // Evento para excluir checklist
+        excluirChecklistBtn.addEventListener('click', function() {
+            if (editingIndex !== -1 && confirm('Tem certeza que deseja excluir este checklist?')) {
+                checklists.splice(editingIndex, 1);
+                editModal.style.display = 'none';
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                salvarNoLocalStorage();
+                showNotification('Checklist excluído com sucesso!', 'success');
+                editingIndex = -1;
+            }
+        });
+        
+        // Função para excluir checklist da tabela
+        window.excluirChecklist = function(index) {
+            if (confirm('Tem certeza que deseja excluir este checklist?')) {
+                checklists.splice(index, 1);
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                salvarNoLocalStorage();
+                showNotification('Checklist excluído com sucesso!', 'success');
+            }
+        };
+        
+        // Evento para novo checklist
+        novoChecklistBtn.addEventListener('click', function() {
+            editingIndex = -1;
+            modalTitle.textContent = 'Novo Checklist';
+            excluirChecklistBtn.style.display = 'none';
+            
+            // Limpar formulário
+            checklistForm.reset();
+            dispositivosContainer.innerHTML = '';
+            
+            // Adicionar alguns dispositivos padrão
+            adicionarDispositivoInput('SETAS', 'Ok');
+            adicionarDispositivoInput('SENSOR DE PORTA DE MOTORISTA', 'Ok');
+            adicionarDispositivoInput('GPS', 'Ok');
+            
+            // Definir data atual
+            const now = new Date();
+            const nowStr = now.toISOString().slice(0, 16);
+            document.getElementById('editDataRealizacao').value = nowStr;
+            
+            // Definir validade para 30 dias
+            const validade = new Date(now);
+            validade.setDate(validade.getDate() + 30);
+            const validadeStr = validade.toISOString().slice(0, 16);
+            document.getElementById('editValidade').value = validadeStr;
+            
+            // Abrir modal
+            editModal.style.display = 'flex';
+        });
+        
+        // Eventos para fechar modal
+        fecharModal.addEventListener('click', function() {
+            editModal.style.display = 'none';
+            editingIndex = -1;
+        });
+        
+        cancelarBtn.addEventListener('click', function() {
+            editModal.style.display = 'none';
+            editingIndex = -1;
+        });
+        
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+                editingIndex = -1;
+            }
+        });
+        
+        // Eventos de filtro e busca
+        searchInput.addEventListener('input', atualizarTabela);
+        filterTipo.addEventListener('change', atualizarTabela);
+        filterStatus.addEventListener('change', atualizarTabela);
+        
+        limparFiltrosBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterTipo.value = '';
+            filterStatus.value = '';
+            atualizarTabela();
+        });
+        
+        // ✅ EVENTO: Botão para remover duplicados
+        removerDuplicadosBtn.addEventListener('click', removerPlacasDuplicadas);
+        
+        // ✅ EVENTO: Botão de debug
+        debugBtn.addEventListener('click', debugDatasImportadas);
+        
+        // Evento para exportar dados
+        exportBtn.addEventListener('click', function() {
+            if (checklists.length === 0) {
+                showNotification('Não há dados para exportar!', 'warning');
+                return;
+            }
+            
+            // Criar uma nova planilha
+            const wb = XLSX.utils.book_new();
+            
+            // Preparar dados para exportação
+            const exportData = [];
+            
+            // Adicionar cabeçalho
+            exportData.push(['Relatório Checklist']);
+            exportData.push([]);
+            exportData.push(['Empresa: Sistema de Checklists']);
+            exportData.push(['Periodo: ' + new Date().toLocaleDateString('pt-BR')]);
+            exportData.push([]);
+            
+            // Adicionar cada checklist
+            checklists.forEach(checklist => {
+                exportData.push([`Veículo: ${checklist.placa} | ${checklist.tipo} |`]);
+                exportData.push([`Data da Realização: ${checklist.dataRealizacao} | Validade: ${checklist.validade} |`]);
+                exportData.push([`Responsavel: ${checklist.responsavel} | ${checklist.telefone} |`]);
+                exportData.push([`Operador: ${checklist.operador} |`]);
+                exportData.push(['Dispositivos Avaliados', 'Situação']);
+                
+                checklist.dispositivos.forEach(d => {
+                    exportData.push([d.nome, d.situacao]);
+                });
+                
+                exportData.push([]);
+            });
+            
+            // Criar worksheet
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            
+            // Adicionar worksheet ao workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'RelatorioChecklist');
+            
+            // Exportar arquivo
+            XLSX.writeFile(wb, `checklists_veiculares_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showNotification('Arquivo exportado com sucesso!', 'success');
+        });
+        
+        // Função para salvar no localStorage
+        function salvarNoLocalStorage() {
+            localStorage.setItem('checklists_veiculares', JSON.stringify(checklists));
+            localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
+        }
+        
+        // Função para carregar do localStorage
+        function carregarDoLocalStorage() {
+            const saved = localStorage.getItem('checklists_veiculares');
+            if (saved) {
+                checklists = JSON.parse(saved);
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+            }
+            
+            // Carregar modo escuro
+            const darkModeSaved = localStorage.getItem('dark_mode_sistema');
+            if (darkModeSaved === 'true') {
+                toggleDarkMode();
+            }
+        }
+        
+        // Função para alternar modo escuro
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            
+            if (isDarkMode) {
+                btnDarkMode.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
+            } else {
+                btnDarkMode.innerHTML = '<i class="fas fa-moon"></i> Modo Escuro';
+            }
+        }
+        
+        // Evento para modo escuro
+        btnDarkMode.addEventListener('click', toggleDarkMode);
+        
+        // Evento para importar arquivo Excel
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Processar a planilha "RelatorioChecklist"
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                console.log("Dados brutos do Excel:", jsonData);
+                processarExcelData(jsonData);
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                showNotification('Arquivo importado com sucesso!', 'success');
+                
+                // Executar debug para verificar importação
+                debugDatasImportadas();
+            };
+            
+            reader.readAsArrayBuffer(file);
+        });
+        
+        // Carregar dados ao iniciar
+        window.addEventListener('DOMContentLoaded', function() {
+            carregarDoLocalStorage();
+        });
+        
+        // Permitir arrastar e soltar arquivo
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.body.style.backgroundColor = 'rgba(102, 126, 234, 0.8)';
+        });
+        
+        document.addEventListener('dragleave', function(e) {
+            document.body.style.backgroundColor = '';
+        });
+        
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.body.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                
+                // Disparar evento change manualmente
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+        
+        // ✅ FUNÇÃO: Notificação de sucesso
+        function showNotification(message, type = 'info') {
+            // Remover notificações anteriores
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(n => n.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 15px 20px;">
+                    <span style="font-size: 20px;">
+                        ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '⏳'}
+                    </span>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#00c853' : type === 'error' ? '#ff0000' : type === 'warning' ? '#ff9800' : '#2196f3'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 9999;
+                max-width: 400px;
+                animation: slideIn 0.3s ease;
+                font-weight: 500;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 4000);
+        }
+        
+        // Adicionar estilo para animação
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
