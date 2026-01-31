@@ -218,6 +218,17 @@
             box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
         }
 
+        /* NOVO BOTÃO - REGISTRAR AVISO */
+        .btn-notify {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-notify:hover {
+            background: #d97706;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
         .file-input-container {
             position: relative;
         }
@@ -242,7 +253,7 @@
             font-weight: 600;
         }
 
-        /* 📊 CARDS DE RESUMO */
+        /* 📊 CARDS DE RESUMO - ATUALIZADO COM AVISOS */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -260,6 +271,7 @@
             box-shadow: var(--shadow-light);
             border-left: 4px solid var(--primary-red);
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .summary-card:hover {
@@ -277,6 +289,14 @@
 
         .summary-card.expired {
             border-left-color: var(--primary-red);
+        }
+
+        .summary-card.avisados {
+            border-left-color: #f59e0b;
+        }
+
+        .summary-card.sem-aviso {
+            border-left-color: #ef4444;
         }
 
         .summary-card.total {
@@ -304,7 +324,7 @@
             margin-top: 4px;
         }
 
-        /* 🔍 FILTROS */
+        /* 🔍 FILTROS - ATUALIZADO COM NOVA OPÇÃO */
         .filters {
             padding: 20px 30px;
             background: var(--bg-secondary);
@@ -377,7 +397,7 @@
         .table-container {
             overflow-x: auto;
             padding: 20px 30px;
-            max-height: 60vh; /* Aumentado para mostrar mais dispositivos */
+            max-height: 60vh;
             overflow-y: auto;
         }
 
@@ -385,7 +405,7 @@
             width: 100%;
             border-collapse: collapse;
             background: var(--bg-primary);
-            min-width: 1200px;
+            min-width: 1300px;
         }
 
         thead th {
@@ -421,7 +441,7 @@
             background: var(--bg-secondary);
         }
 
-        /* 🎯 ESTADOS VISUAIS - LINHAS (CORES MODIFICADAS PARA MODO ESCURO) */
+        /* 🎯 ESTADOS VISUAIS - LINHAS */
         tbody tr.vencido {
             background: #f8d7da !important;
             border-left: 3px solid var(--primary-red);
@@ -465,6 +485,15 @@
             color: black;
         }
 
+        /* NOVO BADGE - AVISO */
+        .status-aviso {
+            background: #f59e0b;
+            color: white;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            margin: 2px;
+        }
+
         .vehicle-plate {
             font-family: 'Courier New', monospace;
             font-weight: 700;
@@ -496,13 +525,13 @@
             color: #92400e;
         }
 
-        /* 🎭 DISPOSITIVOS - AGORA TODOS VISÍVEIS */
+        /* 🎭 DISPOSITIVOS */
         .status-cell {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            max-width: 400px;
-            max-height: 150px;
+            max-width: 350px;
+            max-height: 120px;
             overflow-y: auto;
             padding: 5px;
             border: 1px solid var(--border-color);
@@ -556,10 +585,11 @@
             color: #065f46;
         }
 
-        /* 🎭 BOTÕES DE AÇÃO */
+        /* 🎭 BOTÕES DE AÇÃO - ATUALIZADO COM BOTÃO DE AVISO */
         .action-buttons {
             display: flex;
             gap: 5px;
+            flex-wrap: wrap;
         }
 
         .btn-edit {
@@ -596,7 +626,25 @@
             transform: translateY(-1px);
         }
 
-        /* 🎭 MODAL */
+        /* NOVO BOTÃO DE AVISO */
+        .btn-notify-small {
+            padding: 6px 12px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-notify-small:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        /* 🎭 MODAL DE EDITAR/CRIAR */
         .modal {
             display: none;
             position: fixed;
@@ -620,6 +668,11 @@
             max-height: 80vh;
             overflow-y: auto;
             border: 1px solid var(--border-color);
+        }
+
+        /* NOVO MODAL - REGISTRAR AVISO */
+        .modal-wide {
+            max-width: 800px;
         }
 
         .modal h3 {
@@ -716,6 +769,44 @@
             background: var(--gray-dark);
         }
 
+        /* HISTÓRICO DE AVISOS */
+        .historico-avisos {
+            margin-top: 10px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .aviso-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .aviso-item:last-child {
+            border-bottom: none;
+        }
+
+        .aviso-data {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .aviso-quem {
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .sem-aviso {
+            color: var(--gray-text);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
         /* 🎭 FOOTER */
         .footer {
             background: var(--bg-secondary);
@@ -762,7 +853,7 @@
             color: var(--border-color);
         }
 
-        /* 🔄 MODO ESCURO ESPECÍFICO - CORES MODIFICADAS */
+        /* 🔄 MODO ESCURO ESPECÍFICO */
         .dark-mode .tipo-proprio {
             background: #1e3a8a;
             color: #dbeafe;
@@ -790,6 +881,11 @@
             box-shadow: 0 0 4px rgba(252, 165, 165, 0.7);
         }
 
+        .dark-mode .status-aviso {
+            background: #92400e;
+            color: #fef3c7;
+        }
+
         .dark-mode .validade-vencida {
             background: #7f1d1d;
             color: #fecaca;
@@ -805,7 +901,7 @@
             color: #d1fae5;
         }
 
-        /* CORES MELHORADAS PARA MODO ESCURO - VENCIDOS MAIS VISÍVEIS */
+        /* CORES MELHORADAS PARA MODO ESCURO */
         .dark-mode tbody tr.vencido {
             background: #4a1e1e !important;
             border-left: 3px solid #dc2626;
@@ -862,6 +958,10 @@
                 flex-direction: column;
                 gap: 10px;
             }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
         
         /* 🎭 BOTÃO FECHAR MODAL */
@@ -910,7 +1010,6 @@
                     <button class="btn btn-warning" id="btnDarkMode">
                         <i class="fas fa-moon"></i> Modo Escuro
                     </button>
-                    <!-- Botão temporário para debug -->
                     <button class="btn btn-info" id="debugBtn">
                         <i class="fas fa-bug"></i> Debug
                     </button>
@@ -918,12 +1017,12 @@
             </div>
         </header>
         
-        <!-- 📊 CARDS DE RESUMO -->
+        <!-- 📊 CARDS DE RESUMO ATUALIZADOS -->
         <div class="summary-cards" id="statusBadges">
             <!-- Badges serão preenchidos via JavaScript -->
         </div>
         
-        <!-- 🔍 FILTROS -->
+        <!-- 🔍 FILTROS ATUALIZADOS -->
         <div class="filters">
             <div class="filter-group">
                 <div class="filter-label">Filtrar por Tipo</div>
@@ -943,6 +1042,8 @@
                     <option value="proximo">Próximos a Vencer</option>
                     <option value="ok">OK</option>
                     <option value="defeito">Com Defeito</option>
+                    <option value="sem_aviso">Vencidos sem Aviso</option>
+                    <option value="com_aviso">Vencidos com Aviso</option>
                 </select>
             </div>
             
@@ -966,7 +1067,8 @@
                         <th>Validade</th>
                         <th>Responsável</th>
                         <th>Operador</th>
-                        <th>Dispositivos (todos visíveis)</th>
+                        <th>Avisos</th>
+                        <th>Dispositivos</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -994,6 +1096,10 @@
                 </div>
                 <div class="stat-item">
                     <span id="filteredCount">0</span> filtrados
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-bell" style="color: #f59e0b;"></i>
+                    <span id="avisadosCount">0</span> avisados
                 </div>
             </div>
         </div>
@@ -1074,11 +1180,81 @@
         </div>
     </div>
 
+    <!-- 🎭 NOVO MODAL - REGISTRAR AVISO -->
+    <div class="modal" id="avisoModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h3 id="avisoModalTitle">Registrar Aviso de Checklist Vencido</h3>
+                <button class="btn-fechar" id="fecharAvisoModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="avisoInfo" style="margin-bottom: 20px; padding: 15px; background: var(--bg-secondary); border-radius: var(--radius-sm);">
+                    <h4 id="avisoPlaca" style="margin-bottom: 5px;"></h4>
+                    <div id="avisoDetalhes" style="color: var(--text-secondary); font-size: 0.9rem;"></div>
+                </div>
+                
+                <form id="avisoForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="avisoData">Data e Hora do Aviso *</label>
+                            <input type="datetime-local" id="avisoData" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="avisoQuemNotificou">Quem notificou *</label>
+                            <input type="text" id="avisoQuemNotificou" class="form-control" placeholder="Seu nome" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="avisoQuemRecebeu">Quem recebeu o aviso *</label>
+                            <input type="text" id="avisoQuemRecebeu" class="form-control" placeholder="Nome do condutor/responsável" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="avisoMetodo">Método de aviso</label>
+                            <select id="avisoMetodo" class="form-control">
+                                <option value="Pessoalmente">Pessoalmente</option>
+                                <option value="Telefone">Telefone</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="E-mail">E-mail</option>
+                                <option value="Sistema">Sistema</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="avisoObservacao">Observações</label>
+                        <textarea id="avisoObservacao" class="form-control" rows="3" placeholder="Detalhes adicionais sobre o aviso..."></textarea>
+                    </div>
+                </form>
+                
+                <div class="historico-avisos" id="historicoAvisos">
+                    <h4 style="margin-bottom: 10px; font-size: 1rem;">Histórico de Avisos</h4>
+                    <div id="listaAvisos">
+                        <!-- Histórico será carregado aqui -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelarAvisoBtn">Cancelar</button>
+                <button class="btn btn-success" id="registrarAvisoBtn">
+                    <i class="fas fa-bell"></i> Registrar Aviso
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Banco de dados em memória
         let checklists = [];
         let editingIndex = -1;
         let isDarkMode = false;
+        let avisoIndex = -1; // Índice do checklist para registrar aviso
         
         // Dispositivos comuns para referência
         const dispositivosComuns = [
@@ -1105,6 +1281,7 @@
         const noDataMessage = document.getElementById('noDataMessage');
         const statusBadges = document.getElementById('statusBadges');
         const editModal = document.getElementById('editModal');
+        const avisoModal = document.getElementById('avisoModal');
         const btnDarkMode = document.getElementById('btnDarkMode');
         const debugBtn = document.getElementById('debugBtn');
         const fecharModal = document.getElementById('fecharModal');
@@ -1117,13 +1294,143 @@
         const modalTitle = document.getElementById('modalTitle');
         const totalCount = document.getElementById('totalCount');
         const filteredCount = document.getElementById('filteredCount');
+        const avisadosCount = document.getElementById('avisadosCount');
         
-        // ✅ FUNÇÃO SIMPLIFICADA: Extrair datas de colunas separadas
-        function extrairDatasDeColunasSeparadas(cellA, cellB) {
-            console.log("Extraindo datas de colunas separadas:");
-            console.log("Coluna A:", cellA);
-            console.log("Coluna B:", cellB);
+        // Elementos do modal de aviso
+        const fecharAvisoModal = document.getElementById('fecharAvisoModal');
+        const cancelarAvisoBtn = document.getElementById('cancelarAvisoBtn');
+        const registrarAvisoBtn = document.getElementById('registrarAvisoBtn');
+        const avisoModalTitle = document.getElementById('avisoModalTitle');
+        const avisoPlaca = document.getElementById('avisoPlaca');
+        const avisoDetalhes = document.getElementById('avisoDetalhes');
+        const avisoForm = document.getElementById('avisoForm');
+        const avisoData = document.getElementById('avisoData');
+        const avisoQuemNotificou = document.getElementById('avisoQuemNotificou');
+        const avisoQuemRecebeu = document.getElementById('avisoQuemRecebeu');
+        const avisoMetodo = document.getElementById('avisoMetodo');
+        const avisoObservacao = document.getElementById('avisoObservacao');
+        const listaAvisos = document.getElementById('listaAvisos');
+        const historicoAvisos = document.getElementById('historicoAvisos');
+        
+        // ✅ FUNÇÃO: Abrir modal de registro de aviso
+        window.registrarAviso = function(index) {
+            avisoIndex = index;
+            const checklist = checklists[index];
             
+            // Preencher informações do checklist
+            avisoPlaca.textContent = `Placa: ${checklist.placa} (${checklist.tipo})`;
+            avisoDetalhes.innerHTML = `
+                Responsável: ${checklist.responsavel}<br>
+                Operador: ${checklist.operador}<br>
+                Validade: ${checklist.validade || 'N/A'}
+            `;
+            
+            // Definir data atual como padrão
+            const now = new Date();
+            const nowStr = now.toISOString().slice(0, 16);
+            avisoData.value = nowStr;
+            
+            // Carregar histórico de avisos
+            carregarHistoricoAvisos(checklist);
+            
+            // Abrir modal
+            avisoModal.style.display = 'flex';
+        };
+        
+        // ✅ FUNÇÃO: Carregar histórico de avisos
+        function carregarHistoricoAvisos(checklist) {
+            if (!checklist.avisos || checklist.avisos.length === 0) {
+                listaAvisos.innerHTML = '<div class="sem-aviso">Nenhum aviso registrado</div>';
+                historicoAvisos.style.display = 'block';
+                return;
+            }
+            
+            // Ordenar avisos por data (mais recente primeiro)
+            const avisosOrdenados = [...checklist.avisos].sort((a, b) => 
+                new Date(b.data) - new Date(a.data)
+            );
+            
+            listaAvisos.innerHTML = avisosOrdenados.map(aviso => {
+                const dataFormatada = new Date(aviso.data).toLocaleString('pt-BR');
+                return `
+                    <div class="aviso-item">
+                        <div class="aviso-data">
+                            <i class="fas fa-calendar-alt" style="margin-right: 5px;"></i>
+                            ${dataFormatada}
+                        </div>
+                        <div class="aviso-quem">
+                            <strong>Notificado por:</strong> ${aviso.quemNotificou} |
+                            <strong>Recebido por:</strong> ${aviso.quemRecebeu} |
+                            <strong>Método:</strong> ${aviso.metodo || 'Não especificado'}
+                        </div>
+                        ${aviso.observacao ? `<div style="margin-top: 5px; color: var(--gray-text); font-size: 0.85rem;"><i class="fas fa-comment"></i> ${aviso.observacao}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            historicoAvisos.style.display = 'block';
+        }
+        
+        // ✅ FUNÇÃO: Registrar novo aviso
+        registrarAvisoBtn.addEventListener('click', function() {
+            if (!avisoForm.checkValidity()) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            const novoAviso = {
+                data: avisoData.value,
+                quemNotificou: avisoQuemNotificou.value.trim(),
+                quemRecebeu: avisoQuemRecebeu.value.trim(),
+                metodo: avisoMetodo.value,
+                observacao: avisoObservacao.value.trim()
+            };
+            
+            // Garantir que o array de avisos existe
+            if (!checklists[avisoIndex].avisos) {
+                checklists[avisoIndex].avisos = [];
+            }
+            
+            // Adicionar aviso
+            checklists[avisoIndex].avisos.push(novoAviso);
+            
+            // Fechar modal e limpar formulário
+            avisoModal.style.display = 'none';
+            avisoForm.reset();
+            
+            // Atualizar interface
+            atualizarTabela();
+            atualizarBadges();
+            atualizarContadores();
+            salvarNoLocalStorage();
+            
+            // Mostrar notificação
+            showNotification('Aviso registrado com sucesso!', 'success');
+            
+            // Resetar índice
+            avisoIndex = -1;
+        });
+        
+        // ✅ FUNÇÃO: Verificar se tem avisos
+        function temAvisos(checklist) {
+            return checklist.avisos && checklist.avisos.length > 0;
+        }
+        
+        // ✅ FUNÇÃO: Formatar último aviso para exibição
+        function formatarUltimoAviso(checklist) {
+            if (!temAvisos(checklist)) {
+                return 'Sem aviso';
+            }
+            
+            const ultimoAviso = checklist.avisos[checklist.avisos.length - 1];
+            const data = new Date(ultimoAviso.data);
+            const dataFormatada = data.toLocaleDateString('pt-BR');
+            
+            return `${dataFormatada} - ${ultimoAviso.quemRecebeu}`;
+        }
+        
+        // ✅ FUNÇÃO CORRIGIDA: Extrair datas de colunas separadas
+        function extrairDatasDeColunasSeparadas(cellA, cellB) {
             let dataRealizacao = '';
             let validade = '';
             
@@ -1141,7 +1448,6 @@
                 validade = cellB.trim();
             }
             
-            console.log("Resultado:", { dataRealizacao, validade });
             return { dataRealizacao, validade };
         }
         
@@ -1296,7 +1602,7 @@
             salvarNoLocalStorage();
         }
         
-        // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha (AGORA LÊ COLUNA B CORRETAMENTE)
+        // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha - AGORA LÊ TIPO DA COLUNA B
         function extrairChecklistDaPlanilha(data, startIndex) {
             const checklist = {
                 placa: '',
@@ -1306,38 +1612,68 @@
                 responsavel: '',
                 telefone: '',
                 operador: '',
-                dispositivos: []
+                dispositivos: [],
+                avisos: []
             };
             
-            // Extrair placa e tipo da primeira linha
-            const firstRow = data[startIndex][0]?.toString().trim() || '';
+            // Extrair placa da primeira linha (coluna A)
+            const cellA = data[startIndex][0]?.toString().trim() || '';
+            const cellB = data[startIndex][1]?.toString().trim() || '';
             
-            if (firstRow.includes('Veículo:') || firstRow.includes('Carreta:')) {
-                console.log("Processando linha do veículo:", firstRow);
+            console.log("📋 Processando checklist - linha:", startIndex + 1);
+            console.log("  Coluna A:", cellA);
+            console.log("  Coluna B:", cellB);
+            
+            if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
+                // Extrair placa da coluna A
+                if (cellA.includes(';')) {
+                    const parts = cellA.split(';');
+                    checklist.placa = parts[0].split(':')[1]?.trim() || '';
+                } else {
+                    checklist.placa = cellA.split(':')[1]?.trim() || '';
+                }
                 
-                // Separar por ponto e vírgula
-                if (firstRow.includes(';')) {
-                    const parts = firstRow.split(';');
-                    
-                    // Placa: "Veículo: SVK6F53"
-                    const placaPart = parts[0];
-                    checklist.placa = placaPart.split(':')[1]?.trim() || '';
-                    
-                    // Tipo: "PROPRIO" (segunda parte após o ;)
-                    if (parts.length > 1) {
-                        checklist.tipo = parts[1].trim();
+                // ✅ CORREÇÃO CRÍTICA: VERIFICAR TIPO NA COLUNA B
+                if (cellB) {
+                    const tipo = cellB.trim().toUpperCase();
+                    if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipo)) {
+                        checklist.tipo = tipo;
+                        console.log(`  ✅ Tipo extraído da coluna B: ${tipo}`);
                     } else {
-                        checklist.tipo = firstRow.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
+                        // Fallback: verificar se tem tipo após ponto e vírgula na coluna A
+                        if (cellA.includes(';')) {
+                            const parts = cellA.split(';');
+                            if (parts.length > 1) {
+                                const tipoFromA = parts[1].trim().toUpperCase();
+                                if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipoFromA)) {
+                                    checklist.tipo = tipoFromA;
+                                    console.log(`  ✅ Tipo extraído da coluna A (após ;): ${tipoFromA}`);
+                                }
+                            }
+                        }
+                        
+                        // Fallback 2: padrão antigo
+                        if (!checklist.tipo) {
+                            checklist.tipo = cellA.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
+                            console.log(`  ⚠️ Tipo padrão: ${checklist.tipo}`);
+                        }
                     }
                 } else {
-                    // Formato antigo com pipe
-                    const parts = firstRow.split('|');
-                    checklist.placa = parts[0].split(':')[1]?.trim() || '';
-                    checklist.tipo = parts.length > 1 ? parts[1].trim() : 'PROPRIO';
+                    // Se não tem coluna B, usar fallback
+                    if (cellA.includes(';')) {
+                        const parts = cellA.split(';');
+                        if (parts.length > 1) {
+                            checklist.tipo = parts[1].trim().toUpperCase();
+                        }
+                    }
+                    
+                    if (!checklist.tipo) {
+                        checklist.tipo = cellA.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
+                    }
                 }
             }
             
-            console.log(`📋 Checklist para: ${checklist.placa} (${checklist.tipo})`);
+            console.log(`  Placa: ${checklist.placa}, Tipo: ${checklist.tipo}`);
             
             // Procurar dados nas próximas linhas
             for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
@@ -1347,13 +1683,8 @@
                 const cellA = row[0]?.toString().trim() || '';
                 const cellB = row[1]?.toString().trim() || '';
                 
-                // ✅ CORREÇÃO CRÍTICA: Extrair datas de colunas separadas
+                // ✅ CORREÇÃO: Extrair datas de colunas separadas
                 if (cellA.includes('Data da Realização:')) {
-                    console.log("Encontrou linha de datas:");
-                    console.log("Coluna A:", cellA);
-                    console.log("Coluna B:", cellB);
-                    
-                    // Extrair data de realização da coluna A
                     checklist.dataRealizacao = cellA.replace('Data da Realização:', '').trim();
                     
                     // ✅ EXTRAIR VALIDADE DA COLUNA B (PONTO CRÍTICO DO BUG)
@@ -1363,13 +1694,11 @@
                         checklist.validade = cellB.trim();
                     }
                     
-                    console.log(`Datas extraídas: Realização="${checklist.dataRealizacao}", Validade="${checklist.validade}"`);
+                    console.log(`  Datas extraídas: Realização="${checklist.dataRealizacao}", Validade="${checklist.validade}"`);
                 }
                 
                 // Responsável
                 if (cellA.includes('Responsavel:')) {
-                    console.log("Processando responsável:", cellA);
-                    
                     if (cellA.includes(';')) {
                         const parts = cellA.split(';');
                         checklist.responsavel = parts[0].replace('Responsavel:', '').trim();
@@ -1391,7 +1720,6 @@
                 
                 // Dispositivos
                 if (cellA === 'Dispositivos Avaliados' || cellA === 'Dispositivos Avaliados;Situação') {
-                    console.log("Iniciando extração de dispositivos...");
                     let j = i + 1;
                     while (j < data.length) {
                         const nextRow = data[j];
@@ -1429,11 +1757,17 @@
                         j++;
                     }
                     
-                    console.log(`Extraídos ${checklist.dispositivos.length} dispositivos`);
+                    console.log(`  Extraídos ${checklist.dispositivos.length} dispositivos`);
                     break; // Terminou de processar este checklist
                 }
             }
             
+            // Se ainda não tem tipo, definir como PROPRIO
+            if (!checklist.tipo) {
+                checklist.tipo = 'PROPRIO';
+            }
+            
+            console.log(`✅ Checklist final: ${checklist.placa} (${checklist.tipo})\n`);
             return checklist;
         }
         
@@ -1456,10 +1790,6 @@
                     const checklist = extrairChecklistDaPlanilha(data, i);
                     if (checklist && checklist.placa) {
                         checklists.push(checklist);
-                        console.log(`✅ Checklist extraído: ${checklist.placa}`);
-                        console.log(`   Realização: "${checklist.dataRealizacao}"`);
-                        console.log(`   Validade: "${checklist.validade}"`);
-                        console.log(`   Status: ${getStatusValidade(checklist.validade)}`);
                         
                         // Pular algumas linhas para evitar processar o mesmo checklist
                         i += 10;
@@ -1480,6 +1810,7 @@
                 console.log(`\n${index + 1}. ${checklist.placa} (${checklist.tipo})`);
                 console.log(`   Realização: "${checklist.dataRealizacao}"`);
                 console.log(`   Validade: "${checklist.validade}"`);
+                console.log(`   Avisos: ${checklist.avisos ? checklist.avisos.length : 0}`);
                 
                 const dataRealizacao = parseDateBrasil(checklist.dataRealizacao);
                 const dataValidade = parseDateBrasil(checklist.validade);
@@ -1495,18 +1826,26 @@
             let vencidos = 0;
             let proximos = 0;
             let ok = 0;
+            let comAviso = 0;
+            let semAviso = 0;
             
             checklists.forEach(checklist => {
                 const status = getStatusValidade(checklist.validade);
+                const temAvisoChecklist = temAvisos(checklist);
+                
                 if (status === 'vencido') vencidos++;
                 if (status === 'proximo') proximos++;
                 if (status === 'ok') ok++;
+                if (status === 'vencido' && temAvisoChecklist) comAviso++;
+                if (status === 'vencido' && !temAvisoChecklist) semAviso++;
             });
             
             console.log("=== ESTATÍSTICAS ===");
             console.log(`Vencidos: ${vencidos}`);
             console.log(`Próximos a vencer: ${proximos}`);
             console.log(`OK: ${ok}`);
+            console.log(`Vencidos com aviso: ${comAviso}`);
+            console.log(`Vencidos sem aviso: ${semAviso}`);
             console.log("=== FIM DEBUG ===");
             
             showNotification('Debug executado! Verifique o console (F12).', 'info');
@@ -1533,7 +1872,7 @@
             });
         }
         
-        // ✅ FUNÇÃO ATUALIZADA: Agora mostra TODOS os dispositivos
+        // ✅ FUNÇÃO ATUALIZADA: Mostra todos os dispositivos e avisos
         function atualizarTabela() {
             const searchTerm = searchInput.value.toLowerCase();
             const tipoFiltro = filterTipo.value;
@@ -1548,11 +1887,14 @@
                 if (statusFiltro) {
                     const statusValidade = getStatusValidade(checklist.validade);
                     const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                    const temAvisoChecklist = temAvisos(checklist);
                     
                     if (statusFiltro === 'vencido' && statusValidade !== 'vencido') return false;
                     if (statusFiltro === 'proximo' && statusValidade !== 'proximo') return false;
                     if (statusFiltro === 'ok' && (statusValidade !== 'ok' || temDefeitoChecklist)) return false;
                     if (statusFiltro === 'defeito' && !temDefeitoChecklist) return false;
+                    if (statusFiltro === 'sem_aviso' && (statusValidade !== 'vencido' || temAvisoChecklist)) return false;
+                    if (statusFiltro === 'com_aviso' && (statusValidade !== 'vencido' || !temAvisoChecklist)) return false;
                 }
                 
                 // Filtro por busca
@@ -1583,6 +1925,7 @@
                 filteredChecklists.forEach((checklist, index) => {
                     const statusValidade = getStatusValidade(checklist.validade);
                     const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                    const temAvisoChecklist = temAvisos(checklist);
                     
                     const row = document.createElement('tr');
                     if (statusValidade === 'vencido') row.classList.add('vencido');
@@ -1593,7 +1936,7 @@
                     if (checklist.tipo === 'AGREGADO') tipoClass = 'tipo-agregado';
                     if (checklist.tipo === 'TERCEIRO') tipoClass = 'tipo-terceiro';
                     
-                    // ✅ AGORA MOSTRA TODOS OS DISPOSITIVOS (sem limite)
+                    // Dispositivos (todos visíveis)
                     const dispositivosHTML = checklist.dispositivos.map(d => {
                         const statusClass = d.situacao && d.situacao.toLowerCase() === 'defeito' ? 'status-defeito' : 'status-ok';
                         const icon = d.situacao && d.situacao.toLowerCase() === 'defeito' ? '❌' : '✅';
@@ -1607,6 +1950,27 @@
                     
                     // Formatar data para exibição
                     const dataFormatada = formatarDataParaExibicao(checklist.dataRealizacao);
+                    
+                    // HTML dos avisos
+                    let avisosHTML = '';
+                    if (temAvisoChecklist) {
+                        const ultimoAviso = formatarUltimoAviso(checklist);
+                        avisosHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 3px;">
+                                <span class="status-aviso" title="Último aviso: ${ultimoAviso}">
+                                    <i class="fas fa-bell" style="margin-right: 3px;"></i>
+                                    ${checklist.avisos.length} aviso(s)
+                                </span>
+                                <small style="font-size: 0.7rem; color: var(--gray-text);">
+                                    Último: ${ultimoAviso}
+                                </small>
+                            </div>
+                        `;
+                    } else if (statusValidade === 'vencido') {
+                        avisosHTML = '<span style="color: #dc2626; font-weight: 600;">⚠️ Sem aviso</span>';
+                    } else {
+                        avisosHTML = '<span style="color: var(--gray-text);">-</span>';
+                    }
                     
                     row.innerHTML = `
                         <td>
@@ -1622,6 +1986,7 @@
                             <small>${checklist.telefone || ''}</small>
                         </td>
                         <td>${checklist.operador}</td>
+                        <td>${avisosHTML}</td>
                         <td>
                             <div class="status-cell" title="${checklist.dispositivos.length} dispositivos avaliados">
                                 ${dispositivosHTML || '<span class="status-item">Nenhum dispositivo</span>'}
@@ -1629,6 +1994,11 @@
                         </td>
                         <td>
                             <div class="action-buttons">
+                                ${statusValidade === 'vencido' ? `
+                                    <button class="btn-notify-small" onclick="registrarAviso(${checklists.indexOf(checklist)})">
+                                        <i class="fas fa-bell"></i> Avisar
+                                    </button>
+                                ` : ''}
                                 <button class="btn-edit" onclick="editarChecklist(${checklists.indexOf(checklist)})">
                                     Editar
                                 </button>
@@ -1647,23 +2017,37 @@
             atualizarContadores(filteredChecklists.length);
         }
         
-        // Função para atualizar os badges de status
+        // ✅ FUNÇÃO ATUALIZADA: Atualizar badges com estatísticas de avisos
         function atualizarBadges() {
             let vencidos = 0;
             let proximos = 0;
             let ok = 0;
             let comDefeito = 0;
+            let comAviso = 0;
+            let semAviso = 0;
             
             checklists.forEach(checklist => {
                 const statusValidade = getStatusValidade(checklist.validade);
                 const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                const temAvisoChecklist = temAvisos(checklist);
                 
-                if (statusValidade === 'vencido') vencidos++;
+                if (statusValidade === 'vencido') {
+                    vencidos++;
+                    if (temAvisoChecklist) {
+                        comAviso++;
+                    } else {
+                        semAviso++;
+                    }
+                }
                 if (statusValidade === 'proximo') proximos++;
                 if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
                 if (temDefeitoChecklist) comDefeito++;
             });
             
+            // Atualizar contador de avisados no footer
+            avisadosCount.textContent = comAviso;
+            
+            // Criar cards de resumo
             statusBadges.innerHTML = `
                 <div class="summary-card total">
                     <div class="card-number">${checklists.length}</div>
@@ -1685,7 +2069,32 @@
                     <div class="card-label">Checklists Vencidos</div>
                     <div class="card-subtitle">Fora da validade</div>
                 </div>
+                <div class="summary-card avisados">
+                    <div class="card-number">${comAviso}</div>
+                    <div class="card-label">Vencidos Avisados</div>
+                    <div class="card-subtitle">Com notificação registrada</div>
+                </div>
+                <div class="summary-card sem-aviso">
+                    <div class="card-number">${semAviso}</div>
+                    <div class="card-label">Vencidos sem Aviso</div>
+                    <div class="card-subtitle">Necessitam notificação</div>
+                </div>
             `;
+            
+            // Adicionar evento de clique nos cards
+            document.querySelectorAll('.summary-card.avisados').forEach(card => {
+                card.addEventListener('click', () => {
+                    filterStatus.value = 'com_aviso';
+                    atualizarTabela();
+                });
+            });
+            
+            document.querySelectorAll('.summary-card.sem-aviso').forEach(card => {
+                card.addEventListener('click', () => {
+                    filterStatus.value = 'sem_aviso';
+                    atualizarTabela();
+                });
+            });
         }
         
         // Função para atualizar contadores
@@ -1831,7 +2240,8 @@
                 responsavel: document.getElementById('editResponsavel').value,
                 telefone: document.getElementById('editTelefone').value,
                 operador: document.getElementById('editOperador').value,
-                dispositivos: []
+                dispositivos: [],
+                avisos: editingIndex !== -1 && checklists[editingIndex].avisos ? checklists[editingIndex].avisos : []
             };
             
             // Coletar dispositivos
@@ -1936,7 +2346,7 @@
             editModal.style.display = 'flex';
         });
         
-        // Eventos para fechar modal
+        // Eventos para fechar modais
         fecharModal.addEventListener('click', function() {
             editModal.style.display = 'none';
             editingIndex = -1;
@@ -1947,11 +2357,28 @@
             editingIndex = -1;
         });
         
+        fecharAvisoModal.addEventListener('click', function() {
+            avisoModal.style.display = 'none';
+            avisoForm.reset();
+            avisoIndex = -1;
+        });
+        
+        cancelarAvisoBtn.addEventListener('click', function() {
+            avisoModal.style.display = 'none';
+            avisoForm.reset();
+            avisoIndex = -1;
+        });
+        
         // Fechar modal ao clicar fora
         window.addEventListener('click', function(e) {
             if (e.target === editModal) {
                 editModal.style.display = 'none';
                 editingIndex = -1;
+            }
+            if (e.target === avisoModal) {
+                avisoModal.style.display = 'none';
+                avisoForm.reset();
+                avisoIndex = -1;
             }
         });
         
@@ -1995,10 +2422,22 @@
             
             // Adicionar cada checklist
             checklists.forEach(checklist => {
-                exportData.push([`Veículo: ${checklist.placa} | ${checklist.tipo} |`]);
-                exportData.push([`Data da Realização: ${checklist.dataRealizacao} | Validade: ${checklist.validade} |`]);
-                exportData.push([`Responsavel: ${checklist.responsavel} | ${checklist.telefone} |`]);
-                exportData.push([`Operador: ${checklist.operador} |`]);
+                exportData.push([`Veículo: ${checklist.placa}`, checklist.tipo]);
+                exportData.push([`Data da Realização: ${checklist.dataRealizacao}`, `Validade: ${checklist.validade}`]);
+                exportData.push([`Responsavel: ${checklist.responsavel}`, checklist.telefone]);
+                exportData.push([`Operador: ${checklist.operador}`]);
+                
+                // Adicionar informações de avisos
+                if (checklist.avisos && checklist.avisos.length > 0) {
+                    exportData.push(['Histórico de Avisos:', '']);
+                    checklist.avisos.forEach(aviso => {
+                        exportData.push([
+                            `  ${new Date(aviso.data).toLocaleString('pt-BR')}`,
+                            `Notificado por: ${aviso.quemNotificou} | Recebido por: ${aviso.quemRecebeu} | Método: ${aviso.metodo}`
+                        ]);
+                    });
+                }
+                
                 exportData.push(['Dispositivos Avaliados', 'Situação']);
                 
                 checklist.dispositivos.forEach(d => {
@@ -2072,7 +2511,6 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
-                console.log("Dados brutos do Excel:", jsonData);
                 processarExcelData(jsonData);
                 atualizarTabela();
                 atualizarBadges();
@@ -2089,6 +2527,19 @@
         // Carregar dados ao iniciar
         window.addEventListener('DOMContentLoaded', function() {
             carregarDoLocalStorage();
+            
+            // Definir nome padrão para quem notifica (do localStorage ou padrão)
+            const savedNotificador = localStorage.getItem('notificador_padrao');
+            if (savedNotificador) {
+                avisoQuemNotificou.value = savedNotificador;
+            }
+            
+            // Salvar nome do notificador quando mudar
+            avisoQuemNotificou.addEventListener('change', function() {
+                if (this.value.trim()) {
+                    localStorage.setItem('notificador_padrao', this.value.trim());
+                }
+            });
         });
         
         // Permitir arrastar e soltar arquivo
