@@ -328,6 +328,7 @@
         /* Botões por grupo temático */
         .control-group.import-export .btn {
             background: var(--purple);
+            color: white;
         }
 
         .control-group.import-export .btn:hover {
@@ -336,6 +337,7 @@
 
         .control-group.data-management .btn {
             background: var(--blue);
+            color: white;
         }
 
         .control-group.data-management .btn:hover {
@@ -344,6 +346,7 @@
 
         .control-group.checklist-management .btn {
             background: var(--green);
+            color: white;
         }
 
         .control-group.checklist-management .btn:hover {
@@ -351,11 +354,7 @@
         }
 
         .control-group.system .btn {
-            background: var(--orange);
-        }
-
-        .control-group.system .btn:hover {
-            background: var(--orange-dark);
+            color: white;
         }
 
         /* 🎭 BOTÕES ESPECÍFICOS */
@@ -1274,6 +1273,12 @@
                     <button class="btn" id="btnDarkMode">
                         <i class="fas fa-moon"></i> Modo Escuro
                     </button>
+                    <button class="btn" id="backupBtn" style="background: #10b981;">
+                        <i class="fas fa-database"></i> Backup
+                    </button>
+                    <button class="btn" id="limparTudoBtn" style="background: #dc2626;">
+                        <i class="fas fa-trash-alt"></i> Limpar Tudo
+                    </button>
                 </div>
             </div>
         </header>
@@ -1510,6 +1515,31 @@
         </div>
     </div>
 
+    <!-- 🎭 MODAL DE CONFIRMAÇÃO PARA LIMPEZA -->
+    <div class="modal" id="confirmacaoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmacaoTitulo">⚠️ Confirmação</h3>
+                <button class="btn-fechar" id="fecharConfirmacaoModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="confirmacaoMensagem" style="padding: 20px; text-align: center;">
+                    <!-- Mensagem será preenchida via JavaScript -->
+                </div>
+                
+                <div class="modal-actions" style="justify-content: center; gap: 20px;">
+                    <button class="btn-cancel" id="cancelarConfirmacaoBtn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-danger" id="confirmarAcaoBtn">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 🔥 CONFIGURAÇÃO DO FIREBASE COM SUAS CREDENCIAIS
         const firebaseConfig = {
@@ -1579,6 +1609,8 @@
         const avisoModal = document.getElementById('avisoModal');
         const btnDarkMode = document.getElementById('btnDarkMode');
         const debugBtn = document.getElementById('debugBtn');
+        const backupBtn = document.getElementById('backupBtn');
+        const limparTudoBtn = document.getElementById('limparTudoBtn');
         const fecharModal = document.getElementById('fecharModal');
         const cancelarBtn = document.getElementById('cancelarBtn');
         const salvarChecklistBtn = document.getElementById('salvarChecklistBtn');
@@ -1606,6 +1638,44 @@
         const avisoObservacao = document.getElementById('avisoObservacao');
         const listaAvisos = document.getElementById('listaAvisos');
         const historicoAvisos = document.getElementById('historicoAvisos');
+        
+        // Elementos do modal de confirmação
+        const confirmacaoModal = document.getElementById('confirmacaoModal');
+        const fecharConfirmacaoModal = document.getElementById('fecharConfirmacaoModal');
+        const cancelarConfirmacaoBtn = document.getElementById('cancelarConfirmacaoBtn');
+        const confirmarAcaoBtn = document.getElementById('confirmarAcaoBtn');
+        const confirmacaoTitulo = document.getElementById('confirmacaoTitulo');
+        const confirmacaoMensagem = document.getElementById('confirmacaoMensagem');
+        
+        let acaoConfirmadaCallback = null;
+        
+        // ✅ FUNÇÃO: Mostrar modal de confirmação
+        function mostrarConfirmacao(titulo, mensagem, callback) {
+            confirmacaoTitulo.textContent = titulo;
+            confirmacaoMensagem.innerHTML = mensagem;
+            acaoConfirmadaCallback = callback;
+            confirmacaoModal.style.display = 'flex';
+        }
+        
+        // Eventos do modal de confirmação
+        fecharConfirmacaoModal.addEventListener('click', function() {
+            confirmacaoModal.style.display = 'none';
+            acaoConfirmadaCallback = null;
+        });
+        
+        cancelarConfirmacaoBtn.addEventListener('click', function() {
+            confirmacaoModal.style.display = 'none';
+            acaoConfirmadaCallback = null;
+            showNotification('Ação cancelada', 'info');
+        });
+        
+        confirmarAcaoBtn.addEventListener('click', async function() {
+            if (acaoConfirmadaCallback) {
+                confirmacaoModal.style.display = 'none';
+                await acaoConfirmadaCallback();
+                acaoConfirmadaCallback = null;
+            }
+        });
         
         // ✅ FUNÇÃO: Verificar estado de autenticação
         function initAuth() {
@@ -1751,6 +1821,314 @@
                 console.error('Erro ao salvar no Firestore:', error);
                 throw error;
             }
+        }
+        
+        // ✅ FUNÇÃO: Fazer backup completo antes de limpar
+        async function fazerBackupCompleto() {
+            try {
+                showNotification('Criando backup...', 'info');
+                
+                // Coletar todos os checklists
+                const checklistsSnapshot = await db.collection('checklists').get();
+                const checklistsData = [];
+                checklistsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Converter timestamps para string
+                    const formattedData = {};
+                    Object.keys(data).forEach(key => {
+                        if (data[key] && data[key].toDate) {
+                            formattedData[key] = data[key].toDate().toISOString();
+                        } else {
+                            formattedData[key] = data[key];
+                        }
+                    });
+                    checklistsData.push({
+                        id: doc.id,
+                        ...formattedData
+                    });
+                });
+                
+                // Coletar todos os usuários
+                const usersSnapshot = await db.collection('users').get();
+                const usersData = [];
+                usersSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const formattedData = {};
+                    Object.keys(data).forEach(key => {
+                        if (data[key] && data[key].toDate) {
+                            formattedData[key] = data[key].toDate().toISOString();
+                        } else {
+                            formattedData[key] = data[key];
+                        }
+                    });
+                    usersData.push({
+                        id: doc.id,
+                        ...formattedData
+                    });
+                });
+                
+                // Criar objeto de backup
+                const backupData = {
+                    timestamp: new Date().toISOString(),
+                    totalChecklists: checklistsData.length,
+                    totalUsers: usersData.length,
+                    backupCreatedBy: currentUser ? currentUser.email : 'unknown',
+                    checklists: checklistsData,
+                    users: usersData
+                };
+                
+                // Converter para JSON
+                const dataStr = JSON.stringify(backupData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                // Nome do arquivo
+                const exportFileName = `backup_completo_${new Date().toISOString().slice(0,10)}_${Date.now()}.json`;
+                
+                // Criar link para download
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileName);
+                document.body.appendChild(linkElement);
+                linkElement.click();
+                document.body.removeChild(linkElement);
+                
+                console.log(`Backup criado: ${checklistsData.length} checklists, ${usersData.length} usuários`);
+                
+                return {
+                    success: true,
+                    checklistsCount: checklistsData.length,
+                    usersCount: usersData.length,
+                    fileName: exportFileName
+                };
+                
+            } catch (error) {
+                console.error('Erro ao fazer backup:', error);
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+        
+        // ✅ FUNÇÃO: Limpar TODOS os dados do Firebase
+        async function limparTodosDadosFirebase() {
+            // Confirmação EXTRA com input manual
+            const confirmacao = prompt(`⚠️ PERIGO: Isso apagará TODOS os dados permanentemente!\n\nDigite "APAGAR-TUDO" para confirmar:`);
+            
+            if (confirmacao !== "APAGAR-TUDO") {
+                showNotification('Operação cancelada', 'warning');
+                return;
+            }
+            
+            // Segunda confirmação
+            if (!confirm('🚨 ATENÇÃO FINAL!\n\nIsso vai apagar:\n✅ TODOS os checklists\n✅ TODOS os usuários\n✅ TODOS os avisos\n\nNÃO HAVERÁ VOLTA!')) {
+                showNotification('Operação cancelada', 'warning');
+                return;
+            }
+            
+            try {
+                showNotification('Fazendo backup antes de apagar...', 'info');
+                
+                // 1. Primeiro, fazer backup
+                const backupResult = await fazerBackupCompleto();
+                
+                if (!backupResult.success) {
+                    showNotification('Erro ao fazer backup. Operação cancelada.', 'error');
+                    return;
+                }
+                
+                showNotification('Backup concluído. Apagando dados...', 'warning');
+                
+                // 2. Apagar todos os checklists
+                const checklistsSnapshot = await db.collection('checklists').get();
+                const checklistDeletePromises = [];
+                let checklistsCount = 0;
+                
+                checklistsSnapshot.forEach(doc => {
+                    checklistDeletePromises.push(db.collection('checklists').doc(doc.id).delete());
+                    checklistsCount++;
+                });
+                
+                await Promise.all(checklistDeletePromises);
+                console.log(`${checklistsCount} checklists apagados`);
+                
+                // 3. Apagar todos os usuários (exceto o usuário atual, se quiser manter)
+                const usersSnapshot = await db.collection('users').get();
+                const userDeletePromises = [];
+                let usersCount = 0;
+                
+                usersSnapshot.forEach(doc => {
+                    // Opcional: manter o usuário atual
+                    // if (doc.id !== currentUser?.uid) {
+                        userDeletePromises.push(db.collection('users').doc(doc.id).delete());
+                        usersCount++;
+                    // }
+                });
+                
+                await Promise.all(userDeletePromises);
+                console.log(`${usersCount} usuários apagados`);
+                
+                // 4. Limpar dados locais
+                checklists = [];
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                
+                // 5. Notificação final
+                showNotification(`✅ Dados apagados com sucesso!\n${checklistsCount} checklists e ${usersCount} usuários removidos.\nBackup salvo como: ${backupResult.fileName || 'backup.json'}`, 'success');
+                
+                // 6. Log para auditoria
+                console.log('Limpeza completa realizada por:', currentUser?.email);
+                console.log('Backup:', backupResult.fileName);
+                console.log('Checklists apagados:', checklistsCount);
+                console.log('Usuários apagados:', usersCount);
+                
+            } catch (error) {
+                console.error('Erro ao limpar dados:', error);
+                showNotification('Erro ao apagar dados. Backup foi criado com sucesso.', 'error');
+            }
+        }
+        
+        // ✅ FUNÇÃO: Limpar apenas checklists (mantém usuários)
+        async function limparApenasChecklists() {
+            const confirmacao = prompt(`⚠️ Isso apagará TODOS os checklists!\n\nDigite "APAGAR-CHECKLISTS" para confirmar:`);
+            
+            if (confirmacao !== "APAGAR-CHECKLISTS") {
+                showNotification('Operação cancelada', 'warning');
+                return;
+            }
+            
+            try {
+                showNotification('Fazendo backup dos checklists...', 'info');
+                
+                // Backup apenas dos checklists
+                const checklistsSnapshot = await db.collection('checklists').get();
+                const checklistsData = [];
+                checklistsSnapshot.forEach(doc => {
+                    checklistsData.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Criar backup
+                const backupData = {
+                    timestamp: new Date().toISOString(),
+                    checklists: checklistsData,
+                    backupType: 'checklists-only'
+                };
+                
+                const dataStr = JSON.stringify(backupData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                const fileName = `backup_checklists_${new Date().toISOString().slice(0,10)}.json`;
+                
+                const link = document.createElement('a');
+                link.href = dataUri;
+                link.download = fileName;
+                link.click();
+                
+                // Apagar checklists
+                const deletePromises = [];
+                checklistsSnapshot.forEach(doc => {
+                    deletePromises.push(db.collection('checklists').doc(doc.id).delete());
+                });
+                
+                await Promise.all(deletePromises);
+                
+                // Atualizar localmente
+                checklists = [];
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                
+                showNotification(`${deletePromises.length} checklists apagados. Backup salvo.`, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao limpar checklists:', error);
+                showNotification('Erro ao apagar checklists', 'error');
+            }
+        }
+        
+        // ✅ FUNÇÃO: Upload e restauração de backup
+        async function uploadERestaurarBackup() {
+            return new Promise((resolve) => {
+                // Criar input de arquivo
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) {
+                        resolve({ success: false, error: 'Nenhum arquivo selecionado' });
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = async (event) => {
+                        try {
+                            const backupData = JSON.parse(event.target.result);
+                            
+                            // Validar estrutura do backup
+                            if (!backupData.checklists || !Array.isArray(backupData.checklists)) {
+                                showNotification('Arquivo de backup inválido', 'error');
+                                resolve({ success: false, error: 'Estrutura inválida' });
+                                return;
+                            }
+                            
+                            // Confirmar restauração
+                            if (!confirm(`Restaurar backup com ${backupData.checklists.length} checklists?`)) {
+                                resolve({ success: false, error: 'Cancelado pelo usuário' });
+                                return;
+                            }
+                            
+                            showNotification('Restaurando backup...', 'info');
+                            
+                            // Limpar checklists existentes antes de restaurar
+                            const existingSnapshot = await db.collection('checklists').get();
+                            const deletePromises = [];
+                            existingSnapshot.forEach(doc => {
+                                deletePromises.push(db.collection('checklists').doc(doc.id).delete());
+                            });
+                            
+                            await Promise.all(deletePromises);
+                            
+                            // Restaurar checklists do backup
+                            let restoredCount = 0;
+                            for (const checklist of backupData.checklists) {
+                                try {
+                                    const { id, ...checklistData } = checklist;
+                                    await db.collection('checklists').add(checklistData);
+                                    restoredCount++;
+                                } catch (error) {
+                                    console.error(`Erro ao restaurar checklist:`, error);
+                                }
+                            }
+                            
+                            // Recarregar dados
+                            await loadSharedChecklists();
+                            
+                            showNotification(`Backup restaurado: ${restoredCount} checklists`, 'success');
+                            resolve({ success: true, restoredCount });
+                            
+                        } catch (error) {
+                            console.error('Erro ao processar backup:', error);
+                            showNotification('Erro ao processar arquivo de backup', 'error');
+                            resolve({ success: false, error: error.message });
+                        }
+                    };
+                    
+                    reader.onerror = () => {
+                        showNotification('Erro ao ler arquivo', 'error');
+                        resolve({ success: false, error: 'Erro de leitura' });
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            });
         }
         
         // ✅ FUNÇÃO: Login com Firebase
@@ -2937,6 +3315,10 @@
                 avisoForm.reset();
                 avisoIndex = -1;
             }
+            if (e.target === confirmacaoModal) {
+                confirmacaoModal.style.display = 'none';
+                acaoConfirmadaCallback = null;
+            }
         });
         
         // Eventos de filtro e busca
@@ -2956,6 +3338,60 @@
         
         // ✅ EVENTO: Botão de debug
         debugBtn.addEventListener('click', debugDatasImportadas);
+        
+        // ✅ EVENTO: Botão de Backup
+        if (backupBtn) {
+            backupBtn.addEventListener('click', async function() {
+                try {
+                    showNotification('Criando backup completo...', 'info');
+                    const result = await fazerBackupCompleto();
+                    
+                    if (result.success) {
+                        showNotification(`Backup criado com sucesso! ${result.checklistsCount} checklists e ${result.usersCount} usuários.`, 'success');
+                    } else {
+                        showNotification('Erro ao criar backup', 'error');
+                    }
+                } catch (error) {
+                    console.error('Erro no backup:', error);
+                    showNotification('Erro ao criar backup', 'error');
+                }
+            });
+        }
+        
+        // ✅ EVENTO: Botão Limpar Tudo (com menu de opções)
+        if (limparTudoBtn) {
+            limparTudoBtn.addEventListener('click', async function() {
+                // Criar menu de opções
+                const opcao = prompt(
+                    `🚨 LIMPEZA DE DADOS 🚨\n\n` +
+                    `Escolha uma opção:\n` +
+                    `1 - Limpar TUDO (checklists + usuários)\n` +
+                    `2 - Limpar apenas checklists\n` +
+                    `3 - Restaurar backup\n` +
+                    `4 - Cancelar\n\n` +
+                    `Digite o número da opção:`
+                );
+                
+                switch (opcao) {
+                    case '1':
+                        await limparTodosDadosFirebase();
+                        break;
+                        
+                    case '2':
+                        await limparApenasChecklists();
+                        break;
+                        
+                    case '3':
+                        await uploadERestaurarBackup();
+                        break;
+                        
+                    case '4':
+                    default:
+                        showNotification('Operação cancelada', 'info');
+                        break;
+                }
+            });
+        }
         
         // ✅ EVENTO MODIFICADO: Exportar dados
         exportBtn.addEventListener('click', function() {
