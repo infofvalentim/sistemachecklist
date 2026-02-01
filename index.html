@@ -6,6 +6,10 @@
     <title>Sistema de Gestão de Checklists Veiculares</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- Adicionar Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         /* 🎨 VARIÁVEIS DE CORES - MODO CLARO (PADRÃO) */
         :root {
@@ -90,57 +94,72 @@
             transition: var(--transition);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: var(--bg-primary);
+        /* 🎭 TELA DE LOGIN */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-heavy);
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            min-height: 90vh;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            margin-bottom: 30px;
+        }
+
+        .login-logo h1 {
+            color: var(--primary-black);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .login-logo p {
+            color: var(--gray-text);
+            font-size: 14px;
+        }
+
+        .login-form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             transition: var(--transition);
         }
 
-        /* 🎭 HEADER */
-        .header {
-            background: linear-gradient(135deg, var(--primary-black) 0%, #2d2d2d 100%);
-            color: white;
-            padding: 25px 30px;
-            position: relative;
-            border-bottom: 4px solid var(--primary-red);
+        .form-control:focus {
+            border-color: var(--primary-red);
+            outline: none;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .header-titles h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .header-subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        /* 🎭 CONTROLES */
-        .controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        /* 🎭 BOTÕES */
         .btn {
             padding: 12px 24px;
             border: none;
@@ -148,8 +167,9 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             font-size: 14px;
         }
@@ -168,6 +188,177 @@
             box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
         }
 
+        .login-footer {
+            margin-top: 20px;
+            color: var(--gray-text);
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* 🎭 MAIN CONTAINER (APÓS LOGIN) */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-heavy);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            min-height: 90vh;
+            transition: var(--transition);
+            display: none; /* Inicialmente escondido */
+        }
+
+        /* 🎭 HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, #2d2d2d 100%);
+            color: white;
+            padding: 25px 30px;
+            position: relative;
+            border-bottom: 4px solid var(--primary-red);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header-titles h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* 🎭 USER INFO */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 🎭 CONTROLES - REORGANIZADO */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: var(--radius-md);
+            margin-top: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group-title {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            opacity: 0.9;
+        }
+
+        /* Botões por grupo temático */
+        .control-group.import-export .btn {
+            background: var(--purple);
+        }
+
+        .control-group.import-export .btn:hover {
+            background: var(--purple-dark);
+        }
+
+        .control-group.data-management .btn {
+            background: var(--blue);
+        }
+
+        .control-group.data-management .btn:hover {
+            background: var(--blue-dark);
+        }
+
+        .control-group.checklist-management .btn {
+            background: var(--green);
+        }
+
+        .control-group.checklist-management .btn:hover {
+            background: var(--green-dark);
+        }
+
+        .control-group.system .btn {
+            background: var(--orange);
+        }
+
+        .control-group.system .btn:hover {
+            background: var(--orange-dark);
+        }
+
+        /* 🎭 BOTÕES ESPECÍFICOS */
         .btn-success {
             background: var(--green);
             color: white;
@@ -683,43 +874,6 @@
             padding-bottom: 10px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-red);
-            outline: none;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
         .dispositivos-container {
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -927,8 +1081,25 @@
                 text-align: center;
             }
             
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
             .controls {
-                justify-content: center;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group-title {
+                text-align: center;
+                margin-bottom: 5px;
+                margin-right: 0;
             }
             
             .summary-cards {
@@ -980,10 +1151,69 @@
             position: relative;
             margin-bottom: 20px;
         }
+
+        /* MENSAGENS DE ERRO */
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* LOADING */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 🎭 TELA DE LOGIN -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>Sistema de Checklists</h1>
+                <p>Acesso restrito a usuários autorizados</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">E-mail</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="seu@email.com" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Sua senha" required>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <span id="loginBtnText">Entrar no Sistema</span>
+                    <div class="loading" id="loginLoading" style="display: none;"></div>
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Apenas usuários autorizados podem acessar este sistema</p>
+                <p>Problemas para entrar? Contate o administrador</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎭 SISTEMA PRINCIPAL (APÓS LOGIN) -->
+    <div class="container" id="mainContainer">
         <header class="header">
             <div class="header-content">
                 <div class="header-titles">
@@ -991,27 +1221,58 @@
                     <div class="header-subtitle">Gerencie vistorias, validades e status dos veículos</div>
                 </div>
                 
-                <div class="controls">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Usuário</div>
+                        <div class="user-email" id="userEmail">usuario@email.com</div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 🎭 CONTROLES REORGANIZADOS -->
+            <div class="controls">
+                <!-- Grupo 1: Importação/Exportação -->
+                <div class="control-group import-export">
+                    <span class="control-group-title">Arquivos:</span>
                     <div class="file-input-container">
                         <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
-                        <label for="fileInput" class="file-label">
+                        <label for="fileInput" class="btn">
                             <i class="fas fa-file-import"></i> Importar Excel
                         </label>
                     </div>
-                    <button class="btn btn-info" id="exportBtn">
+                    <button class="btn" id="exportBtn">
                         <i class="fas fa-file-export"></i> Exportar
                     </button>
-                    <button class="btn btn-purple" id="removerDuplicadosBtn">
+                </div>
+                
+                <!-- Grupo 2: Gerenciamento de Dados -->
+                <div class="control-group data-management">
+                    <span class="control-group-title">Dados:</span>
+                    <button class="btn" id="removerDuplicadosBtn">
                         <i class="fas fa-filter"></i> Remover Duplicados
                     </button>
-                    <button class="btn btn-success" id="novoChecklistBtn">
+                    <button class="btn" id="debugBtn">
+                        <i class="fas fa-bug"></i> Debug
+                    </button>
+                </div>
+                
+                <!-- Grupo 3: Checklist -->
+                <div class="control-group checklist-management">
+                    <span class="control-group-title">Checklist:</span>
+                    <button class="btn" id="novoChecklistBtn">
                         <i class="fas fa-plus"></i> Novo Checklist
                     </button>
-                    <button class="btn btn-warning" id="btnDarkMode">
+                </div>
+                
+                <!-- Grupo 4: Sistema -->
+                <div class="control-group system">
+                    <span class="control-group-title">Sistema:</span>
+                    <button class="btn" id="btnDarkMode">
                         <i class="fas fa-moon"></i> Modo Escuro
-                    </button>
-                    <button class="btn btn-info" id="debugBtn">
-                        <i class="fas fa-bug"></i> Debug
                     </button>
                 </div>
             </div>
@@ -1250,11 +1511,27 @@
     </div>
 
     <script>
+        // 🔥 CONFIGURAÇÃO DO FIREBASE COM SUAS CREDENCIAIS
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOQleL7RjbxTTvRbzsvrDtc0LedUG0MO4",
+            authDomain: "sistema-checklists.firebaseapp.com",
+            projectId: "sistema-checklists",
+            storageBucket: "sistema-checklists.firebasestorage.app",
+            messagingSenderId: "971393773741",
+            appId: "1:971393773741:web:c06489a33a3790cb3ed624"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         // Banco de dados em memória
         let checklists = [];
         let editingIndex = -1;
         let isDarkMode = false;
-        let avisoIndex = -1; // Índice do checklist para registrar aviso
+        let avisoIndex = -1;
+        let currentUser = null;
         
         // Dispositivos comuns para referência
         const dispositivosComuns = [
@@ -1268,7 +1545,25 @@
             "TRAVA DE QUINTA RODA"
         ];
         
-        // Elementos DOM
+        // Elementos DOM - Login
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBtnText = document.getElementById('loginBtnText');
+        const loginLoading = document.getElementById('loginLoading');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        // Elementos DOM - Usuário
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        
+        // Elementos DOM - Sistema
         const fileInput = document.getElementById('fileInput');
         const exportBtn = document.getElementById('exportBtn');
         const removerDuplicadosBtn = document.getElementById('removerDuplicadosBtn');
@@ -1312,6 +1607,185 @@
         const listaAvisos = document.getElementById('listaAvisos');
         const historicoAvisos = document.getElementById('historicoAvisos');
         
+        // ✅ FUNÇÃO: Verificar estado de autenticação
+        function initAuth() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Usuário logado
+                    currentUser = user;
+                    showMainApp();
+                    updateUserInfo(user);
+                    loadUserDataFromFirestore(user.uid);
+                } else {
+                    // Usuário não logado
+                    showLogin();
+                }
+            });
+        }
+        
+        // ✅ FUNÇÃO: Mostrar tela de login
+        function showLogin() {
+            loginContainer.style.display = 'flex';
+            mainContainer.style.display = 'none';
+            currentUser = null;
+        }
+        
+        // ✅ FUNÇÃO: Mostrar aplicativo principal
+        function showMainApp() {
+            loginContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+        }
+        
+        // ✅ FUNÇÃO: Atualizar informações do usuário
+        function updateUserInfo(user) {
+            const displayName = user.displayName || user.email.split('@')[0];
+            const initials = displayName.charAt(0).toUpperCase();
+            
+            userAvatar.textContent = initials;
+            userName.textContent = displayName;
+            userEmail.textContent = user.email;
+            
+            // Atualizar campo "quem notificou" com o nome do usuário
+            avisoQuemNotificou.value = displayName;
+        }
+        
+        // ✅ FUNÇÃO: Carregar dados do usuário do Firestore
+        async function loadUserDataFromFirestore(userId) {
+            try {
+                showNotification('Carregando seus dados...', 'info');
+                const userDoc = await db.collection('users').doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    if (userData.checklists) {
+                        checklists = userData.checklists;
+                        atualizarTabela();
+                        atualizarBadges();
+                        atualizarContadores();
+                        showNotification('Dados carregados com sucesso!', 'success');
+                    } else {
+                        // Primeiro acesso - criar estrutura
+                        showNotification('Bem-vindo! Crie seu primeiro checklist.', 'info');
+                    }
+                } else {
+                    // Criar documento do usuário se não existir
+                    await db.collection('users').doc(userId).set({
+                        email: currentUser.email,
+                        name: currentUser.displayName || currentUser.email.split('@')[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        checklists: []
+                    });
+                    showNotification('Perfil criado! Bem-vindo ao sistema.', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showNotification('Usando dados locais. Algumas funcionalidades podem ser limitadas.', 'warning');
+                // Tentar carregar do localStorage como fallback
+                carregarDoLocalStorage();
+            }
+        }
+        
+        // ✅ FUNÇÃO: Salvar dados no Firestore
+        async function saveDataToFirestore() {
+            if (!currentUser) return;
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    checklists: checklists,
+                    lastSync: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('Dados salvos no Firestore');
+            } catch (error) {
+                console.error('Erro ao salvar no Firestore:', error);
+                showNotification('Erro ao salvar na nuvem. Salvando localmente.', 'warning');
+                // Salvar no localStorage como backup
+                salvarNoLocalStorage();
+            }
+        }
+        
+        // ✅ FUNÇÃO: Login com Firebase
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+            
+            // Validação básica
+            if (!email || !password) {
+                showError(emailError, 'Preencha todos os campos');
+                return;
+            }
+            
+            // Mostrar loading
+            loginBtn.disabled = true;
+            loginBtnText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Atualizar último login no Firestore
+                await db.collection('users').doc(user.uid).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showNotification('Login realizado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro no login:', error);
+                
+                // Tratamento de erros
+                let errorMessage = 'Erro ao fazer login';
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage = 'E-mail inválido';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'Usuário desativado';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage = 'Usuário não encontrado';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Senha incorreta';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Muitas tentativas. Tente mais tarde';
+                        break;
+                }
+                
+                showError(passwordError, errorMessage);
+            } finally {
+                // Restaurar botão
+                loginBtn.disabled = false;
+                loginBtnText.style.display = 'inline';
+                loginLoading.style.display = 'none';
+            }
+        });
+        
+        // ✅ FUNÇÃO: Logout
+        logoutBtn.addEventListener('click', async function() {
+            try {
+                await auth.signOut();
+                showNotification('Logout realizado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro no logout:', error);
+                showNotification('Erro ao fazer logout', 'error');
+            }
+        });
+        
+        // ✅ FUNÇÃO: Mostrar erro no formulário
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
         // ✅ FUNÇÃO: Abrir modal de registro de aviso
         window.registrarAviso = function(index) {
             avisoIndex = index;
@@ -1329,6 +1803,12 @@
             const now = new Date();
             const nowStr = now.toISOString().slice(0, 16);
             avisoData.value = nowStr;
+            
+            // Preencher com nome do usuário logado
+            if (currentUser) {
+                const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+                avisoQuemNotificou.value = displayName;
+            }
             
             // Carregar histórico de avisos
             carregarHistoricoAvisos(checklist);
@@ -1372,7 +1852,7 @@
         }
         
         // ✅ FUNÇÃO: Registrar novo aviso
-        registrarAvisoBtn.addEventListener('click', function() {
+        registrarAvisoBtn.addEventListener('click', async function() {
             if (!avisoForm.checkValidity()) {
                 alert('Preencha todos os campos obrigatórios!');
                 return;
@@ -1383,7 +1863,9 @@
                 quemNotificou: avisoQuemNotificou.value.trim(),
                 quemRecebeu: avisoQuemRecebeu.value.trim(),
                 metodo: avisoMetodo.value,
-                observacao: avisoObservacao.value.trim()
+                observacao: avisoObservacao.value.trim(),
+                registradoPor: currentUser ? currentUser.email : 'Sistema',
+                registradoEm: new Date().toISOString()
             };
             
             // Garantir que o array de avisos existe
@@ -1402,7 +1884,9 @@
             atualizarTabela();
             atualizarBadges();
             atualizarContadores();
-            salvarNoLocalStorage();
+            
+            // Salvar no Firestore
+            await saveDataToFirestore();
             
             // Mostrar notificação
             showNotification('Aviso registrado com sucesso!', 'success');
@@ -1427,28 +1911,6 @@
             const dataFormatada = data.toLocaleDateString('pt-BR');
             
             return `${dataFormatada} - ${ultimoAviso.quemRecebeu}`;
-        }
-        
-        // ✅ FUNÇÃO CORRIGIDA: Extrair datas de colunas separadas
-        function extrairDatasDeColunasSeparadas(cellA, cellB) {
-            let dataRealizacao = '';
-            let validade = '';
-            
-            // Extrair data de realização da coluna A
-            if (cellA.includes('Data da Realização:')) {
-                dataRealizacao = cellA.replace('Data da Realização:', '').trim();
-            } else if (cellA) {
-                dataRealizacao = cellA.trim();
-            }
-            
-            // Extrair validade da coluna B
-            if (cellB.includes('Validade:')) {
-                validade = cellB.replace('Validade:', '').trim();
-            } else if (cellB) {
-                validade = cellB.trim();
-            }
-            
-            return { dataRealizacao, validade };
         }
         
         // ✅ FUNÇÃO MELHORADA: Verificar se uma data é válida
@@ -1561,7 +2023,7 @@
         }
         
         // ✅ FUNÇÃO NOVA: Remover placas duplicadas
-        function removerPlacasDuplicadas() {
+        async function removerPlacasDuplicadas() {
             if (checklists.length === 0) {
                 showNotification('Não há checklists para processar!', 'warning');
                 return;
@@ -1599,7 +2061,9 @@
             atualizarTabela();
             atualizarBadges();
             atualizarContadores();
-            salvarNoLocalStorage();
+            
+            // Salvar no Firestore
+            await saveDataToFirestore();
         }
         
         // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha - AGORA LÊ TIPO DA COLUNA B
@@ -1613,16 +2077,14 @@
                 telefone: '',
                 operador: '',
                 dispositivos: [],
-                avisos: []
+                avisos: [],
+                importadoPor: currentUser ? currentUser.email : 'Sistema',
+                importadoEm: new Date().toISOString()
             };
             
             // Extrair placa da primeira linha (coluna A)
             const cellA = data[startIndex][0]?.toString().trim() || '';
             const cellB = data[startIndex][1]?.toString().trim() || '';
-            
-            console.log("📋 Processando checklist - linha:", startIndex + 1);
-            console.log("  Coluna A:", cellA);
-            console.log("  Coluna B:", cellB);
             
             if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
                 // Extrair placa da coluna A
@@ -1638,7 +2100,6 @@
                     const tipo = cellB.trim().toUpperCase();
                     if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipo)) {
                         checklist.tipo = tipo;
-                        console.log(`  ✅ Tipo extraído da coluna B: ${tipo}`);
                     } else {
                         // Fallback: verificar se tem tipo após ponto e vírgula na coluna A
                         if (cellA.includes(';')) {
@@ -1647,7 +2108,6 @@
                                 const tipoFromA = parts[1].trim().toUpperCase();
                                 if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipoFromA)) {
                                     checklist.tipo = tipoFromA;
-                                    console.log(`  ✅ Tipo extraído da coluna A (após ;): ${tipoFromA}`);
                                 }
                             }
                         }
@@ -1655,7 +2115,6 @@
                         // Fallback 2: padrão antigo
                         if (!checklist.tipo) {
                             checklist.tipo = cellA.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
-                            console.log(`  ⚠️ Tipo padrão: ${checklist.tipo}`);
                         }
                     }
                 } else {
@@ -1672,8 +2131,6 @@
                     }
                 }
             }
-            
-            console.log(`  Placa: ${checklist.placa}, Tipo: ${checklist.tipo}`);
             
             // Procurar dados nas próximas linhas
             for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
@@ -1693,8 +2150,6 @@
                     } else if (cellB) {
                         checklist.validade = cellB.trim();
                     }
-                    
-                    console.log(`  Datas extraídas: Realização="${checklist.dataRealizacao}", Validade="${checklist.validade}"`);
                 }
                 
                 // Responsável
@@ -1756,8 +2211,6 @@
                         
                         j++;
                     }
-                    
-                    console.log(`  Extraídos ${checklist.dispositivos.length} dispositivos`);
                     break; // Terminou de processar este checklist
                 }
             }
@@ -1767,16 +2220,12 @@
                 checklist.tipo = 'PROPRIO';
             }
             
-            console.log(`✅ Checklist final: ${checklist.placa} (${checklist.tipo})\n`);
             return checklist;
         }
         
         // ✅ FUNÇÃO CORRIGIDA: Processar dados do Excel
-        function processarExcelData(data) {
-            checklists = [];
-            
-            console.log("Iniciando processamento de dados do Excel...");
-            console.log("Total de linhas:", data.length);
+        async function processarExcelData(data) {
+            const newChecklists = [];
             
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
@@ -1786,19 +2235,26 @@
                 
                 // Encontrou um novo veículo
                 if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
-                    console.log(`\n=== Encontrou novo veículo na linha ${i + 1} ===`);
                     const checklist = extrairChecklistDaPlanilha(data, i);
                     if (checklist && checklist.placa) {
-                        checklists.push(checklist);
-                        
-                        // Pular algumas linhas para evitar processar o mesmo checklist
+                        newChecklists.push(checklist);
                         i += 10;
                     }
                 }
             }
             
-            console.log(`\n✅ Total de checklists extraídos: ${checklists.length}`);
-            salvarNoLocalStorage();
+            // Adicionar novos checklists aos existentes
+            checklists = [...checklists, ...newChecklists];
+            
+            // Atualizar interface
+            atualizarTabela();
+            atualizarBadges();
+            atualizarContadores();
+            
+            // Salvar no Firestore
+            await saveDataToFirestore();
+            
+            showNotification(`${newChecklists.length} checklists importados com sucesso!`, 'success');
         }
         
         // ✅ FUNÇÃO DE DEBUG: Verificar datas importadas
@@ -1821,32 +2277,6 @@
                 console.log(`   Dispositivos: ${checklist.dispositivos.length}`);
                 console.log('---');
             });
-            
-            // Calcular estatísticas
-            let vencidos = 0;
-            let proximos = 0;
-            let ok = 0;
-            let comAviso = 0;
-            let semAviso = 0;
-            
-            checklists.forEach(checklist => {
-                const status = getStatusValidade(checklist.validade);
-                const temAvisoChecklist = temAvisos(checklist);
-                
-                if (status === 'vencido') vencidos++;
-                if (status === 'proximo') proximos++;
-                if (status === 'ok') ok++;
-                if (status === 'vencido' && temAvisoChecklist) comAviso++;
-                if (status === 'vencido' && !temAvisoChecklist) semAviso++;
-            });
-            
-            console.log("=== ESTATÍSTICAS ===");
-            console.log(`Vencidos: ${vencidos}`);
-            console.log(`Próximos a vencer: ${proximos}`);
-            console.log(`OK: ${ok}`);
-            console.log(`Vencidos com aviso: ${comAviso}`);
-            console.log(`Vencidos sem aviso: ${semAviso}`);
-            console.log("=== FIM DEBUG ===");
             
             showNotification('Debug executado! Verifique o console (F12).', 'info');
         }
@@ -2224,7 +2654,7 @@
         });
         
         // Evento para salvar checklist
-        salvarChecklistBtn.addEventListener('click', function() {
+        salvarChecklistBtn.addEventListener('click', async function() {
             // Validar formulário
             if (!checklistForm.checkValidity()) {
                 alert('Preencha todos os campos obrigatórios!');
@@ -2241,7 +2671,11 @@
                 telefone: document.getElementById('editTelefone').value,
                 operador: document.getElementById('editOperador').value,
                 dispositivos: [],
-                avisos: editingIndex !== -1 && checklists[editingIndex].avisos ? checklists[editingIndex].avisos : []
+                avisos: editingIndex !== -1 && checklists[editingIndex].avisos ? checklists[editingIndex].avisos : [],
+                criadoPor: currentUser ? currentUser.email : 'unknown',
+                criadoEm: editingIndex === -1 ? new Date().toISOString() : checklists[editingIndex].criadoEm || new Date().toISOString(),
+                atualizadoPor: currentUser ? currentUser.email : 'unknown',
+                atualizadoEm: new Date().toISOString()
             };
             
             // Coletar dispositivos
@@ -2284,34 +2718,42 @@
             atualizarTabela();
             atualizarBadges();
             atualizarContadores();
-            salvarNoLocalStorage();
+            
+            // Salvar no Firestore
+            await saveDataToFirestore();
             
             // Resetar índice de edição
             editingIndex = -1;
         });
         
         // Evento para excluir checklist
-        excluirChecklistBtn.addEventListener('click', function() {
+        excluirChecklistBtn.addEventListener('click', async function() {
             if (editingIndex !== -1 && confirm('Tem certeza que deseja excluir este checklist?')) {
                 checklists.splice(editingIndex, 1);
                 editModal.style.display = 'none';
                 atualizarTabela();
                 atualizarBadges();
                 atualizarContadores();
-                salvarNoLocalStorage();
+                
+                // Salvar no Firestore
+                await saveDataToFirestore();
+                
                 showNotification('Checklist excluído com sucesso!', 'success');
                 editingIndex = -1;
             }
         });
         
         // Função para excluir checklist da tabela
-        window.excluirChecklist = function(index) {
+        window.excluirChecklist = async function(index) {
             if (confirm('Tem certeza que deseja excluir este checklist?')) {
                 checklists.splice(index, 1);
                 atualizarTabela();
                 atualizarBadges();
                 atualizarContadores();
-                salvarNoLocalStorage();
+                
+                // Salvar no Firestore
+                await saveDataToFirestore();
+                
                 showNotification('Checklist excluído com sucesso!', 'success');
             }
         };
@@ -2418,6 +2860,8 @@
             exportData.push([]);
             exportData.push(['Empresa: Sistema de Checklists']);
             exportData.push(['Periodo: ' + new Date().toLocaleDateString('pt-BR')]);
+            exportData.push(['Exportado por: ' + (currentUser ? currentUser.email : 'Sistema')]);
+            exportData.push(['Data exportação: ' + new Date().toLocaleString('pt-BR')]);
             exportData.push([]);
             
             // Adicionar cada checklist
@@ -2454,17 +2898,17 @@
             XLSX.utils.book_append_sheet(wb, ws, 'RelatorioChecklist');
             
             // Exportar arquivo
-            XLSX.writeFile(wb, `checklists_veiculares_${new Date().toISOString().slice(0,10)}.xlsx`);
+            XLSX.writeFile(wb, `checklists_${new Date().toISOString().slice(0,10)}_${currentUser ? currentUser.email.split('@')[0] : 'sistema'}.xlsx`);
             showNotification('Arquivo exportado com sucesso!', 'success');
         });
         
-        // Função para salvar no localStorage
+        // Função para salvar no localStorage (backup)
         function salvarNoLocalStorage() {
             localStorage.setItem('checklists_veiculares', JSON.stringify(checklists));
             localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
         }
         
-        // Função para carregar do localStorage
+        // Função para carregar do localStorage (fallback)
         function carregarDoLocalStorage() {
             const saved = localStorage.getItem('checklists_veiculares');
             if (saved) {
@@ -2491,81 +2935,38 @@
             } else {
                 btnDarkMode.innerHTML = '<i class="fas fa-moon"></i> Modo Escuro';
             }
+            
+            // Salvar preferência
+            localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
         }
         
         // Evento para modo escuro
         btnDarkMode.addEventListener('click', toggleDarkMode);
         
         // Evento para importar arquivo Excel
-        fileInput.addEventListener('change', function(e) {
+        fileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
             const reader = new FileReader();
             
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                
-                // Processar a planilha "RelatorioChecklist"
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                processarExcelData(jsonData);
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                showNotification('Arquivo importado com sucesso!', 'success');
-                
-                // Executar debug para verificar importação
-                debugDatasImportadas();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Processar a planilha "RelatorioChecklist"
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    await processarExcelData(jsonData);
+                } catch (error) {
+                    console.error('Erro ao importar arquivo:', error);
+                    showNotification('Erro ao importar arquivo Excel', 'error');
+                }
             };
             
             reader.readAsArrayBuffer(file);
-        });
-        
-        // Carregar dados ao iniciar
-        window.addEventListener('DOMContentLoaded', function() {
-            carregarDoLocalStorage();
-            
-            // Definir nome padrão para quem notifica (do localStorage ou padrão)
-            const savedNotificador = localStorage.getItem('notificador_padrao');
-            if (savedNotificador) {
-                avisoQuemNotificou.value = savedNotificador;
-            }
-            
-            // Salvar nome do notificador quando mudar
-            avisoQuemNotificou.addEventListener('change', function() {
-                if (this.value.trim()) {
-                    localStorage.setItem('notificador_padrao', this.value.trim());
-                }
-            });
-        });
-        
-        // Permitir arrastar e soltar arquivo
-        document.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.body.style.backgroundColor = 'rgba(102, 126, 234, 0.8)';
-        });
-        
-        document.addEventListener('dragleave', function(e) {
-            document.body.style.backgroundColor = '';
-        });
-        
-        document.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.body.style.backgroundColor = '';
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-                
-                // Disparar evento change manualmente
-                const event = new Event('change');
-                fileInput.dispatchEvent(event);
-            }
         });
         
         // ✅ FUNÇÃO: Notificação de sucesso
@@ -2635,6 +3036,44 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Inicializar aplicação
+        window.addEventListener('DOMContentLoaded', function() {
+            // Inicializar autenticação
+            initAuth();
+            
+            // Carregar preferências
+            const darkModeSaved = localStorage.getItem('dark_mode_sistema');
+            if (darkModeSaved === 'true') {
+                toggleDarkMode();
+            }
+        });
+        
+        // Permitir arrastar e soltar arquivo
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.body.style.backgroundColor = 'rgba(102, 126, 234, 0.8)';
+        });
+        
+        document.addEventListener('dragleave', function(e) {
+            document.body.style.backgroundColor = '';
+        });
+        
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.body.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                
+                // Disparar evento change manualmente
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
     </script>
 </body>
 </html>
