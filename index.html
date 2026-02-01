@@ -1526,7 +1526,7 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Banco de dados em memória
+        // Banco de dados em memória (COMPARTILHADO entre todos os usuários)
         let checklists = [];
         let editingIndex = -1;
         let isDarkMode = false;
@@ -1609,13 +1609,19 @@
         
         // ✅ FUNÇÃO: Verificar estado de autenticação
         function initAuth() {
-            auth.onAuthStateChanged((user) => {
+            auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     // Usuário logado
                     currentUser = user;
                     showMainApp();
                     updateUserInfo(user);
-                    loadUserDataFromFirestore(user.uid);
+                    
+                    // Criar/atualizar perfil do usuário na coleção 'users'
+                    await updateUserProfile(user);
+                    
+                    // Carregar checklists COMPARTILHADOS da coleção 'checklists'
+                    await loadSharedChecklists();
+                    
                 } else {
                     // Usuário não logado
                     showLogin();
@@ -1636,7 +1642,7 @@
             mainContainer.style.display = 'block';
         }
         
-        // ✅ FUNÇÃO: Atualizar informações do usuário
+        // ✅ FUNÇÃO: Atualizar informações do usuário na interface
         function updateUserInfo(user) {
             const displayName = user.displayName || user.email.split('@')[0];
             const initials = displayName.charAt(0).toUpperCase();
@@ -1649,59 +1655,101 @@
             avisoQuemNotificou.value = displayName;
         }
         
-        // ✅ FUNÇÃO: Carregar dados do usuário do Firestore
-        async function loadUserDataFromFirestore(userId) {
+        // ✅ FUNÇÃO: Criar/atualizar perfil do usuário (coleção 'users')
+        async function updateUserProfile(user) {
             try {
-                showNotification('Carregando seus dados...', 'info');
-                const userDoc = await db.collection('users').doc(userId).get();
+                const userRef = db.collection('users').doc(user.uid);
+                const userDoc = await userRef.get();
                 
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    if (userData.checklists) {
-                        checklists = userData.checklists;
-                        atualizarTabela();
-                        atualizarBadges();
-                        atualizarContadores();
-                        showNotification('Dados carregados com sucesso!', 'success');
-                    } else {
-                        // Primeiro acesso - criar estrutura
-                        showNotification('Bem-vindo! Crie seu primeiro checklist.', 'info');
-                    }
-                } else {
-                    // Criar documento do usuário se não existir
-                    await db.collection('users').doc(userId).set({
-                        email: currentUser.email,
-                        name: currentUser.displayName || currentUser.email.split('@')[0],
+                if (!userDoc.exists) {
+                    // Criar novo perfil do usuário
+                    await userRef.set({
+                        email: user.email,
+                        name: user.displayName || user.email.split('@')[0],
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                        checklists: []
+                        preferences: {}
                     });
-                    showNotification('Perfil criado! Bem-vindo ao sistema.', 'success');
+                    console.log('Novo perfil de usuário criado');
+                } else {
+                    // Atualizar último login
+                    await userRef.update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('Perfil de usuário atualizado');
                 }
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                showNotification('Usando dados locais. Algumas funcionalidades podem ser limitadas.', 'warning');
-                // Tentar carregar do localStorage como fallback
-                carregarDoLocalStorage();
+                console.error('Erro ao atualizar perfil:', error);
             }
         }
         
-        // ✅ FUNÇÃO: Salvar dados no Firestore
-        async function saveDataToFirestore() {
-            if (!currentUser) return;
-            
+        // ✅ FUNÇÃO: Carregar checklists COMPARTILHADOS (coleção 'checklists')
+        async function loadSharedChecklists() {
             try {
-                await db.collection('users').doc(currentUser.uid).update({
-                    checklists: checklists,
-                    lastSync: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                showNotification('Carregando checklists compartilhados...', 'info');
+                
+                // Limpar array local
+                checklists = [];
+                
+                // Buscar TODOS os checklists da coleção compartilhada 'checklists'
+                const querySnapshot = await db.collection('checklists')
+                    .orderBy('atualizadoEm', 'desc')
+                    .get();
+                
+                querySnapshot.forEach((doc) => {
+                    checklists.push({
+                        id: doc.id, // ID do documento no Firestore
+                        ...doc.data()
+                    });
                 });
-                console.log('Dados salvos no Firestore');
+                
+                console.log(`${checklists.length} checklists carregados da base compartilhada`);
+                
+                // Atualizar interface
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                
+                showNotification(`${checklists.length} checklists carregados!`, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao carregar checklists compartilhados:', error);
+                showNotification('Erro ao carregar dados. Verifique sua conexão.', 'error');
+                carregarDoLocalStorage(); // Fallback para localStorage
+            }
+        }
+        
+        // ✅ FUNÇÃO: Salvar checklist na base COMPARTILHADA
+        async function saveChecklistToFirestore(checklistData, isEditing = false, checklistId = null) {
+            try {
+                // Adicionar metadados
+                const checklistCompleto = {
+                    ...checklistData,
+                    atualizadoPor: currentUser.uid,
+                    atualizadoPorEmail: currentUser.email,
+                    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                if (!isEditing) {
+                    // NOVO CHECKLIST
+                    checklistCompleto.criadoPor = currentUser.uid;
+                    checklistCompleto.criadoPorEmail = currentUser.email;
+                    checklistCompleto.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    const docRef = await db.collection('checklists').add(checklistCompleto);
+                    console.log('Novo checklist criado com ID:', docRef.id);
+                    return docRef.id;
+                    
+                } else {
+                    // EDITAR CHECKLIST EXISTENTE
+                    await db.collection('checklists').doc(checklistId).update(checklistCompleto);
+                    console.log('Checklist atualizado com ID:', checklistId);
+                    return checklistId;
+                }
+                
             } catch (error) {
                 console.error('Erro ao salvar no Firestore:', error);
-                showNotification('Erro ao salvar na nuvem. Salvando localmente.', 'warning');
-                // Salvar no localStorage como backup
-                salvarNoLocalStorage();
+                throw error;
             }
         }
         
@@ -1726,11 +1774,6 @@
             try {
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
-                
-                // Atualizar último login no Firestore
-                await db.collection('users').doc(user.uid).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                });
                 
                 showNotification('Login realizado com sucesso!', 'success');
             } catch (error) {
@@ -1858,41 +1901,50 @@
                 return;
             }
             
+            const checklist = checklists[avisoIndex];
             const novoAviso = {
                 data: avisoData.value,
                 quemNotificou: avisoQuemNotificou.value.trim(),
                 quemRecebeu: avisoQuemRecebeu.value.trim(),
                 metodo: avisoMetodo.value,
                 observacao: avisoObservacao.value.trim(),
-                registradoPor: currentUser ? currentUser.email : 'Sistema',
+                registradoPor: currentUser.email,
                 registradoEm: new Date().toISOString()
             };
             
-            // Garantir que o array de avisos existe
-            if (!checklists[avisoIndex].avisos) {
-                checklists[avisoIndex].avisos = [];
+            try {
+                // Atualizar avisos na base COMPARTILHADA
+                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
+                
+                await db.collection('checklists').doc(checklist.id).update({
+                    avisos: avisosAtualizados,
+                    atualizadoPor: currentUser.uid,
+                    atualizadoPorEmail: currentUser.email,
+                    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Atualizar localmente
+                checklists[avisoIndex].avisos = avisosAtualizados;
+                
+                // Fechar modal e limpar formulário
+                avisoModal.style.display = 'none';
+                avisoForm.reset();
+                
+                // Atualizar interface
+                atualizarTabela();
+                atualizarBadges();
+                atualizarContadores();
+                
+                // Mostrar notificação
+                showNotification('Aviso registrado com sucesso!', 'success');
+                
+                // Resetar índice
+                avisoIndex = -1;
+                
+            } catch (error) {
+                console.error('Erro ao registrar aviso:', error);
+                showNotification('Erro ao registrar aviso.', 'error');
             }
-            
-            // Adicionar aviso
-            checklists[avisoIndex].avisos.push(novoAviso);
-            
-            // Fechar modal e limpar formulário
-            avisoModal.style.display = 'none';
-            avisoForm.reset();
-            
-            // Atualizar interface
-            atualizarTabela();
-            atualizarBadges();
-            atualizarContadores();
-            
-            // Salvar no Firestore
-            await saveDataToFirestore();
-            
-            // Mostrar notificação
-            showNotification('Aviso registrado com sucesso!', 'success');
-            
-            // Resetar índice
-            avisoIndex = -1;
         });
         
         // ✅ FUNÇÃO: Verificar se tem avisos
@@ -2050,20 +2102,37 @@
                 }
             });
             
-            // Atualizar lista de checklists
-            checklists = Array.from(uniquePlacas.values());
+            // Salvar checklists únicos na base compartilhada
+            const checklistsUnicos = Array.from(uniquePlacas.values());
             
-            // Mostrar resultado
-            const removidosCount = checklistsRemovidos.length;
-            showNotification(`${removidosCount} checklists duplicados removidos! Mantidos: ${checklists.length} checklists únicos.`, 'success');
+            // Primeiro, deletar todos os checklists antigos
+            const deletePromises = checklists.map(checklist => 
+                db.collection('checklists').doc(checklist.id).delete()
+            );
             
-            // Atualizar interface
-            atualizarTabela();
-            atualizarBadges();
-            atualizarContadores();
-            
-            // Salvar no Firestore
-            await saveDataToFirestore();
+            try {
+                // Executar todas as exclusões
+                await Promise.all(deletePromises);
+                
+                // Agora salvar os checklists únicos
+                const savePromises = checklistsUnicos.map(checklist => {
+                    const { id, ...checklistData } = checklist;
+                    return saveChecklistToFirestore(checklistData, false);
+                });
+                
+                await Promise.all(savePromises);
+                
+                // Recarregar checklists
+                await loadSharedChecklists();
+                
+                // Mostrar resultado
+                const removidosCount = checklistsRemovidos.length;
+                showNotification(`${removidosCount} checklists duplicados removidos! Mantidos: ${checklistsUnicos.length} checklists únicos.`, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao remover duplicados:', error);
+                showNotification('Erro ao remover duplicados.', 'error');
+            }
         }
         
         // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha - AGORA LÊ TIPO DA COLUNA B
@@ -2243,16 +2312,26 @@
                 }
             }
             
-            // Adicionar novos checklists aos existentes
-            checklists = [...checklists, ...newChecklists];
+            // Salvar CADA novo checklist na base compartilhada
+            for (const checklist of newChecklists) {
+                try {
+                    const newId = await saveChecklistToFirestore(checklist, false);
+                    
+                    // Adicionar localmente
+                    checklists.unshift({
+                        id: newId,
+                        ...checklist
+                    });
+                    
+                } catch (error) {
+                    console.error('Erro ao salvar checklist importado:', error);
+                }
+            }
             
             // Atualizar interface
             atualizarTabela();
             atualizarBadges();
             atualizarContadores();
-            
-            // Salvar no Firestore
-            await saveDataToFirestore();
             
             showNotification(`${newChecklists.length} checklists importados com sucesso!`, 'success');
         }
@@ -2425,14 +2504,14 @@
                         <td>
                             <div class="action-buttons">
                                 ${statusValidade === 'vencido' ? `
-                                    <button class="btn-notify-small" onclick="registrarAviso(${checklists.indexOf(checklist)})">
+                                    <button class="btn-notify-small" onclick="registrarAviso(${index})">
                                         <i class="fas fa-bell"></i> Avisar
                                     </button>
                                 ` : ''}
-                                <button class="btn-edit" onclick="editarChecklist(${checklists.indexOf(checklist)})">
+                                <button class="btn-edit" onclick="editarChecklist(${index})">
                                     Editar
                                 </button>
-                                <button class="btn-delete" onclick="excluirChecklist(${checklists.indexOf(checklist)})">
+                                <button class="btn-delete" onclick="excluirChecklist(${index})">
                                     Excluir
                                 </button>
                             </div>
@@ -2533,7 +2612,7 @@
             filteredCount.textContent = filtered !== null ? filtered : checklists.length;
         }
         
-        // Função para abrir modal de edição
+        // ✅ FUNÇÃO MODIFICADA: Abrir modal de edição
         window.editarChecklist = function(index) {
             editingIndex = index;
             const checklist = checklists[index];
@@ -2653,7 +2732,7 @@
             adicionarDispositivoInput();
         });
         
-        // Evento para salvar checklist
+        // ✅ EVENTO MODIFICADO: Salvar checklist
         salvarChecklistBtn.addEventListener('click', async function() {
             // Validar formulário
             if (!checklistForm.checkValidity()) {
@@ -2662,7 +2741,7 @@
             }
             
             // Coletar dados do formulário
-            const novoChecklist = {
+            const checklistData = {
                 placa: document.getElementById('editPlaca').value.toUpperCase(),
                 tipo: document.getElementById('editTipo').value,
                 dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
@@ -2671,11 +2750,7 @@
                 telefone: document.getElementById('editTelefone').value,
                 operador: document.getElementById('editOperador').value,
                 dispositivos: [],
-                avisos: editingIndex !== -1 && checklists[editingIndex].avisos ? checklists[editingIndex].avisos : [],
-                criadoPor: currentUser ? currentUser.email : 'unknown',
-                criadoEm: editingIndex === -1 ? new Date().toISOString() : checklists[editingIndex].criadoEm || new Date().toISOString(),
-                atualizadoPor: currentUser ? currentUser.email : 'unknown',
-                atualizadoEm: new Date().toISOString()
+                avisos: editingIndex !== -1 ? checklists[editingIndex].avisos || [] : []
             };
             
             // Coletar dispositivos
@@ -2693,68 +2768,108 @@
                 }
                 
                 if (nome) {
-                    novoChecklist.dispositivos.push({
+                    checklistData.dispositivos.push({
                         nome: nome,
                         situacao: situacaoSelect.value
                     });
                 }
             });
             
-            // Adicionar ou atualizar
-            if (editingIndex === -1) {
-                // Novo checklist
-                checklists.unshift(novoChecklist);
-                showNotification('Checklist criado com sucesso!', 'success');
-            } else {
-                // Editar checklist existente
-                checklists[editingIndex] = novoChecklist;
-                showNotification('Checklist atualizado com sucesso!', 'success');
-            }
-            
-            // Fechar modal
-            editModal.style.display = 'none';
-            
-            // Atualizar interface
-            atualizarTabela();
-            atualizarBadges();
-            atualizarContadores();
-            
-            // Salvar no Firestore
-            await saveDataToFirestore();
-            
-            // Resetar índice de edição
-            editingIndex = -1;
-        });
-        
-        // Evento para excluir checklist
-        excluirChecklistBtn.addEventListener('click', async function() {
-            if (editingIndex !== -1 && confirm('Tem certeza que deseja excluir este checklist?')) {
-                checklists.splice(editingIndex, 1);
+            try {
+                if (editingIndex === -1) {
+                    // NOVO CHECKLIST - salvar na base compartilhada
+                    const newId = await saveChecklistToFirestore(checklistData, false);
+                    
+                    // Adicionar localmente
+                    checklists.unshift({
+                        id: newId,
+                        ...checklistData
+                    });
+                    
+                    showNotification('Checklist criado com sucesso!', 'success');
+                    
+                } else {
+                    // EDITAR CHECKLIST EXISTENTE
+                    const existingChecklist = checklists[editingIndex];
+                    await saveChecklistToFirestore(checklistData, true, existingChecklist.id);
+                    
+                    // Atualizar localmente
+                    checklists[editingIndex] = {
+                        id: existingChecklist.id,
+                        ...checklistData
+                    };
+                    
+                    showNotification('Checklist atualizado com sucesso!', 'success');
+                }
+                
+                // Fechar modal e atualizar
                 editModal.style.display = 'none';
                 atualizarTabela();
                 atualizarBadges();
                 atualizarContadores();
                 
-                // Salvar no Firestore
-                await saveDataToFirestore();
-                
-                showNotification('Checklist excluído com sucesso!', 'success');
                 editingIndex = -1;
+                
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                showNotification('Erro ao salvar checklist. Tente novamente.', 'error');
             }
         });
         
-        // Função para excluir checklist da tabela
+        // ✅ EVENTO MODIFICADO: Excluir checklist do modal
+        excluirChecklistBtn.addEventListener('click', async function() {
+            if (editingIndex !== -1 && confirm('Tem certeza que deseja excluir este checklist?')) {
+                const checklist = checklists[editingIndex];
+                
+                try {
+                    // Excluir da base compartilhada
+                    await db.collection('checklists').doc(checklist.id).delete();
+                    
+                    // Excluir localmente
+                    checklists.splice(editingIndex, 1);
+                    
+                    // Fechar modal
+                    editModal.style.display = 'none';
+                    
+                    // Atualizar interface
+                    atualizarTabela();
+                    atualizarBadges();
+                    atualizarContadores();
+                    
+                    showNotification('Checklist excluído com sucesso!', 'success');
+                    
+                    editingIndex = -1;
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir:', error);
+                    showNotification('Erro ao excluir checklist.', 'error');
+                }
+            }
+        });
+        
+        // ✅ FUNÇÃO MODIFICADA: Excluir checklist da tabela
         window.excluirChecklist = async function(index) {
             if (confirm('Tem certeza que deseja excluir este checklist?')) {
-                checklists.splice(index, 1);
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
+                const checklist = checklists[index];
                 
-                // Salvar no Firestore
-                await saveDataToFirestore();
-                
-                showNotification('Checklist excluído com sucesso!', 'success');
+                try {
+                    // Excluir da base compartilhada
+                    await db.collection('checklists').doc(checklist.id).delete();
+                    
+                    // Excluir localmente
+                    checklists.splice(index, 1);
+                    
+                    // Atualizar interface
+                    atualizarTabela();
+                    atualizarBadges();
+                    atualizarContadores();
+                    
+                    showNotification('Checklist excluído com sucesso!', 'success');
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir:', error);
+                    showNotification('Erro ao excluir checklist.', 'error');
+                }
             }
         };
         
@@ -2842,7 +2957,7 @@
         // ✅ EVENTO: Botão de debug
         debugBtn.addEventListener('click', debugDatasImportadas);
         
-        // Evento para exportar dados
+        // ✅ EVENTO MODIFICADO: Exportar dados
         exportBtn.addEventListener('click', function() {
             if (checklists.length === 0) {
                 showNotification('Não há dados para exportar!', 'warning');
@@ -2856,7 +2971,7 @@
             const exportData = [];
             
             // Adicionar cabeçalho
-            exportData.push(['Relatório Checklist']);
+            exportData.push(['Relatório Checklist - Dados Compartilhados']);
             exportData.push([]);
             exportData.push(['Empresa: Sistema de Checklists']);
             exportData.push(['Periodo: ' + new Date().toLocaleDateString('pt-BR')]);
@@ -2898,7 +3013,7 @@
             XLSX.utils.book_append_sheet(wb, ws, 'RelatorioChecklist');
             
             // Exportar arquivo
-            XLSX.writeFile(wb, `checklists_${new Date().toISOString().slice(0,10)}_${currentUser ? currentUser.email.split('@')[0] : 'sistema'}.xlsx`);
+            XLSX.writeFile(wb, `checklists_compartilhados_${new Date().toISOString().slice(0,10)}_${currentUser ? currentUser.email.split('@')[0] : 'sistema'}.xlsx`);
             showNotification('Arquivo exportado com sucesso!', 'success');
         });
         
@@ -2943,7 +3058,7 @@
         // Evento para modo escuro
         btnDarkMode.addEventListener('click', toggleDarkMode);
         
-        // Evento para importar arquivo Excel
+        // ✅ EVENTO MODIFICADO: Importar arquivo Excel
         fileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -3037,7 +3152,7 @@
         `;
         document.head.appendChild(style);
         
-        // Inicializar aplicação
+        // ✅ Inicializar aplicação
         window.addEventListener('DOMContentLoaded', function() {
             // Inicializar autenticação
             initAuth();
