@@ -3374,7 +3374,7 @@
             reader.readAsArrayBuffer(file);
         });
         
-        // ✅ REMOVER DUPLICADOS - VERSÃO CORRIGIDA
+        // ✅ REMOVER DUPLICADOS - VERSÃO FINAL CORRIGIDA
 removerDuplicadosBtn.addEventListener('click', async function() {
     const checklists = checklistsCache.getAll();
     
@@ -3389,98 +3389,118 @@ removerDuplicadosBtn.addEventListener('click', async function() {
         async () => {
             showProgressBar('Removendo duplicados...');
             
-            const uniquePlacas = new Map();
+            console.log('📊 Iniciando remoção de duplicados...');
+            console.log(`Total antes: ${checklists.length}`);
             
-            // Ordenar por data mais recente
-            const checklistsOrdenados = [...checklists].sort((a, b) => {
-                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
-                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
-                return dataB - dataA; // Mais recente primeiro
+            // Agrupar por placa normalizada
+            const checklistsPorPlaca = {};
+            
+            checklists.forEach(checklist => {
+                const placaNormalizada = checklist.placa.trim().toUpperCase();
+                
+                if (!checklistsPorPlaca[placaNormalizada]) {
+                    checklistsPorPlaca[placaNormalizada] = [];
+                }
+                
+                checklistsPorPlaca[placaNormalizada].push({
+                    checklist,
+                    dataRealizacao: parseDateBrasil(checklist.dataRealizacao) || new Date(0),
+                    index: checklist.id
+                });
             });
             
-            // Identificar quais serão mantidos (mais recentes) e quais serão removidos (duplicados)
+            // Identificar quais serão mantidos (mais recentes) e quais serão removidos
             const checklistsParaManter = [];
             const checklistsParaRemover = [];
             
-            checklistsOrdenados.forEach(checklist => {
-                const placaNormalizada = checklist.placa.trim().toUpperCase();
+            Object.keys(checklistsPorPlaca).forEach(placa => {
+                const lista = checklistsPorPlaca[placa];
                 
-                if (!uniquePlacas.has(placaNormalizada)) {
-                    // Primeira ocorrência desta placa - MANTER
-                    uniquePlacas.set(placaNormalizada, checklist);
-                    checklistsParaManter.push(checklist);
+                if (lista.length > 1) {
+                    // Ordenar por data mais recente
+                    lista.sort((a, b) => b.dataRealizacao - a.dataRealizacao);
+                    
+                    // Manter o mais recente
+                    checklistsParaManter.push(lista[0].checklist);
+                    
+                    // Remover os duplicados (todos menos o primeiro)
+                    for (let i = 1; i < lista.length; i++) {
+                        checklistsParaRemover.push(lista[i].checklist);
+                    }
+                    
+                    console.log(`Placa ${placa}: ${lista.length} registros, mantendo o mais recente`);
                 } else {
-                    // Placa duplicada - REMOVER
-                    checklistsParaRemover.push(checklist);
+                    // Apenas um registro, manter
+                    checklistsParaManter.push(lista[0].checklist);
                 }
             });
             
-            console.log(`📊 Removendo duplicados: ${checklistsParaRemover.length} para remover, ${checklistsParaManter.length} para manter`);
+            console.log(`Resultado: ${checklistsParaManter.length} para manter, ${checklistsParaRemover.length} para remover`);
+            
+            if (checklistsParaRemover.length === 0) {
+                hideProgressBar();
+                showNotification('Nenhum duplicado encontrado!', 'info');
+                return;
+            }
             
             // 1. Remover os duplicados do cache local
             checklistsParaRemover.forEach(checklist => {
                 if (checklist.id) {
+                    console.log(`Removendo do cache: ${checklist.placa} (ID: ${checklist.id})`);
                     checklistsCache.delete(checklist.id);
                 }
             });
             
-            // 2. Se algum checklist mantido tiver ID local, substituir pelo ID original
-            checklistsParaManter.forEach(checklist => {
-                if (checklist.id && checklist.id.startsWith('local_')) {
-                    // Encontrar o checklist original no cache
-                    const checklistsOriginais = checklistsCache.getAll();
-                    const original = checklistsOriginais.find(c => 
-                        c.placa === checklist.placa && 
-                        c.id && 
-                        !c.id.startsWith('local_')
-                    );
-                    
-                    if (original) {
-                        // Usar o ID original (Firestore) para manter o checklist
-                        checklist.id = original.id;
-                    }
-                }
-            });
+            // 2. Atualizar UI com os dados atuais do cache
+            // NÃO limpar o cache completamente, apenas deixar como está
+            // O cache já foi atualizado com as remoções acima
             
-            // 3. Atualizar cache apenas com os mantidos
-            // Limpar cache completamente
-            checklistsCache.clear();
-            
-            // Adicionar apenas os checklists únicos
-            checklistsParaManter.forEach(checklist => {
-                const id = checklist.id || performanceManager.generateId();
-                checklistsCache.set(id, checklist);
-            });
-            
-            // 4. Atualizar UI IMEDIATAMENTE
-            atualizarTabela();
-            atualizarBadges();
-            
-            // 5. Remover duplicados do Firestore (apenas se forem documentos do Firestore)
+            // 3. Remover duplicados do Firestore
             let removidosFirestore = 0;
             
             for (const checklist of checklistsParaRemover) {
                 if (checklist.id && checklist.id.startsWith('firestore_')) {
                     try {
                         const firestoreId = checklist.id.replace('firestore_', '');
+                        console.log(`Removendo do Firestore: ${checklist.placa} (ID: ${firestoreId})`);
                         await db.collection('checklists').doc(firestoreId).delete();
                         removidosFirestore++;
+                        
+                        // Atualizar progresso
+                        updateProgress(
+                            removidosFirestore, 
+                            checklistsParaRemover.length, 
+                            `Removendo ${removidosFirestore}/${checklistsParaRemover.length}`
+                        );
+                        
                     } catch (error) {
                         console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
                     }
                 }
             }
             
+            // 4. Atualizar UI
+            atualizarTabela();
+            atualizarBadges();
+            
             hideProgressBar();
             
-            // Mostrar resumo
+            // 5. Mostrar resultado
             showNotification(
-                `✅ Remoção concluída!<br>` +
-                `• ${checklistsParaRemover.length} duplicados removidos<br>` +
-                `• ${checklistsParaManter.length} checklists únicos mantidos<br>` +
-                `• ${removidosFirestore} removidos do servidor`,
+                `✅ Remoção de duplicados concluída!<br>` +
+                `• Total original: ${checklists.length}<br>` +
+                `• Duplicados removidos: ${checklistsParaRemover.length}<br>` +
+                `• Únicos mantidos: ${checklistsParaManter.length}<br>` +
+                `• Removidos do servidor: ${removidosFirestore}`,
                 'success'
             );
+            
+            // 6. Log para depuração
+            console.log('=== RESUMO DA REMOÇÃO ===');
+            console.log(`Original: ${checklists.length}`);
+            console.log(`Removidos: ${checklistsParaRemover.length}`);
+            console.log(`Mantidos: ${checklistsParaManter.length}`);
+            console.log(`Cache atual: ${checklistsCache.getAll().length}`);
         }
     );
 });
