@@ -216,7 +216,6 @@
             min-height: 90vh;
             transition: var(--transition);
             display: none; /* Inicialmente escondido */
-            position: relative; /* Importante para posicionar a sidebar */
         }
 
         /* 🎭 HEADER COMPACTO */
@@ -559,46 +558,40 @@
             border-color: var(--primary-red);
         }
 
-        /* 🎯 CORREÇÕES COMPLETAS DA SIDEBAR */
+        /* 🎯 SIDEBAR DE RELATÓRIOS REPOSICIONADA E MELHORADA */
         .sidebar-reports {
             position: fixed;
-            top: 50%; /* CENTRALIZADO VERTICALMENTE */
-            right: 0;
-            transform: translateY(-50%); /* AJUSTE PRECISO */
+            bottom: 30px;
+            right: 30px;
             z-index: 900;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-toggle {
-            position: absolute;
-            left: -45px; /* MAIS PARA FORA */
-            top: 50%;
-            transform: translateY(-50%); /* CENTRALIZADO PERFEITO */
-            width: 45px;
-            height: 45px;
-            background: var(--primary-red);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-red) 0%, #cc0000 100%);
             color: white;
             border: none;
-            border-radius: 8px 0 0 8px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 901;
+            position: relative;
         }
 
         .sidebar-toggle i {
-            animation: none !important;
-            font-size: 20px;
+            font-size: 24px;
             transition: transform 0.3s ease;
         }
 
         .sidebar-toggle:hover {
-            background: #cc0000;
-            transform: translateY(-50%) translateX(-5px);
-            width: 50px;
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 25px rgba(255, 0, 0, 0.4);
         }
 
         .sidebar-toggle:hover i {
@@ -606,92 +599,134 @@
         }
 
         .sidebar-content {
-            width: 250px;
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 300px;
             background: var(--bg-primary);
-            border-left: 1px solid var(--border-color);
-            box-shadow: -2px 0 15px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: var(--shadow-heavy);
             padding: 20px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            border-radius: 8px 0 0 8px;
-            max-height: 70vh;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            max-height: 500px;
             overflow-y: auto;
         }
 
         .sidebar-reports.expanded .sidebar-content {
-            transform: translateX(0);
-        }
-
-        .sidebar-reports.expanded .sidebar-toggle {
-            left: -40px;
-            border-radius: 8px 0 0 8px;
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
         }
 
         .sidebar-content h4 {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 20px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-red);
         }
 
         .report-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            margin-bottom: 5px;
+            gap: 12px;
+            padding: 14px;
+            margin-bottom: 8px;
             background: var(--bg-secondary);
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: 13px;
+            font-size: 14px;
+            border: 1px solid transparent;
         }
 
         .report-item:hover {
             background: var(--primary-red);
             color: white;
-            transform: translateX(-3px);
+            transform: translateX(-4px);
+            border-color: var(--primary-red);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
         }
 
-        /* RESPONSIVIDADE CORRIGIDA PARA SIDEBAR */
+        .report-item i {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* BADGE DE NOTIFICAÇÃO NO BOTÃO */
+        .sidebar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--green);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-primary);
+            animation: pulse 2s infinite;
+        }
+
+        /* RESPONSIVIDADE MELHORADA PARA SIDEBAR */
         @media (max-width: 768px) {
             .sidebar-reports {
-                top: auto;
                 bottom: 20px;
                 right: 20px;
-                transform: none;
             }
             
             .sidebar-toggle {
-                position: relative;
-                left: 0;
-                top: 0;
-                transform: none;
                 width: 50px;
                 height: 50px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+            
+            .sidebar-toggle i {
+                font-size: 22px;
             }
             
             .sidebar-content {
-                position: fixed;
-                bottom: 80px;
-                right: 20px;
                 width: calc(100vw - 40px);
                 max-width: 350px;
-                border-radius: 8px;
-                max-height: 60vh;
+                bottom: 65px;
+                right: 0;
             }
             
             .sidebar-reports.expanded .sidebar-toggle {
-                left: 0;
+                transform: rotate(90deg);
             }
             
             .sidebar-toggle:hover {
-                transform: scale(1.05);
+                transform: scale(1.05) rotate(90deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-reports {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .sidebar-toggle {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .sidebar-content {
+                width: calc(100vw - 30px);
+                padding: 15px;
             }
         }
 
@@ -1646,7 +1681,7 @@
         /* CONTROLES DE VISUALIZAÇÃO */
         .controles-visualizacao {
             position: fixed;
-            bottom: 20px;
+            bottom: 100px;
             right: 20px;
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
@@ -1921,7 +1956,7 @@
                     <option value="">Todos os Tipos</option>
                     <option value="PROPRIO">Próprio</option>
                     <option value="AGREGADO">Agregado</option>
-                    <option value="TERCEIRO">Terceio</option>
+                    <option value="TERCEIRO">Terceiro</option>
                 </select>
             </div>
             
@@ -1986,10 +2021,11 @@
             </div>
         </div>
         
-        <!-- 📊 SIDEBAR DE RELATÓRIOS CORRIGIDA - AGORA DENTRO DO CONTAINER -->
+        <!-- 📊 SIDEBAR DE RELATÓRIOS REPOSICIONADA E MELHORADA -->
         <div class="sidebar-reports" id="sidebarReports">
-            <button class="sidebar-toggle" id="sidebarToggle" title="Abrir Relatórios">
-                <i class="fas fa-chart-bar"></i>
+            <div class="sidebar-badge" id="sidebarBadge" style="display: none;">5</div>
+            <button class="sidebar-toggle" id="sidebarToggle" title="Relatórios Rápidos">
+                <i class="fas fa-chart-pie"></i>
             </button>
             
             <div class="sidebar-content" id="sidebarContent">
@@ -2018,6 +2054,11 @@
                 <div class="report-item" data-relatorio="exportPDF">
                     <i class="fas fa-file-pdf"></i>
                     <span>Exportar PDF</span>
+                </div>
+                
+                <div class="report-item" data-relatorio="exportExcel">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Exportar Excel</span>
                 </div>
             </div>
         </div>
@@ -2364,6 +2405,7 @@
         const sidebarReports = document.getElementById('sidebarReports');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarContent = document.getElementById('sidebarContent');
+        const sidebarBadge = document.getElementById('sidebarBadge');
         
         let acaoConfirmadaCallback = null;
         
@@ -2810,6 +2852,9 @@
                     // Inicializar melhorias de usabilidade
                     inicializarMelhoriasUsabilidade();
                     
+                    // Atualizar badge da sidebar
+                    atualizarBadgeSidebar();
+                    
                 } else {
                     showLogin();
                 }
@@ -3159,6 +3204,7 @@
             
             atualizarContadores(filteredChecklists.length);
             atualizarFiltrosAtivos();
+            atualizarBadgeSidebar();
         }
         
         // ✅ FUNÇÕES DE MELHORIA DE USABILIDADE
@@ -3436,6 +3482,12 @@
                 e.preventDefault();
                 exportCompletoBtn.click();
             }
+            
+            // Ctrl + R = Abrir relatórios
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                sidebarToggle.click();
+            }
         });
         
         // Mostrar tooltip de atalhos
@@ -3543,18 +3595,17 @@
             document.head.appendChild(estilo);
         }
         
-        // ✅ SIDEBAR DE RELATÓRIOS - VERSÃO CORRIGIDA
+        // ✅ SIDEBAR DE RELATÓRIOS - VERSÃO MELHORADA E REPOSICIONADA
         sidebarToggle.addEventListener('click', function(e) {
             e.stopPropagation();
             sidebarReports.classList.toggle('expanded');
             
-            // ÍCONES SEM ANIMAÇÃO DE SPIN
             if (sidebarReports.classList.contains('expanded')) {
                 this.innerHTML = '<i class="fas fa-times"></i>';
                 this.title = 'Fechar Relatórios';
             } else {
-                this.innerHTML = '<i class="fas fa-chart-bar"></i>';
-                this.title = 'Abrir Relatórios';
+                this.innerHTML = '<i class="fas fa-chart-pie"></i>';
+                this.title = 'Relatórios Rápidos';
             }
         });
 
@@ -3564,8 +3615,8 @@
                 !sidebarToggle.contains(e.target) &&
                 sidebarReports.classList.contains('expanded')) {
                 sidebarReports.classList.remove('expanded');
-                sidebarToggle.innerHTML = '<i class="fas fa-chart-bar"></i>';
-                sidebarToggle.title = 'Abrir Relatórios';
+                sidebarToggle.innerHTML = '<i class="fas fa-chart-pie"></i>';
+                sidebarToggle.title = 'Relatórios Rápidos';
             }
         });
 
@@ -3574,6 +3625,22 @@
             sidebarContent.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
+        }
+        
+        // Função para atualizar badge da sidebar
+        function atualizarBadgeSidebar() {
+            const checklists = checklistsCache.getAll();
+            const vencidosSemAviso = checklists.filter(c => 
+                getStatusValidade(c.validade) === 'vencido' && 
+                (!c.avisos || c.avisos.length === 0)
+            ).length;
+            
+            if (vencidosSemAviso > 0) {
+                sidebarBadge.textContent = vencidosSemAviso;
+                sidebarBadge.style.display = 'flex';
+            } else {
+                sidebarBadge.style.display = 'none';
+            }
         }
         
         // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
@@ -4349,6 +4416,9 @@
                 case 'exportPDF':
                     exportarParaPDF(checklists);
                     break;
+                case 'exportExcel':
+                    exportarParaExcel(checklists);
+                    break;
             }
         }
         
@@ -4458,6 +4528,41 @@
         
         function exportarParaPDF(checklists) {
             showNotification('Exportação para PDF em desenvolvimento...', 'info');
+        }
+        
+        function exportarParaExcel(checklists) {
+            if (checklists.length === 0) {
+                showNotification('Não há dados para exportar!', 'warning');
+                return;
+            }
+            
+            const exportData = [];
+            exportData.push(['Relatório de Checklists - ' + new Date().toLocaleDateString('pt-BR')]);
+            exportData.push([]);
+            exportData.push(['Placa', 'Tipo', 'Data Realização', 'Validade', 'Responsável', 'Operador', 'Dispositivos OK', 'Dispositivos com Defeito']);
+            
+            checklists.forEach(checklist => {
+                const dispositivosOk = checklist.dispositivos?.filter(d => d.situacao?.toLowerCase() !== 'defeito').length || 0;
+                const dispositivosDefeito = checklist.dispositivos?.filter(d => d.situacao?.toLowerCase() === 'defeito').length || 0;
+                
+                exportData.push([
+                    checklist.placa,
+                    checklist.tipo,
+                    checklist.dataRealizacao,
+                    checklist.validade,
+                    checklist.responsavel,
+                    checklist.operador,
+                    dispositivosOk,
+                    dispositivosDefeito
+                ]);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Relatorio');
+            
+            XLSX.writeFile(wb, `relatorio_checklists_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showNotification('Relatório exportado para Excel com sucesso!', 'success');
         }
         
         function mostrarRelatorioModal(titulo, conteudo) {
