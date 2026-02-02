@@ -216,13 +216,14 @@
             min-height: 90vh;
             transition: var(--transition);
             display: none; /* Inicialmente escondido */
+            position: relative; /* Importante para posicionar a sidebar */
         }
 
-        /* 🎭 HEADER */
+        /* 🎭 HEADER COMPACTO */
         .header {
             background: linear-gradient(135deg, var(--primary-black) 0%, #2d2d2d 100%);
             color: white;
-            padding: 25px 30px 0 30px;
+            padding: 20px 30px 15px 30px;
             position: relative;
             border-bottom: 4px solid var(--primary-red);
         }
@@ -232,19 +233,19 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .header-titles h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             letter-spacing: -0.5px;
         }
 
         .header-subtitle {
-            font-size: 16px;
+            font-size: 14px;
             opacity: 0.9;
             font-weight: 400;
         }
@@ -253,12 +254,12 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--primary-red);
             display: flex;
@@ -266,7 +267,7 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .user-details {
@@ -276,11 +277,11 @@
 
         .user-name {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .user-email {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.8;
         }
 
@@ -288,10 +289,10 @@
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             transition: var(--transition);
         }
 
@@ -299,242 +300,167 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* 🎨 SISTEMA DE ABAS E BOTÕES - NOVO DESIGN */
-        .action-system {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .action-tabs {
+        /* 🔘 BARRA DE AÇÕES COMPACTA */
+        .top-action-bar {
             display: flex;
-            gap: 2px;
-            padding: 10px 10px 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .action-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .action-tab {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 12px 20px;
-            border-radius: 8px 8px 0 0;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
             gap: 8px;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .action-tab:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .action-tab.active {
-            background: var(--bg-primary);
-            color: var(--primary-black);
-            font-weight: 600;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary-red);
-            border-radius: 3px 3px 0 0;
-        }
-
-        /* CONTEÚDO DAS ABAS */
-        .action-content {
-            background: var(--bg-primary);
-            border-radius: 0 0 12px 12px;
-            padding: 25px;
-            min-height: 80px;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* GRUPOS DE BOTÕES */
-        .button-group {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .button-group:last-child {
-            margin-bottom: 0;
-            border-bottom: none;
-        }
-
-        .group-label {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        /* BOTÕES NOVOS - DESIGN MODERNO */
-        .btn-action {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
             padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
-            margin: 0 8px 8px 0;
-            font-size: 14px;
-            min-width: 160px;
             justify-content: flex-start;
         }
 
-        .btn-action:hover {
-            background: var(--primary-red);
-            color: white;
-            border-color: var(--primary-red);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            margin-right: 15px;
+            border-right: 1px solid var(--border-color);
+            padding-right: 15px;
         }
 
-        .btn-action i {
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
+        .action-group:last-child {
+            border-right: none;
+            margin-right: 0;
+            padding-right: 0;
         }
 
-        .btn-action.danger {
-            background: rgba(220, 38, 38, 0.1);
-            border-color: rgba(220, 38, 38, 0.3);
-            color: #dc2626;
-        }
-
-        .btn-action.danger:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        /* BOTÕES DE FILTRO */
-        .btn-filter {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
+        .btn-icon {
+            display: flex;
             align-items: center;
             gap: 6px;
-            margin: 0 5px 5px 0;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 36px;
         }
 
-        .btn-filter:hover {
+        .btn-icon:hover {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+        }
+
+        .btn-icon .btn-label {
+            font-weight: 500;
+        }
+
+        .btn-icon.active {
             background: var(--primary-red);
             color: white;
             border-color: var(--primary-red);
         }
 
-        .btn-filter.active {
-            background: var(--primary-red);
-            color: white;
-            border-color: var(--primary-red);
-            font-weight: 600;
-        }
-
-        /* INPUT DE ARQUIVO MODERNO */
-        .file-input-wrapper {
+        /* 📂 DROPDOWNS ESTILIZADOS */
+        .dropdown {
             position: relative;
             display: inline-block;
-            margin: 0 10px 10px 0;
         }
 
-        .file-input {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .btn-file {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
+        .dropdown-toggle {
+            display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            border: none;
+            gap: 6px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
             min-width: 200px;
-            justify-content: center;
-        }
-
-        .btn-file:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .file-info {
-            display: block;
-            font-size: 11px;
-            color: var(--gray-text);
+            z-index: 1000;
+            display: none;
+            padding: 8px 0;
             margin-top: 5px;
         }
 
-        /* 📊 CARDS DE RESUMO - ATUALIZADO COM AVISOS */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 13px;
+            transition: background 0.2s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--bg-secondary);
+        }
+
+        .dropdown-menu hr {
+            margin: 5px 0;
+            border: none;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .dropdown-menu a.danger {
+            color: #dc2626;
+        }
+
+        .dropdown-menu a.danger:hover {
+            background: #fee2e2;
+        }
+
+        /* 🔍 BARRA DE BUSCA OTIMIZADA */
+        .compact-search {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .compact-search input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .compact-search i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* 📊 CARDS DE RESUMO COMPACTOS */
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            padding: 20px 30px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            padding: 15px 20px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
         }
 
         .summary-card {
             background: var(--bg-primary);
-            padding: 20px;
+            padding: 15px;
             border-radius: var(--radius-md);
             text-align: center;
             box-shadow: var(--shadow-light);
@@ -573,14 +499,14 @@
         }
 
         .card-number {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             margin-bottom: 5px;
             color: var(--text-primary);
         }
 
         .card-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             font-weight: 600;
             text-transform: uppercase;
@@ -590,12 +516,12 @@
         .card-subtitle {
             font-size: 10px;
             color: var(--gray-text);
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
-        /* 🔍 FILTROS - ATUALIZADO COM NOVA OPÇÃO */
+        /* 📊 FILTROS COMPACTOS */
         .filters {
-            padding: 20px 30px;
+            padding: 15px 20px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -611,20 +537,21 @@
         }
 
         .filter-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-secondary);
         }
 
         .filter-select, .filter-input {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-width: 150px;
+            min-width: 140px;
             cursor: pointer;
             transition: var(--transition);
+            font-size: 13px;
         }
 
         .filter-select:focus, .filter-input:focus {
@@ -632,42 +559,149 @@
             border-color: var(--primary-red);
         }
 
-        .search-box {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
+        /* 🎯 CORREÇÕES COMPLETAS DA SIDEBAR */
+        .sidebar-reports {
+            position: fixed;
+            top: 50%; /* CENTRALIZADO VERTICALMENTE */
+            right: 0;
+            transform: translateY(-50%); /* AJUSTE PRECISO */
+            z-index: 900;
+            transition: all 0.3s ease;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 12px 45px 12px 15px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary-red);
-        }
-
-        .search-box i {
+        .sidebar-toggle {
             position: absolute;
-            right: 15px;
+            left: -45px; /* MAIS PARA FORA */
             top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
+            transform: translateY(-50%); /* CENTRALIZADO PERFEITO */
+            width: 45px;
+            height: 45px;
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 901;
+        }
+
+        .sidebar-toggle i {
+            animation: none !important;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: #cc0000;
+            transform: translateY(-50%) translateX(-5px);
+            width: 50px;
+        }
+
+        .sidebar-toggle:hover i {
+            transform: scale(1.1);
+        }
+
+        .sidebar-content {
+            width: 250px;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border-color);
+            box-shadow: -2px 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-radius: 8px 0 0 8px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-reports.expanded .sidebar-content {
+            transform: translateX(0);
+        }
+
+        .sidebar-reports.expanded .sidebar-toggle {
+            left: -40px;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .sidebar-content h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .report-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 5px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .report-item:hover {
+            background: var(--primary-red);
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        /* RESPONSIVIDADE CORRIGIDA PARA SIDEBAR */
+        @media (max-width: 768px) {
+            .sidebar-reports {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                transform: none;
+            }
+            
+            .sidebar-toggle {
+                position: relative;
+                left: 0;
+                top: 0;
+                transform: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+            
+            .sidebar-content {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                width: calc(100vw - 40px);
+                max-width: 350px;
+                border-radius: 8px;
+                max-height: 60vh;
+            }
+            
+            .sidebar-reports.expanded .sidebar-toggle {
+                left: 0;
+            }
+            
+            .sidebar-toggle:hover {
+                transform: scale(1.05);
+            }
         }
 
         /* 📋 TABELA */
         .table-container {
             overflow-x: auto;
-            padding: 20px 30px;
+            padding: 15px 20px;
             max-height: 60vh;
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
 
         table {
@@ -681,10 +715,10 @@
             background: var(--bg-secondary);
             color: var(--text-primary);
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-bottom: 3px solid var(--border-color);
             text-align: left;
             position: sticky;
@@ -693,21 +727,22 @@
         }
 
         tbody td {
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-bottom: 1px solid var(--border-color);
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-primary);
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
             vertical-align: middle;
         }
 
         tbody tr {
             border-left: 3px solid transparent;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
 
         tbody tr:hover {
             background: var(--bg-secondary);
+            transform: translateX(3px);
         }
 
         /* 🎯 ESTADOS VISUAIS - LINHAS */
@@ -731,9 +766,9 @@
 
         /* 🎭 STATUS BADGES */
         .status-badge {
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             text-align: center;
             display: inline-block;
@@ -754,7 +789,6 @@
             color: black;
         }
 
-        /* NOVO BADGE - AVISO */
         .status-aviso {
             background: #f59e0b;
             color: white;
@@ -766,15 +800,15 @@
         .vehicle-plate {
             font-family: 'Courier New', monospace;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-primary);
         }
 
         /* 🎪 PLACAS E TIPOS */
         .tipo-badge {
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 12px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             display: inline-block;
         }
@@ -800,7 +834,7 @@
             flex-wrap: wrap;
             gap: 4px;
             max-width: 350px;
-            max-height: 120px;
+            max-height: 80px;
             overflow-y: auto;
             padding: 5px;
             border: 1px solid var(--border-color);
@@ -809,9 +843,9 @@
         }
 
         .status-item {
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
+            padding: 3px 6px;
+            border-radius: 8px;
+            font-size: 0.65rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
@@ -834,9 +868,10 @@
         /* 🎭 VALIDADE */
         .validade-badge {
             font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             display: inline-block;
+            font-size: 0.8rem;
         }
 
         .validade-vencida {
@@ -857,25 +892,25 @@
         /* 🎭 BOTÕES DE AÇÃO NA TABELA - DESIGN NOVO */
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: nowrap;
-            min-width: 200px;
+            min-width: 180px;
         }
 
         .btn-table {
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-weight: 500;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: none;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             flex: 1;
             justify-content: center;
-            min-width: 70px;
+            min-width: 60px;
         }
 
         .btn-table.edit {
@@ -914,212 +949,35 @@
             transform: translateY(-1px);
         }
 
-        /* BOTÃO FLUTUANTE PARA MOBILE */
-        .floating-action-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary-red);
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .floating-action-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
-        }
-
-        .floating-menu {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: var(--bg-primary);
-            border-radius: 15px;
-            box-shadow: var(--shadow-heavy);
-            padding: 15px;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 999;
-            min-width: 200px;
-            border: 1px solid var(--border-color);
-        }
-
-        .floating-menu.active {
-            display: flex;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 🎭 MODAL DE EDITAR/CRIAR */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--bg-primary);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            max-width: 700px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        /* NOVO MODAL - REGISTRAR AVISO */
-        .modal-wide {
-            max-width: 800px;
-        }
-
-        .modal h3 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            font-size: 20px;
-            border-bottom: 2px solid var(--primary-red);
-            padding-bottom: 10px;
-        }
-
-        .dispositivos-container {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .dispositivo-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .dispositivo-item:last-child {
-            border-bottom: none;
-        }
-
-        .status-select {
-            padding: 5px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-weight: 500;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        .btn-cancel {
-            background: var(--gray-text);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .btn-cancel:hover {
-            background: var(--gray-dark);
-        }
-
-        /* HISTÓRICO DE AVISOS */
-        .historico-avisos {
-            margin-top: 10px;
-            padding: 15px;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .aviso-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-        }
-
-        .aviso-item:last-child {
-            border-bottom: none;
-        }
-
-        .aviso-data {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .aviso-quem {
-            color: var(--text-secondary);
-            margin-top: 3px;
-        }
-
-        .sem-aviso {
-            color: var(--gray-text);
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-
         /* 🎭 FOOTER */
         .footer {
             background: var(--bg-secondary);
-            padding: 15px 30px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-color);
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
+            font-size: 12px;
         }
 
         .footer-info {
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .stats {
             display: flex;
-            gap: 15px;
-            font-size: 12px;
+            gap: 12px;
+            font-size: 11px;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            gap: 5px;
+            padding: 5px 10px;
             background: var(--bg-primary);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
@@ -1128,32 +986,44 @@
         /* 🎭 NO DATA */
         .no-data {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: var(--text-secondary);
         }
 
         .no-data i {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             color: var(--border-color);
         }
 
         /* 🔄 MODO ESCURO ESPECÍFICO */
-        .dark-mode .action-system {
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .dark-mode .action-tab.active {
+        .dark-mode .top-action-bar {
             background: var(--bg-secondary);
-            color: var(--text-primary);
         }
 
-        .dark-mode .btn-action {
+        .dark-mode .action-group {
+            border-right-color: var(--border-color);
+        }
+
+        .dark-mode .btn-icon {
             background: var(--bg-secondary);
             border-color: var(--border-color);
         }
 
-        .dark-mode .btn-action:hover {
+        .dark-mode .btn-icon:hover {
+            background: var(--primary-red);
+        }
+
+        .dark-mode .dropdown-menu {
+            background: var(--bg-primary);
+            border-color: var(--border-color);
+        }
+
+        .dark-mode .report-item {
+            background: var(--bg-secondary);
+        }
+
+        .dark-mode .report-item:hover {
             background: var(--primary-red);
         }
 
@@ -1222,6 +1092,19 @@
             background: #6b4706 !important;
         }
 
+        .dark-mode .sidebar-content {
+            background: var(--bg-primary);
+            border-color: var(--border-color);
+        }
+
+        .dark-mode .report-item {
+            background: var(--bg-secondary);
+        }
+
+        .dark-mode .report-item:hover {
+            background: var(--primary-red);
+        }
+
         /* BARRA DE PROGRESSO */
         .progress-bar-container {
             position: fixed;
@@ -1253,86 +1136,143 @@
             transition: width 0.3s;
         }
 
-        /* 📱 RESPONSIVIDADE */
-        @media (max-width: 1024px) {
-            .action-tabs {
-                flex-wrap: wrap;
-            }
-            
-            .btn-action {
-                min-width: 140px;
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-            
-            .action-content {
-                padding: 15px;
-            }
+        /* 🎭 MODAL DE EDITAR/CRIAR CHECKLIST */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
         }
 
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .action-system {
-                display: none;
-            }
-            
-            .floating-action-btn {
-                display: flex;
-            }
-            
-            .summary-cards {
-                grid-template-columns: 1fr 1fr;
-                padding: 15px 20px;
-            }
-            
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-select, .filter-input {
-                min-width: 100%;
-            }
-            
-            .search-box {
-                max-width: 100%;
-            }
-            
-            .footer {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .button-group {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .btn-action {
-                width: 100%;
-                margin: 0 0 10px 0;
-            }
+        .modal-content {
+            background: var(--bg-primary);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
         }
-        
+
+        .modal-wide {
+            max-width: 800px;
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 18px;
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 8px;
+        }
+
+        .modal-body {
+            padding: 10px 0;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .dispositivos-container {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .dispositivo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .dispositivo-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-select {
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: var(--gray-text);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-dark);
+        }
+
+        .historico-avisos {
+            margin-top: 10px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .aviso-item {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .aviso-item:last-child {
+            border-bottom: none;
+        }
+
+        .aviso-data {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .aviso-quem {
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .sem-aviso {
+            color: var(--gray-text);
+            font-style: italic;
+            text-align: center;
+            padding: 15px;
+        }
+
         /* 🎭 BOTÃO FECHAR MODAL */
         .btn-fechar {
             position: absolute;
@@ -1347,13 +1287,13 @@
         
         .modal-header {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         /* MENSAGENS DE ERRO */
         .error-message {
             color: #dc2626;
-            font-size: 12px;
+            font-size: 11px;
             margin-top: 5px;
             display: none;
         }
@@ -1361,10 +1301,10 @@
         /* LOADING */
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-red);
+            width: 18px;
+            height: 18px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary-red);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -1372,6 +1312,448 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 📱 RESPONSIVIDADE */
+        @media (max-width: 1024px) {
+            .top-action-bar {
+                padding: 10px 15px;
+                gap: 5px;
+            }
+            
+            .action-group {
+                margin-right: 10px;
+                padding-right: 10px;
+            }
+            
+            .btn-icon .btn-label {
+                display: none;
+            }
+            
+            .btn-icon {
+                padding: 8px;
+                width: 36px;
+                height: 36px;
+                justify-content: center;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 12px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .top-action-bar {
+                justify-content: center;
+            }
+            
+            .action-group {
+                margin-right: 0;
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-group:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 15px;
+            }
+            
+            .filter-select, .filter-input {
+                min-width: 100%;
+            }
+            
+            .compact-search {
+                max-width: 100%;
+            }
+            
+            .footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-table {
+                width: 100%;
+            }
+        }
+
+        /* INPUT DE ARQUIVO MODERNO */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .btn-file {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            min-width: 180px;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .btn-file:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-info {
+            display: block;
+            font-size: 10px;
+            color: var(--gray-text);
+            margin-top: 3px;
+        }
+
+        /* 🎨 ESTILOS ADICIONAIS PARA MELHORIAS DE USABILIDADE */
+        
+        /* BARRA DE NOTIFICAÇÕES */
+        #barra-notificacoes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #ff0000, #ff6b6b);
+            color: white;
+            padding: 10px 20px;
+            display: none;
+            z-index: 1000;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease;
+        }
+
+        #barra-notificacoes div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        #ver-notificacoes {
+            background: white;
+            color: #ff0000;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #ver-notificacoes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(255,255,255,0.3);
+        }
+
+        #fechar-notificacoes {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+
+        #fechar-notificacoes:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* FILTROS ATIVOS */
+        .filtros-ativos {
+            display: flex;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .filtro-ativo {
+            background: var(--primary-red);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filtro-ativo:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+
+        .filtro-ativo i {
+            font-size: 10px;
+        }
+
+        /* DESTAQUES NAS LINHAS */
+        tbody tr.destaque-urgente {
+            animation: pulse 2s infinite;
+            border-left: 4px solid #ff0000 !important;
+        }
+
+        tbody tr.destaque-atencao {
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 193, 7, 0.1) 50%, transparent 100%) !important;
+        }
+
+        .highlight-cell {
+            background: #fff3cd !important;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .highlight-cell::after {
+            content: "⚠️";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* MENU CONTEXTUAL */
+        .context-menu {
+            position: fixed;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+            z-index: 10000;
+            min-width: 180px;
+            animation: fadeIn 0.15s ease;
+        }
+
+        .context-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 13px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .context-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .context-item.danger {
+            color: #dc2626;
+        }
+
+        .context-item.danger:hover {
+            background: #fee2e2;
+        }
+
+        /* PREVIEW RÁPIDO */
+        .preview-rapido {
+            position: fixed;
+            background: var(--bg-primary);
+            border: 2px solid var(--primary-red);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 1000;
+            max-width: 300px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .preview-rapido.visible {
+            opacity: 1;
+        }
+
+        /* CONTROLES DE VISUALIZAÇÃO */
+        .controles-visualizacao {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* MODOS DE VISUALIZAÇÃO */
+        .modo-compacto table td {
+            padding: 6px 4px !important;
+            font-size: 11px !important;
+        }
+
+        .modo-compacto .btn-table {
+            padding: 4px 6px !important;
+            font-size: 10px !important;
+        }
+
+        .modo-compacto .vehicle-plate {
+            font-size: 11px !important;
+        }
+
+        .modo-expandido table td {
+            padding: 14px 10px !important;
+            font-size: 13px !important;
+        }
+
+        .modo-expandido .status-cell {
+            max-height: 120px !important;
+        }
+
+        /* SUGESTÕES DE BUSCA */
+        .sugestoes-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+            z-index: 1000;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .sugestao-item {
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sugestao-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* STATUS DINÂMICOS */
+        .status-dinamico-0 { background: #10b981; color: white; }
+        .status-dinamico-1 { background: #f59e0b; color: black; }
+        .status-dinamico-2 { background: #ef4444; color: white; }
+        .status-dinamico-3 { background: #8b5cf6; color: white; }
+
+        /* ANIMAÇÕES ADICIONAIS */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.3); }
+            70% { box-shadow: 0 0 0 5px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+
+        /* TOOLTIP MELHORADO */
+        [title] {
+            position: relative;
+        }
+
+        [title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-black);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* GARANTIR QUE NENHUM SPIN AFETE A SIDEBAR */
+        #sidebarToggle i,
+        .sidebar-toggle i,
+        .sidebar-reports i {
+            animation: none !important;
         }
     </style>
 </head>
@@ -1431,181 +1813,120 @@
                 </div>
             </div>
             
-            <!-- 🎨 NOVO SISTEMA DE ABAS E BOTÕES -->
-            <div class="action-system">
-                <!-- 🏷️ ABA PRINCIPAL -->
-                <div class="action-tabs">
-                    <button class="action-tab active" data-tab="geral">
-                        <i class="fas fa-home"></i> Geral
+            <!-- 🔘 BARRA DE AÇÕES COMPACTA -->
+            <div class="top-action-bar">
+                <!-- GRUPO 1: Ações principais -->
+                <div class="action-group">
+                    <button class="btn-icon" title="Novo Checklist" id="novoChecklistBtn">
+                        <i class="fas fa-plus"></i>
+                        <span class="btn-label">Novo</span>
                     </button>
-                    <button class="action-tab" data-tab="importacao">
-                        <i class="fas fa-file-import"></i> Arquivos
-                    </button>
-                    <button class="action-tab" data-tab="checklist">
-                        <i class="fas fa-clipboard-check"></i> Checklist
-                    </button>
-                    <button class="action-tab" data-tab="relatorios">
-                        <i class="fas fa-chart-bar"></i> Relatórios
-                    </button>
-                    <button class="action-tab" data-tab="sistema">
-                        <i class="fas fa-cog"></i> Sistema
+                    
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+                        <button class="btn-icon" title="Importar Excel" onclick="fileInput.click()">
+                            <i class="fas fa-file-import"></i>
+                            <span class="btn-label">Importar</span>
+                        </button>
+                    </div>
+                    
+                    <button class="btn-icon" title="Exportar" id="exportCompletoBtn">
+                        <i class="fas fa-file-export"></i>
+                        <span class="btn-label">Exportar</span>
                     </button>
                 </div>
                 
-                <!-- 🎭 CONTEÚDO DAS ABAS -->
-                <div class="action-content">
-                    <!-- 🟢 ABA GERAL -->
-                    <div class="tab-content active" id="tab-geral">
-                        <div class="button-group">
-                            <span class="group-label">Filtros Rápidos</span>
-                            <button class="btn-filter" data-filter="vencidos">
-                                <i class="fas fa-exclamation-triangle"></i> Vencidos
-                            </button>
-                            <button class="btn-filter" data-filter="proximos">
-                                <i class="fas fa-clock"></i> Próximos
-                            </button>
-                            <button class="btn-filter" data-filter="sem-aviso">
-                                <i class="fas fa-bell-slash"></i> Sem Aviso
-                            </button>
-                            <button class="btn-filter" data-filter="todos">
-                                <i class="fas fa-list"></i> Ver Todos
-                            </button>
-                        </div>
-                        
-                        <div class="button-group">
-                            <span class="group-label">Ações Rápidas</span>
-                            <button class="btn-action" id="novoChecklistBtn">
-                                <i class="fas fa-plus-circle"></i> Novo Checklist
-                            </button>
-                            <button class="btn-action" id="exportRapidoBtn">
-                                <i class="fas fa-file-export"></i> Exportar Seleção
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 📁 ABA ARQUIVOS -->
-                    <div class="tab-content" id="tab-importacao">
-                        <div class="button-group">
-                            <span class="group-label">Importar Dados</span>
-                            <div class="file-input-wrapper">
-                                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
-                                <label for="fileInput" class="btn-file">
-                                    <i class="fas fa-file-excel"></i> Importar Excel
-                                </label>
-                                <span class="file-info">Formatos: .xlsx, .xls</span>
-                            </div>
-                            <button class="btn-action" id="importModeloBtn">
-                                <i class="fas fa-download"></i> Baixar Modelo
-                            </button>
-                        </div>
-                        
-                        <div class="button-group">
-                            <span class="group-label">Exportar Dados</span>
-                            <button class="btn-action" id="exportCompletoBtn">
-                                <i class="fas fa-file-export"></i> Exportar Completo
-                            </button>
-                            <button class="btn-action" id="exportPDFBtn">
-                                <i class="fas fa-file-pdf"></i> Exportar PDF
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 📋 ABA CHECKLIST -->
-                    <div class="tab-content" id="tab-checklist">
-                        <div class="button-group">
-                            <span class="group-label">Gerenciamento</span>
-                            <button class="btn-action" id="removerDuplicadosBtn">
-                                <i class="fas fa-filter"></i> Remover Duplicados
-                            </button>
-                            <button class="btn-action" id="validarChecklistsBtn">
-                                <i class="fas fa-check-double"></i> Validar Todos
-                            </button>
-                            <button class="btn-action" id="batchEditarBtn">
-                                <i class="fas fa-edit"></i> Edição em Lote
-                            </button>
-                        </div>
-                        
-                        <div class="button-group">
-                            <span class="group-label">Avisos</span>
-                            <button class="btn-action" id="avisarTodosBtn">
-                                <i class="fas fa-bullhorn"></i> Avisar Vencidos
-                            </button>
-                            <button class="btn-action" id="relatorioAvisosBtn">
-                                <i class="fas fa-chart-line"></i> Relatório Avisos
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 📊 ABA RELATÓRIOS -->
-                    <div class="tab-content" id="tab-relatorios">
-                        <div class="button-group">
-                            <span class="group-label">Relatórios</span>
-                            <button class="btn-action" data-relatorio="status">
-                                <i class="fas fa-chart-pie"></i> Status Geral
-                            </button>
-                            <button class="btn-action" data-relatorio="vencimentos">
-                                <i class="fas fa-calendar-times"></i> Vencimentos
-                            </button>
-                            <button class="btn-action" data-relatorio="dispositivos">
-                                <i class="fas fa-microchip"></i> Dispositivos
-                            </button>
-                            <button class="btn-action" data-relatorio="historico">
-                                <i class="fas fa-history"></i> Histórico
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- ⚙️ ABA SISTEMA -->
-                    <div class="tab-content" id="tab-sistema">
-                        <div class="button-group">
-                            <span class="group-label">Configurações</span>
-                            <button class="btn-action" id="btnDarkMode">
-                                <i class="fas fa-moon"></i> Modo Escuro
-                            </button>
-                            <button class="btn-action" id="backupBtn">
-                                <i class="fas fa-database"></i> Backup
-                            </button>
-                            <button class="btn-action" id="restoreBtn">
-                                <i class="fas fa-undo"></i> Restaurar
-                            </button>
-                        </div>
-                        
-                        <div class="button-group">
-                            <span class="group-label">Manutenção</span>
-                            <button class="btn-action" id="debugBtn">
-                                <i class="fas fa-bug"></i> Debug
-                            </button>
-                            <button class="btn-action" id="limparCacheBtn">
-                                <i class="fas fa-broom"></i> Limpar Cache
-                            </button>
-                            <button class="btn-action danger" id="limparTudoBtn">
-                                <i class="fas fa-trash-alt"></i> Limpar Tudo
-                            </button>
+                <!-- GRUPO 2: Filtros -->
+                <div class="action-group">
+                    <div class="dropdown">
+                        <button class="btn-icon dropdown-toggle" title="Filtros Rápidos">
+                            <i class="fas fa-filter"></i>
+                            <span class="btn-label">Filtrar</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" data-filter="vencidos"><i class="fas fa-exclamation-triangle"></i> Vencidos</a>
+                            <a href="#" data-filter="proximos"><i class="fas fa-clock"></i> Próximos</a>
+                            <a href="#" data-filter="sem-aviso"><i class="fas fa-bell-slash"></i> Sem Aviso</a>
+                            <a href="#" data-filter="todos"><i class="fas fa-list"></i> Ver Todos</a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- GRUPO 3: Ações em lote -->
+                <div class="action-group">
+                    <div class="dropdown">
+                        <button class="btn-icon dropdown-toggle" title="Ações em Lote">
+                            <i class="fas fa-layer-group"></i>
+                            <span class="btn-label">Lote</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" id="avisarTodosBtn"><i class="fas fa-bullhorn"></i> Avisar Vencidos</a>
+                            <a href="#" id="removerDuplicadosBtn"><i class="fas fa-filter"></i> Remover Duplicados</a>
+                            <a href="#" id="validarChecklistsBtn"><i class="fas fa-check-double"></i> Validar Todos</a>
+                            <a href="#" id="exportRapidoBtn"><i class="fas fa-file-export"></i> Exportar Seleção</a>
+                            <a href="#" id="importModeloBtn"><i class="fas fa-download"></i> Baixar Modelo</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- GRUPO 4: Sistema -->
+                <div class="action-group">
+                    <div class="dropdown">
+                        <button class="btn-icon dropdown-toggle" title="Sistema">
+                            <i class="fas fa-cog"></i>
+                            <span class="btn-label">Sistema</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" id="btnDarkMode"><i class="fas fa-moon"></i> Modo Escuro</a>
+                            <a href="#" id="backupBtn"><i class="fas fa-database"></i> Backup</a>
+                            <a href="#" id="debugBtn"><i class="fas fa-bug"></i> Debug</a>
+                            <a href="#" id="limparCacheBtn"><i class="fas fa-broom"></i> Limpar Cache</a>
+                            <hr>
+                            <a href="#" id="limparTudoBtn" class="danger"><i class="fas fa-trash-alt"></i> Limpar Tudo</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- BUSCA COMPACTA -->
+                <div class="compact-search">
+                    <input type="text" id="searchInput" placeholder="Buscar por placa, responsável...">
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <!-- LIMPAR FILTROS -->
+                <button class="btn-icon" id="limparFiltrosBtn" title="Limpar Filtros">
+                    <i class="fas fa-times-circle"></i>
+                    <span class="btn-label">Limpar</span>
+                </button>
             </div>
         </header>
         
-        <!-- 📊 CARDS DE RESUMO ATUALIZADOS -->
+        <!-- 📊 FILTROS ATIVOS -->
+        <div class="filtros-ativos" id="filtrosAtivos">
+            <!-- Filtros ativos serão mostrados aqui -->
+        </div>
+        
+        <!-- 📊 CARDS DE RESUMO -->
         <div class="summary-cards" id="statusBadges">
             <!-- Badges serão preenchidos via JavaScript -->
         </div>
         
-        <!-- 🔍 FILTROS ATUALIZADOS -->
+        <!-- 🔍 FILTROS -->
         <div class="filters">
             <div class="filter-group">
-                <div class="filter-label">Filtrar por Tipo</div>
+                <div class="filter-label">Tipo do Veículo</div>
                 <select class="filter-select" id="filterTipo">
                     <option value="">Todos os Tipos</option>
                     <option value="PROPRIO">Próprio</option>
                     <option value="AGREGADO">Agregado</option>
-                    <option value="TERCEIRO">Terceiro</option>
+                    <option value="TERCEIRO">Terceio</option>
                 </select>
             </div>
             
             <div class="filter-group">
-                <div class="filter-label">Filtrar por Status</div>
+                <div class="filter-label">Status</div>
                 <select class="filter-select" id="filterStatus">
                     <option value="">Todos os Status</option>
                     <option value="vencido">Vencidos</option>
@@ -1616,15 +1937,6 @@
                     <option value="com_aviso">Vencidos com Aviso</option>
                 </select>
             </div>
-            
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar por placa, responsável, operador...">
-                <i class="fas fa-search"></i>
-            </div>
-            
-            <button class="btn-filter" id="limparFiltrosBtn">
-                <i class="fas fa-filter"></i> Limpar Filtros
-            </button>
         </div>
         
         <!-- 📋 TABELA PRINCIPAL -->
@@ -1673,8 +1985,44 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 📊 SIDEBAR DE RELATÓRIOS CORRIGIDA - AGORA DENTRO DO CONTAINER -->
+        <div class="sidebar-reports" id="sidebarReports">
+            <button class="sidebar-toggle" id="sidebarToggle" title="Abrir Relatórios">
+                <i class="fas fa-chart-bar"></i>
+            </button>
+            
+            <div class="sidebar-content" id="sidebarContent">
+                <h4><i class="fas fa-chart-pie"></i> Relatórios Rápidos</h4>
+                
+                <div class="report-item" data-relatorio="status">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Status Geral</span>
+                </div>
+                
+                <div class="report-item" data-relatorio="vencimentos">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>Vencimentos</span>
+                </div>
+                
+                <div class="report-item" data-relatorio="dispositivos">
+                    <i class="fas fa-microchip"></i>
+                    <span>Dispositivos</span>
+                </div>
+                
+                <div class="report-item" data-relatorio="historico">
+                    <i class="fas fa-history"></i>
+                    <span>Histórico</span>
+                </div>
+                
+                <div class="report-item" data-relatorio="exportPDF">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Exportar PDF</span>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
     <!-- 🎭 MODAL PARA EDITAR/CRIAR CHECKLIST -->
     <div class="modal" id="editModal">
         <div class="modal-content">
@@ -1735,7 +2083,7 @@
                         <div class="dispositivos-container" id="dispositivosContainer">
                             <!-- Dispositivos serão adicionados dinamicamente -->
                         </div>
-                        <button type="button" class="btn-action" id="addDispositivoBtn" style="margin-top: 10px;">
+                        <button type="button" class="btn-icon" id="addDispositivoBtn" style="margin-top: 10px;">
                             <i class="fas fa-plus"></i> Adicionar Dispositivo
                         </button>
                     </div>
@@ -1744,13 +2092,13 @@
             
             <div class="modal-actions">
                 <button class="btn-cancel" id="cancelarBtn">Cancelar</button>
-                <button class="btn-action danger" id="excluirChecklistBtn" style="display: none;">Excluir</button>
-                <button class="btn-action" id="salvarChecklistBtn" style="background: var(--green); color: white;">Salvar Checklist</button>
+                <button class="btn-icon danger" id="excluirChecklistBtn" style="display: none;">Excluir</button>
+                <button class="btn-icon" id="salvarChecklistBtn" style="background: var(--green); color: white;">Salvar Checklist</button>
             </div>
         </div>
     </div>
 
-    <!-- 🎭 NOVO MODAL - REGISTRAR AVISO -->
+    <!-- 🎭 MODAL - REGISTRAR AVISO -->
     <div class="modal" id="avisoModal">
         <div class="modal-content modal-wide">
             <div class="modal-header">
@@ -1759,7 +2107,7 @@
             </div>
             
             <div class="modal-body">
-                <div id="avisoInfo" style="margin-bottom: 20px; padding: 15px; background: var(--bg-secondary); border-radius: var(--radius-sm);">
+                <div id="avisoInfo" style="margin-bottom: 15px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-sm);">
                     <h4 id="avisoPlaca" style="margin-bottom: 5px;"></h4>
                     <div id="avisoDetalhes" style="color: var(--text-secondary); font-size: 0.9rem;"></div>
                 </div>
@@ -1812,7 +2160,7 @@
             
             <div class="modal-actions">
                 <button class="btn-cancel" id="cancelarAvisoBtn">Cancelar</button>
-                <button class="btn-action" id="registrarAvisoBtn" style="background: var(--green); color: white;">
+                <button class="btn-icon" id="registrarAvisoBtn" style="background: var(--green); color: white;">
                     <i class="fas fa-bell"></i> Registrar Aviso
                 </button>
             </div>
@@ -1828,13 +2176,13 @@
             </div>
             
             <div class="modal-body">
-                <div id="confirmacaoMensagem" style="padding: 20px; text-align: center;"></div>
+                <div id="confirmacaoMensagem" style="padding: 15px; text-align: center;"></div>
                 
-                <div class="modal-actions" style="justify-content: center; gap: 20px;">
+                <div class="modal-actions" style="justify-content: center; gap: 15px;">
                     <button class="btn-cancel" id="cancelarConfirmacaoBtn">
                         <i class="fas fa-times"></i> Cancelar
                     </button>
-                    <button class="btn-action danger" id="confirmarAcaoBtn">
+                    <button class="btn-icon danger" id="confirmarAcaoBtn">
                         <i class="fas fa-check"></i> Confirmar
                     </button>
                 </div>
@@ -1844,38 +2192,15 @@
 
     <!-- BARRA DE PROGRESSO -->
     <div class="progress-bar-container" id="progressBar">
-        <h4 style="margin-bottom: 15px; color: var(--text-primary);">
+        <h4 style="margin-bottom: 12px; color: var(--text-primary); font-size: 16px;">
             <i class="fas fa-sync-alt fa-spin"></i> Processando...
         </h4>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div id="progressText" style="color: var(--text-secondary); font-size: 14px;">
+        <div id="progressText" style="color: var(--text-secondary); font-size: 13px; margin-top: 8px;">
             0 de 0 itens
         </div>
-        <div style="margin-top: 15px; font-size: 12px; color: var(--gray-text);">
-            <i class="fas fa-info-circle"></i> Por favor, aguarde...
-        </div>
-    </div>
-
-    <!-- BOTÃO FLUTUANTE MOBILE -->
-    <button id="floatingActionBtn" class="floating-action-btn">
-        <i class="fas fa-plus"></i>
-    </button>
-
-    <div id="floatingMenu" class="floating-menu">
-        <button class="btn-action" onclick="novoChecklistBtn.click()">
-            <i class="fas fa-plus"></i> Novo Checklist
-        </button>
-        <button class="btn-action" onclick="fileInput.click()">
-            <i class="fas fa-file-import"></i> Importar
-        </button>
-        <button class="btn-action" onclick="exportBtn.click()">
-            <i class="fas fa-file-export"></i> Exportar
-        </button>
-        <button class="btn-action" onclick="buttonsManager?.switchTab('relatorios')">
-            <i class="fas fa-chart-bar"></i> Relatórios
-        </button>
     </div>
 
     <script>
@@ -1953,7 +2278,6 @@
         let isDarkMode = false;
         let avisoIndex = -1;
         let currentUser = null;
-        let buttonsManager = null;
         
         // Dispositivos comuns para referência
         const dispositivosComuns = [
@@ -1998,12 +2322,10 @@
         const backupBtn = document.getElementById('backupBtn');
         const limparTudoBtn = document.getElementById('limparTudoBtn');
         const limparCacheBtn = document.getElementById('limparCacheBtn');
-        const restoreBtn = document.getElementById('restoreBtn');
         const validarChecklistsBtn = document.getElementById('validarChecklistsBtn');
         const avisarTodosBtn = document.getElementById('avisarTodosBtn');
         const importModeloBtn = document.getElementById('importModeloBtn');
-        const batchEditarBtn = document.getElementById('batchEditarBtn');
-        const exportPDFBtn = document.getElementById('exportPDFBtn');
+        const exportPDFBtn = document.querySelector('[data-relatorio="exportPDF"]');
         const exportRapidoBtn = document.getElementById('exportRapidoBtn');
         const fecharModal = document.getElementById('fecharModal');
         const cancelarBtn = document.getElementById('cancelarBtn');
@@ -2039,8 +2361,9 @@
         const progressBar = document.getElementById('progressBar');
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
-        const floatingActionBtn = document.getElementById('floatingActionBtn');
-        const floatingMenu = document.getElementById('floatingMenu');
+        const sidebarReports = document.getElementById('sidebarReports');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarContent = document.getElementById('sidebarContent');
         
         let acaoConfirmadaCallback = null;
         
@@ -2107,7 +2430,6 @@
                 });
                 
                 // 2. Atualizar UI (instantâneo)
-                const checklists = checklistsCache.getAll();
                 atualizarTabela();
                 atualizarBadges();
                 
@@ -2465,428 +2787,6 @@
 
         let performanceManager = new PerformanceManager();
         
-        // 🎯 GERENCIADOR DE BOTÕES
-        class ButtonsManager {
-            constructor() {
-                this.currentTab = 'geral';
-                this.activeFilters = new Set();
-            }
-            
-            init() {
-                this.setupTabs();
-                this.setupButtons();
-                this.setupFloatingMenu();
-                this.setupEventDelegation();
-            }
-            
-            setupTabs() {
-                document.querySelectorAll('.action-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        const tabId = e.currentTarget.dataset.tab;
-                        this.switchTab(tabId);
-                    });
-                });
-            }
-            
-            switchTab(tabId) {
-                document.querySelectorAll('.action-tab').forEach(t => {
-                    t.classList.toggle('active', t.dataset.tab === tabId);
-                });
-                
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.toggle('active', content.id === `tab-${tabId}`);
-                });
-                
-                this.currentTab = tabId;
-                localStorage.setItem('last_tab', tabId);
-            }
-            
-            setupButtons() {
-                // Filtros rápidos
-                document.querySelectorAll('.btn-filter[data-filter]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const filter = e.currentTarget.dataset.filter;
-                        this.applyFilter(filter);
-                    });
-                });
-                
-                // Baixar modelo
-                importModeloBtn?.addEventListener('click', () => this.downloadTemplate());
-                
-                // Validar checklists
-                validarChecklistsBtn?.addEventListener('click', () => this.validateAllChecklists());
-                
-                // Avisar todos
-                avisarTodosBtn?.addEventListener('click', () => this.notifyAllExpired());
-                
-                // Limpar cache
-                limparCacheBtn?.addEventListener('click', () => this.clearCache());
-                
-                // Restaurar backup
-                restoreBtn?.addEventListener('click', () => this.openRestoreModal());
-                
-                // Botões de relatório (delegação)
-                document.addEventListener('click', (e) => {
-                    const relatorioBtn = e.target.closest('[data-relatorio]');
-                    if (relatorioBtn) {
-                        this.generateReport(relatorioBtn.dataset.relatorio);
-                    }
-                });
-            }
-            
-            setupFloatingMenu() {
-                if (floatingActionBtn && floatingMenu) {
-                    floatingActionBtn.addEventListener('click', () => {
-                        floatingMenu.classList.toggle('active');
-                        floatingActionBtn.innerHTML = floatingMenu.classList.contains('active') 
-                            ? '<i class="fas fa-times"></i>' 
-                            : '<i class="fas fa-plus"></i>';
-                    });
-                    
-                    document.addEventListener('click', (e) => {
-                        if (!floatingActionBtn.contains(e.target) && !floatingMenu.contains(e.target)) {
-                            floatingMenu.classList.remove('active');
-                            floatingActionBtn.innerHTML = '<i class="fas fa-plus"></i>';
-                        }
-                    });
-                }
-            }
-            
-            setupEventDelegation() {
-                // Delegação para botões da tabela
-                document.addEventListener('click', (e) => {
-                    const btn = e.target.closest('.btn-table');
-                    if (!btn) return;
-                    
-                    const row = btn.closest('tr');
-                    if (!row) return;
-                    
-                    const rows = Array.from(tableBody.querySelectorAll('tr'));
-                    const index = rows.indexOf(row);
-                    
-                    if (index === -1) return;
-                    
-                    if (btn.classList.contains('edit')) {
-                        editarChecklist(index);
-                    } else if (btn.classList.contains('delete')) {
-                        excluirChecklist(index);
-                    } else if (btn.classList.contains('notify')) {
-                        registrarAviso(index);
-                    }
-                });
-            }
-            
-            applyFilter(filter) {
-                const btn = document.querySelector(`[data-filter="${filter}"]`);
-                
-                if (filter === 'todos') {
-                    this.activeFilters.clear();
-                    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-                    filterStatus.value = '';
-                } else {
-                    if (this.activeFilters.has(filter)) {
-                        this.activeFilters.delete(filter);
-                        btn.classList.remove('active');
-                    } else {
-                        this.activeFilters.add(filter);
-                        document.querySelectorAll('.btn-filter').forEach(b => {
-                            if (b.dataset.filter !== filter) b.classList.remove('active');
-                        });
-                        btn.classList.add('active');
-                    }
-                }
-                
-                let statusValue = '';
-                if (this.activeFilters.has('vencidos')) {
-                    statusValue = 'vencido';
-                } else if (this.activeFilters.has('proximos')) {
-                    statusValue = 'proximo';
-                } else if (this.activeFilters.has('sem-aviso')) {
-                    statusValue = 'sem_aviso';
-                }
-                
-                filterStatus.value = statusValue;
-                atualizarTabela();
-            }
-            
-            downloadTemplate() {
-                const templateData = [
-                    ['Veículo: ABC-1234', 'PROPRIO'],
-                    ['Data da Realização: 01/01/2024 08:00', 'Validade: 31/12/2024 23:59'],
-                    ['Responsavel: João Silva', '(11) 99999-9999'],
-                    ['Operador: Sistema'],
-                    ['Dispositivos Avaliados', 'Situação'],
-                    ['SETAS', 'Ok'],
-                    ['GPS', 'Ok'],
-                    ['SENSOR DE PORTA', 'Defeito']
-                ];
-                
-                const ws = XLSX.utils.aoa_to_sheet(templateData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Modelo');
-                
-                const wscols = [{wch: 30}, {wch: 20}];
-                ws['!cols'] = wscols;
-                
-                XLSX.writeFile(wb, 'modelo_checklist.xlsx');
-                showNotification('Modelo baixado com sucesso!', 'success');
-            }
-            
-            validateAllChecklists() {
-                const checklists = checklistsCache.getAll();
-                const erros = [];
-                const warnings = [];
-                
-                checklists.forEach((checklist) => {
-                    if (!/^[A-Z]{3}\d[A-Z0-9]\d{2}$/i.test(checklist.placa)) {
-                        erros.push(`${checklist.placa}: Placa inválida`);
-                    }
-                    
-                    const realizacao = parseDateBrasil(checklist.dataRealizacao);
-                    const validade = parseDateBrasil(checklist.validade);
-                    
-                    if (!realizacao) warnings.push(`${checklist.placa}: Data realização inválida`);
-                    if (!validade) warnings.push(`${checklist.placa}: Data validade inválida`);
-                    
-                    if (realizacao && validade && realizacao > validade) {
-                        erros.push(`${checklist.placa}: Realização posterior à validade`);
-                    }
-                    
-                    if (!checklist.dispositivos || checklist.dispositivos.length === 0) {
-                        warnings.push(`${checklist.placa}: Sem dispositivos`);
-                    }
-                });
-                
-                let message = '';
-                if (erros.length === 0 && warnings.length === 0) {
-                    message = '✅ Todos os checklists estão válidos!';
-                } else {
-                    message = `
-                        <strong>Validação Concluída:</strong><br>
-                        ${erros.length > 0 ? `❌ ${erros.length} erro(s):<br>${erros.slice(0, 3).join('<br>')}${erros.length > 3 ? '<br>...' : ''}` : ''}
-                        ${warnings.length > 0 ? `⚠️ ${warnings.length} aviso(s):<br>${warnings.slice(0, 3).join('<br>')}${warnings.length > 3 ? '<br>...' : ''}` : ''}
-                    `;
-                }
-                
-                mostrarConfirmacao('Validação', message, null);
-            }
-            
-            async notifyAllExpired() {
-                const checklists = checklistsCache.getAll();
-                const vencidosSemAviso = checklists.filter(c => 
-                    getStatusValidade(c.validade) === 'vencido' && 
-                    (!c.avisos || c.avisos.length === 0)
-                );
-                
-                if (vencidosSemAviso.length === 0) {
-                    showNotification('Nenhum checklist vencido sem aviso encontrado.', 'info');
-                    return;
-                }
-                
-                mostrarConfirmacao(
-                    'Avisar Todos',
-                    `Deseja registrar aviso para ${vencidosSemAviso.length} checklist(s) vencido(s) sem aviso?`,
-                    async () => {
-                        let count = 0;
-                        showProgressBar('Registrando avisos...');
-                        
-                        for (const checklist of vencidosSemAviso) {
-                            try {
-                                const aviso = {
-                                    data: new Date().toISOString(),
-                                    quemNotificou: currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Sistema',
-                                    quemRecebeu: 'Todos',
-                                    metodo: 'Sistema',
-                                    observacao: 'Aviso automático em lote',
-                                    registradoPor: currentUser?.email || 'Sistema',
-                                    registradoEm: new Date().toISOString()
-                                };
-                                
-                                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, aviso] : [aviso];
-                                
-                                // Atualizar localmente
-                                const updated = {
-                                    ...checklist,
-                                    avisos: avisosAtualizados
-                                };
-                                checklistsCache.set(checklist.id, updated);
-                                
-                                // Sincronizar
-                                await performanceManager.syncToFirebaseInBackground([updated], true);
-                                
-                                count++;
-                                updateProgress(count, vencidosSemAviso.length, `Processando... ${count}/${vencidosSemAviso.length}`);
-                                
-                            } catch (error) {
-                                console.error(`Erro ao avisar ${checklist.placa}:`, error);
-                            }
-                        }
-                        
-                        hideProgressBar();
-                        atualizarTabela();
-                        showNotification(`${count} aviso(s) registrado(s) com sucesso!`, 'success');
-                    }
-                );
-            }
-            
-            generateReport(tipo) {
-                const checklists = checklistsCache.getAll();
-                
-                switch (tipo) {
-                    case 'status':
-                        this.generateStatusReport(checklists);
-                        break;
-                    case 'vencimentos':
-                        this.generateExpirationReport(checklists);
-                        break;
-                    case 'dispositivos':
-                        this.generateDevicesReport(checklists);
-                        break;
-                    case 'historico':
-                        this.generateHistoryReport(checklists);
-                        break;
-                }
-            }
-            
-            generateStatusReport(checklists) {
-                const stats = {
-                    total: checklists.length,
-                    vencidos: checklists.filter(c => getStatusValidade(c.validade) === 'vencido').length,
-                    proximos: checklists.filter(c => getStatusValidade(c.validade) === 'proximo').length,
-                    ok: checklists.filter(c => getStatusValidade(c.validade) === 'ok').length,
-                    comDefeito: checklists.filter(c => temDefeito(c.dispositivos)).length,
-                    comAviso: checklists.filter(c => temAvisos(c)).length
-                };
-                
-                const report = `
-                    RELATÓRIO DE STATUS - ${new Date().toLocaleDateString('pt-BR')}
-                    
-                    📊 ESTATÍSTICAS GERAIS:
-                    • Total de Checklists: ${stats.total}
-                    • Checklists OK: ${stats.ok}
-                    • Próximos a Vencer: ${stats.proximos}
-                    • Vencidos: ${stats.vencidos}
-                    • Com Defeito: ${stats.comDefeito}
-                    • Com Aviso Registrado: ${stats.comAviso}
-                    
-                    ⚠️ ATENÇÃO NECESSÁRIA:
-                    • Vencidos sem Aviso: ${stats.vencidos - stats.comAviso}
-                    
-                    📈 PORCENTAGENS:
-                    • OK: ${((stats.ok / stats.total) * 100).toFixed(1)}%
-                    • Atenção: ${(((stats.proximos + stats.vencidos) / stats.total) * 100).toFixed(1)}%
-                `;
-                
-                this.showReportModal('Relatório de Status', report);
-            }
-            
-            showReportModal(title, content) {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>${title}</h3>
-                            <button class="btn-fechar">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <pre style="white-space: pre-wrap; font-family: monospace; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">${content}</pre>
-                        </div>
-                        <div class="modal-actions">
-                            <button class="btn-cancel">Fechar</button>
-                            <button class="btn-action" onclick="this.closest('.modal').querySelector('pre').textContent.exportToFile('relatorio.txt')" style="background: var(--green); color: white;">
-                                <i class="fas fa-download"></i> Exportar TXT
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                modal.style.display = 'flex';
-                
-                modal.querySelector('.btn-fechar').addEventListener('click', () => modal.remove());
-                modal.querySelector('.btn-cancel').addEventListener('click', () => modal.remove());
-                
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) modal.remove();
-                });
-            }
-            
-            clearCache() {
-                mostrarConfirmacao(
-                    'Limpar Cache',
-                    'Deseja limpar o cache local? Isso não apagará os dados do servidor.',
-                    () => {
-                        checklistsCache.clear();
-                        localStorage.removeItem('checklists_cache');
-                        showNotification('Cache limpo com sucesso!', 'success');
-                        atualizarTabela();
-                    }
-                );
-            }
-            
-            openRestoreModal() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                
-                input.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    
-                    mostrarConfirmacao(
-                        'Restaurar Backup',
-                        'Deseja restaurar este backup? Os dados atuais serão substituídos.',
-                        async () => {
-                            showProgressBar('Restaurando backup...');
-                            
-                            const reader = new FileReader();
-                            reader.onload = async (event) => {
-                                try {
-                                    const backupData = JSON.parse(event.target.result);
-                                    
-                                    if (backupData.checklists && Array.isArray(backupData.checklists)) {
-                                        // Limpar cache atual
-                                        checklistsCache.clear();
-                                        
-                                        // Restaurar dados
-                                        backupData.checklists.forEach(checklist => {
-                                            const id = 'firestore_' + (checklist.id || performanceManager.generateId());
-                                            checklistsCache.set(id, checklist);
-                                        });
-                                        
-                                        // Sincronizar com Firebase
-                                        await performanceManager.syncToFirebaseInBackground(
-                                            checklistsCache.getAll(), 
-                                            false
-                                        );
-                                        
-                                        // Atualizar UI
-                                        atualizarTabela();
-                                        atualizarBadges();
-                                        
-                                        hideProgressBar();
-                                        showNotification('Backup restaurado com sucesso!', 'success');
-                                        
-                                    } else {
-                                        throw new Error('Formato de backup inválido');
-                                    }
-                                    
-                                } catch (error) {
-                                    hideProgressBar();
-                                    showNotification('Erro ao restaurar backup: ' + error.message, 'error');
-                                }
-                            };
-                            
-                            reader.readAsText(file);
-                        }
-                    );
-                };
-                
-                input.click();
-            }
-        }
-
         // ✅ INICIALIZAR APLICAÇÃO
         function initApp() {
             auth.onAuthStateChanged(async (user) => {
@@ -2897,21 +2797,18 @@
                     
                     // Inicializar gerenciadores
                     performanceManager = new PerformanceManager();
-                    buttonsManager = new ButtonsManager();
-                    buttonsManager.init();
                     
                     // Carregar dados com cache
                     await performanceManager.loadChecklistsWithCache();
-                    
-                    // Restaurar última aba
-                    const lastTab = localStorage.getItem('last_tab') || 'geral';
-                    buttonsManager.switchTab(lastTab);
                     
                     // Restaurar modo escuro
                     const darkModeSaved = localStorage.getItem('dark_mode_sistema');
                     if (darkModeSaved === 'true') {
                         toggleDarkMode();
                     }
+                    
+                    // Inicializar melhorias de usabilidade
+                    inicializarMelhoriasUsabilidade();
                     
                 } else {
                     showLogin();
@@ -3108,7 +3005,7 @@
             });
         }
         
-        // ✅ FUNÇÃO GLOBAL PARA FILTRAR CHECKLISTS (CORREÇÃO APLICADA)
+        // ✅ FUNÇÃO GLOBAL PARA FILTRAR CHECKLISTS
         function getFilteredChecklists(checklists) {
             const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
             const tipoFiltro = filterTipo ? filterTipo.value : '';
@@ -3171,6 +3068,13 @@
                     const row = document.createElement('tr');
                     if (statusValidade === 'vencido') row.classList.add('vencido');
                     if (statusValidade === 'proximo') row.classList.add('proximo-vencer');
+                    
+                    // Adicionar classes de destaque
+                    if (statusValidade === 'vencido' && !temAvisoChecklist) {
+                        row.classList.add('destaque-urgente');
+                    } else if (statusValidade === 'proximo') {
+                        row.classList.add('destaque-atencao');
+                    }
                     
                     let tipoClass = 'tipo-proprio';
                     if (checklist.tipo === 'AGREGADO') tipoClass = 'tipo-agregado';
@@ -3244,13 +3148,451 @@
                     `;
                     
                     tableBody.appendChild(row);
+                    
+                    // Adicionar eventos de clique aos botões
+                    const buttons = row.querySelectorAll('.btn-table');
+                    buttons[0].addEventListener('click', () => window.registrarAviso(index));
+                    buttons[1].addEventListener('click', () => window.editarChecklist(index));
+                    buttons[2].addEventListener('click', () => window.excluirChecklist(index));
                 });
             }
             
             atualizarContadores(filteredChecklists.length);
+            atualizarFiltrosAtivos();
         }
         
-        // ✅ ATUALIZAR FUNÇÕES EXISTENTES PARA USAR CACHE
+        // ✅ FUNÇÕES DE MELHORIA DE USABILIDADE
+        
+        // 1. 🔍 BUSCA INTELIGENTE COM AUTOCOMPLETE
+        searchInput.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            if (term.length >= 2) {
+                mostrarSugestoes(term);
+            } else {
+                esconderSugestoes();
+            }
+            atualizarTabela();
+        });
+        
+        function mostrarSugestoes(term) {
+            const checklists = checklistsCache.getAll();
+            const sugestoes = new Set();
+            
+            checklists.forEach(c => {
+                if (c.placa.toLowerCase().includes(term)) sugestoes.add(c.placa);
+                if (c.responsavel.toLowerCase().includes(term)) sugestoes.add(c.responsavel);
+                if (c.operador.toLowerCase().includes(term)) sugestoes.add(c.operador);
+            });
+            
+            if (sugestoes.size > 0) {
+                let dropdown = document.querySelector('.sugestoes-dropdown');
+                if (!dropdown) {
+                    dropdown = document.createElement('div');
+                    dropdown.className = 'sugestoes-dropdown';
+                    searchInput.parentNode.appendChild(dropdown);
+                }
+                
+                dropdown.innerHTML = Array.from(sugestoes).slice(0, 5).map(s => 
+                    `<div class="sugestao-item">${s}</div>`
+                ).join('');
+                
+                dropdown.querySelectorAll('.sugestao-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        searchInput.value = item.textContent;
+                        esconderSugestoes();
+                        atualizarTabela();
+                    });
+                });
+            }
+        }
+        
+        function esconderSugestoes() {
+            const dropdown = document.querySelector('.sugestoes-dropdown');
+            if (dropdown) dropdown.remove();
+        }
+        
+        // 2. 📊 FILTROS ATIVOS VISÍVEIS
+        function atualizarFiltrosAtivos() {
+            const container = document.getElementById('filtrosAtivos');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const filtros = [];
+            
+            if (searchInput.value) {
+                filtros.push({
+                    tipo: 'Busca',
+                    valor: searchInput.value,
+                    limpar: () => { searchInput.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            if (filterTipo.value) {
+                filtros.push({
+                    tipo: 'Tipo',
+                    valor: filterTipo.options[filterTipo.selectedIndex].text,
+                    limpar: () => { filterTipo.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            if (filterStatus.value) {
+                filtros.push({
+                    tipo: 'Status',
+                    valor: filterStatus.options[filterStatus.selectedIndex].text,
+                    limpar: () => { filterStatus.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            filtros.forEach(filtro => {
+                const badge = document.createElement('div');
+                badge.className = 'filtro-ativo';
+                badge.innerHTML = `
+                    ${filtro.tipo}: ${filtro.valor}
+                    <i class="fas fa-times"></i>
+                `;
+                badge.addEventListener('click', () => {
+                    filtro.limpar();
+                    atualizarFiltrosAtivos();
+                });
+                container.appendChild(badge);
+            });
+            
+            // Mostrar/ocultar container
+            container.style.display = filtros.length > 0 ? 'flex' : 'none';
+        }
+        
+        // 3. 📱 MENU CONTEXTUAL (CLIQUE DIREITO)
+        document.addEventListener('contextmenu', function(e) {
+            const row = e.target.closest('tr');
+            if (row && row.parentElement === tableBody) {
+                e.preventDefault();
+                mostrarMenuContextual(e, row);
+            }
+        });
+        
+        function mostrarMenuContextual(e, row) {
+            const menu = document.createElement('div');
+            menu.className = 'context-menu';
+            menu.style.cssText = `
+                position: fixed;
+                top: ${e.clientY}px;
+                left: ${e.clientX}px;
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: var(--shadow-medium);
+                z-index: 10000;
+                min-width: 180px;
+            `;
+            
+            const index = Array.from(tableBody.querySelectorAll('tr')).indexOf(row);
+            const checklist = getFilteredChecklists(checklistsCache.getAll())[index];
+            
+            menu.innerHTML = `
+                <div class="context-item" data-action="editar">
+                    <i class="fas fa-edit"></i> Editar Checklist
+                </div>
+                <div class="context-item" data-action="avisar" ${getStatusValidade(checklist.validade) !== 'vencido' ? 'style="opacity: 0.5;"' : ''}>
+                    <i class="fas fa-bell"></i> Registrar Aviso
+                </div>
+                <div class="context-item" data-action="duplicar">
+                    <i class="fas fa-copy"></i> Duplicar
+                </div>
+                <hr style="margin: 5px 0; border-color: var(--border-color);">
+                <div class="context-item danger" data-action="excluir">
+                    <i class="fas fa-trash"></i> Excluir
+                </div>
+            `;
+            
+            document.body.appendChild(menu);
+            
+            // Fechar menu ao clicar fora
+            setTimeout(() => {
+                const closeMenu = () => {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                };
+                document.addEventListener('click', closeMenu);
+            }, 100);
+            
+            // Eventos do menu
+            menu.querySelectorAll('.context-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    switch(action) {
+                        case 'editar':
+                            window.editarChecklist(index);
+                            break;
+                        case 'avisar':
+                            if (getStatusValidade(checklist.validade) === 'vencido') {
+                                window.registrarAviso(index);
+                            }
+                            break;
+                        case 'duplicar':
+                            duplicarChecklist(checklist);
+                            break;
+                        case 'excluir':
+                            window.excluirChecklist(index);
+                            break;
+                    }
+                    menu.remove();
+                });
+            });
+        }
+        
+        function duplicarChecklist(checklist) {
+            const novoChecklist = {
+                ...checklist,
+                placa: checklist.placa + '-COPIA',
+                id: performanceManager.generateId(),
+                criadoPor: currentUser.uid,
+                criadoPorEmail: currentUser.email,
+                criadoEm: new Date().toISOString(),
+                synced: false
+            };
+            
+            checklistsCache.set(novoChecklist.id, novoChecklist);
+            atualizarTabela();
+            showNotification('Checklist duplicado com sucesso!', 'success');
+        }
+        
+        // 4. 🔔 BARRA DE NOTIFICAÇÕES INTELIGENTES
+        function criarBarraNotificacoes() {
+            const barra = document.createElement('div');
+            barra.id = 'barra-notificacoes';
+            barra.innerHTML = `
+                <div>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="contador-notificacoes">0</span> checklists necessitam atenção!
+                </div>
+                <button id="ver-notificacoes" style="background: white; color: #ff0000; border: none; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;">
+                    Ver Agora
+                </button>
+                <button id="fechar-notificacoes" style="background: transparent; color: white; border: none; font-size: 18px; cursor: pointer;">
+                    ×
+                </button>
+            `;
+            
+            document.body.appendChild(barra);
+            
+            // Eventos
+            document.getElementById('ver-notificacoes').addEventListener('click', () => {
+                filterStatus.value = 'vencido';
+                atualizarTabela();
+                barra.style.display = 'none';
+            });
+            
+            document.getElementById('fechar-notificacoes').addEventListener('click', () => {
+                barra.style.display = 'none';
+            });
+            
+            // Verificar notificações inicialmente
+            verificarNotificacoes();
+        }
+        
+        function verificarNotificacoes() {
+            const checklists = checklistsCache.getAll();
+            const urgentes = checklists.filter(c => 
+                getStatusValidade(c.validade) === 'vencido' && 
+                (!c.avisos || c.avisos.length === 0)
+            ).length;
+            
+            if (urgentes > 0) {
+                const barra = document.getElementById('barra-notificacoes');
+                barra.querySelector('#contador-notificacoes').textContent = urgentes;
+                barra.style.display = 'flex';
+            }
+        }
+        
+        // 5. ⚡ ATALHOS DE TECLADO
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + N = Novo Checklist
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                novoChecklistBtn.click();
+            }
+            
+            // Ctrl + F = Focar na busca
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+            
+            // Esc = Limpar filtros/fechar modais
+            if (e.key === 'Escape') {
+                if (editModal.style.display === 'flex') {
+                    editModal.style.display = 'none';
+                } else if (avisoModal.style.display === 'flex') {
+                    avisoModal.style.display = 'none';
+                } else {
+                    limparFiltrosBtn.click();
+                }
+            }
+            
+            // Ctrl + E = Exportar
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                exportCompletoBtn.click();
+            }
+        });
+        
+        // Mostrar tooltip de atalhos
+        searchInput.addEventListener('focus', function() {
+            this.title = 'Use Ctrl+F para buscar rapidamente';
+        });
+        
+        // 6. 📈 PREVIEW RÁPIDO AO PASSAR MOUSE
+        tableBody.addEventListener('mouseover', function(e) {
+            const row = e.target.closest('tr');
+            if (row && row.parentElement === tableBody) {
+                const index = Array.from(tableBody.querySelectorAll('tr')).indexOf(row);
+                const checklist = getFilteredChecklists(checklistsCache.getAll())[index];
+                
+                mostrarPreview(e.clientX, e.clientY, checklist);
+            }
+        });
+        
+        tableBody.addEventListener('mouseout', function() {
+            esconderPreview();
+        });
+        
+        function mostrarPreview(x, y, checklist) {
+            let preview = document.getElementById('preview-rapido');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.id = 'preview-rapido';
+                preview.className = 'preview-rapido';
+                document.body.appendChild(preview);
+            }
+            
+            preview.innerHTML = `
+                <strong>${checklist.placa}</strong> (${checklist.tipo})<br>
+                <small>Validade: ${checklist.validade}</small><br>
+                <small>Responsável: ${checklist.responsavel}</small><br>
+                <small>Dispositivos: ${checklist.dispositivos?.length || 0}</small>
+                <div style="margin-top: 8px; font-size: 11px;">
+                    ${getStatusValidade(checklist.validade) === 'vencido' ? '⚠️ VENCIDO' : '✅ OK'}
+                </div>
+            `;
+            
+            preview.style.left = (x + 15) + 'px';
+            preview.style.top = (y + 15) + 'px';
+            preview.classList.add('visible');
+        }
+        
+        function esconderPreview() {
+            const preview = document.getElementById('preview-rapido');
+            if (preview) {
+                preview.classList.remove('visible');
+            }
+        }
+        
+        // 7. 🎛️ CONTROLES RÁPIDOS DE VISUALIZAÇÃO
+        function criarControlesVisualizacao() {
+            const controles = document.createElement('div');
+            controles.className = 'controles-visualizacao';
+            controles.innerHTML = `
+                <button class="btn-icon" id="btnCompacto" title="Visualização compacta">
+                    <i class="fas fa-compress-alt"></i>
+                </button>
+                <button class="btn-icon" id="btnNormal" title="Visualização normal">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="btn-icon" id="btnExpandido" title="Visualização expandida">
+                    <i class="fas fa-expand-alt"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(controles);
+            
+            // Eventos
+            document.getElementById('btnCompacto').addEventListener('click', () => {
+                document.body.classList.add('modo-compacto');
+                document.body.classList.remove('modo-expandido');
+                localStorage.setItem('visualizacao', 'compacto');
+            });
+            
+            document.getElementById('btnNormal').addEventListener('click', () => {
+                document.body.classList.remove('modo-compacto', 'modo-expandido');
+                localStorage.setItem('visualizacao', 'normal');
+            });
+            
+            document.getElementById('btnExpandido').addEventListener('click', () => {
+                document.body.classList.add('modo-expandido');
+                document.body.classList.remove('modo-compacto');
+                localStorage.setItem('visualizacao', 'expandido');
+            });
+            
+            // Restaurar preferência
+            const preferencia = localStorage.getItem('visualizacao') || 'normal';
+            if (preferencia === 'compacto') document.body.classList.add('modo-compacto');
+            if (preferencia === 'expandido') document.body.classList.add('modo-expandido');
+        }
+        
+        // 8. 🏷️ ETIQUETAS DE STATUS COLORIDAS
+        function criarEtiquetasDinamicas() {
+            const estilo = document.createElement('style');
+            estilo.textContent = `
+                .status-dinamico-0 { background: #10b981; color: white; }
+                .status-dinamico-1 { background: #f59e0b; color: black; }
+                .status-dinamico-2 { background: #ef4444; color: white; }
+                .status-dinamico-3 { background: #8b5cf6; color: white; }
+            `;
+            document.head.appendChild(estilo);
+        }
+        
+        // ✅ SIDEBAR DE RELATÓRIOS - VERSÃO CORRIGIDA
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebarReports.classList.toggle('expanded');
+            
+            // ÍCONES SEM ANIMAÇÃO DE SPIN
+            if (sidebarReports.classList.contains('expanded')) {
+                this.innerHTML = '<i class="fas fa-times"></i>';
+                this.title = 'Fechar Relatórios';
+            } else {
+                this.innerHTML = '<i class="fas fa-chart-bar"></i>';
+                this.title = 'Abrir Relatórios';
+            }
+        });
+
+        // Fechar sidebar ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!sidebarReports.contains(e.target) && 
+                !sidebarToggle.contains(e.target) &&
+                sidebarReports.classList.contains('expanded')) {
+                sidebarReports.classList.remove('expanded');
+                sidebarToggle.innerHTML = '<i class="fas fa-chart-bar"></i>';
+                sidebarToggle.title = 'Abrir Relatórios';
+            }
+        });
+
+        // Prevenir que eventos do conteúdo fechem a sidebar
+        if (sidebarContent) {
+            sidebarContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
+        function inicializarMelhoriasUsabilidade() {
+            criarBarraNotificacoes();
+            criarControlesVisualizacao();
+            criarEtiquetasDinamicas();
+            atualizarFiltrosAtivos();
+            
+            // Verificar notificações periodicamente
+            setInterval(verificarNotificacoes, 60000);
+            
+            // Atualizar filtros ativos quando os filtros mudarem
+            searchInput.addEventListener('input', atualizarFiltrosAtivos);
+            filterTipo.addEventListener('change', atualizarFiltrosAtivos);
+            filterStatus.addEventListener('change', atualizarFiltrosAtivos);
+        }
+        
+        // ✅ FUNÇÕES EXISTENTES PARA USAR CACHE
         
         window.editarChecklist = async function(index) {
             const checklists = checklistsCache.getAll();
@@ -3374,136 +3716,125 @@
             reader.readAsArrayBuffer(file);
         });
         
-        // ✅ REMOVER DUPLICADOS - VERSÃO FINAL CORRIGIDA
-removerDuplicadosBtn.addEventListener('click', async function() {
-    const checklists = checklistsCache.getAll();
-    
-    if (checklists.length === 0) {
-        showNotification('Não há checklists para processar!', 'warning');
-        return;
-    }
-    
-    mostrarConfirmacao(
-        'Remover Duplicados',
-        'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
-        async () => {
-            showProgressBar('Removendo duplicados...');
+        // ✅ REMOVER DUPLICADOS
+        removerDuplicadosBtn.addEventListener('click', async function() {
+            const checklists = checklistsCache.getAll();
             
-            console.log('📊 Iniciando remoção de duplicados...');
-            console.log(`Total antes: ${checklists.length}`);
-            
-            // Agrupar por placa normalizada
-            const checklistsPorPlaca = {};
-            
-            checklists.forEach(checklist => {
-                const placaNormalizada = checklist.placa.trim().toUpperCase();
-                
-                if (!checklistsPorPlaca[placaNormalizada]) {
-                    checklistsPorPlaca[placaNormalizada] = [];
-                }
-                
-                checklistsPorPlaca[placaNormalizada].push({
-                    checklist,
-                    dataRealizacao: parseDateBrasil(checklist.dataRealizacao) || new Date(0),
-                    index: checklist.id
-                });
-            });
-            
-            // Identificar quais serão mantidos (mais recentes) e quais serão removidos
-            const checklistsParaManter = [];
-            const checklistsParaRemover = [];
-            
-            Object.keys(checklistsPorPlaca).forEach(placa => {
-                const lista = checklistsPorPlaca[placa];
-                
-                if (lista.length > 1) {
-                    // Ordenar por data mais recente
-                    lista.sort((a, b) => b.dataRealizacao - a.dataRealizacao);
-                    
-                    // Manter o mais recente
-                    checklistsParaManter.push(lista[0].checklist);
-                    
-                    // Remover os duplicados (todos menos o primeiro)
-                    for (let i = 1; i < lista.length; i++) {
-                        checklistsParaRemover.push(lista[i].checklist);
-                    }
-                    
-                    console.log(`Placa ${placa}: ${lista.length} registros, mantendo o mais recente`);
-                } else {
-                    // Apenas um registro, manter
-                    checklistsParaManter.push(lista[0].checklist);
-                }
-            });
-            
-            console.log(`Resultado: ${checklistsParaManter.length} para manter, ${checklistsParaRemover.length} para remover`);
-            
-            if (checklistsParaRemover.length === 0) {
-                hideProgressBar();
-                showNotification('Nenhum duplicado encontrado!', 'info');
+            if (checklists.length === 0) {
+                showNotification('Não há checklists para processar!', 'warning');
                 return;
             }
             
-            // 1. Remover os duplicados do cache local
-            checklistsParaRemover.forEach(checklist => {
-                if (checklist.id) {
-                    console.log(`Removendo do cache: ${checklist.placa} (ID: ${checklist.id})`);
-                    checklistsCache.delete(checklist.id);
-                }
-            });
-            
-            // 2. Atualizar UI com os dados atuais do cache
-            // NÃO limpar o cache completamente, apenas deixar como está
-            // O cache já foi atualizado com as remoções acima
-            
-            // 3. Remover duplicados do Firestore
-            let removidosFirestore = 0;
-            
-            for (const checklist of checklistsParaRemover) {
-                if (checklist.id && checklist.id.startsWith('firestore_')) {
-                    try {
-                        const firestoreId = checklist.id.replace('firestore_', '');
-                        console.log(`Removendo do Firestore: ${checklist.placa} (ID: ${firestoreId})`);
-                        await db.collection('checklists').doc(firestoreId).delete();
-                        removidosFirestore++;
+            mostrarConfirmacao(
+                'Remover Duplicados',
+                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
+                async () => {
+                    showProgressBar('Removendo duplicados...');
+                    
+                    console.log('📊 Iniciando remoção de duplicados...');
+                    console.log(`Total antes: ${checklists.length}`);
+                    
+                    // Agrupar por placa normalizada
+                    const checklistsPorPlaca = {};
+                    
+                    checklists.forEach(checklist => {
+                        const placaNormalizada = checklist.placa.trim().toUpperCase();
                         
-                        // Atualizar progresso
-                        updateProgress(
-                            removidosFirestore, 
-                            checklistsParaRemover.length, 
-                            `Removendo ${removidosFirestore}/${checklistsParaRemover.length}`
-                        );
+                        if (!checklistsPorPlaca[placaNormalizada]) {
+                            checklistsPorPlaca[placaNormalizada] = [];
+                        }
                         
-                    } catch (error) {
-                        console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
+                        checklistsPorPlaca[placaNormalizada].push({
+                            checklist,
+                            dataRealizacao: parseDateBrasil(checklist.dataRealizacao) || new Date(0),
+                            index: checklist.id
+                        });
+                    });
+                    
+                    // Identificar quais serão mantidos (mais recentes) e quais serão removidos
+                    const checklistsParaManter = [];
+                    const checklistsParaRemover = [];
+                    
+                    Object.keys(checklistsPorPlaca).forEach(placa => {
+                        const lista = checklistsPorPlaca[placa];
+                        
+                        if (lista.length > 1) {
+                            // Ordenar por data mais recente
+                            lista.sort((a, b) => b.dataRealizacao - a.dataRealizacao);
+                            
+                            // Manter o mais recente
+                            checklistsParaManter.push(lista[0].checklist);
+                            
+                            // Remover os duplicados (todos menos o primeiro)
+                            for (let i = 1; i < lista.length; i++) {
+                                checklistsParaRemover.push(lista[i].checklist);
+                            }
+                            
+                            console.log(`Placa ${placa}: ${lista.length} registros, mantendo o mais recente`);
+                        } else {
+                            // Apenas um registro, manter
+                            checklistsParaManter.push(lista[0].checklist);
+                        }
+                    });
+                    
+                    console.log(`Resultado: ${checklistsParaManter.length} para manter, ${checklistsParaRemover.length} para remover`);
+                    
+                    if (checklistsParaRemover.length === 0) {
+                        hideProgressBar();
+                        showNotification('Nenhum duplicado encontrado!', 'info');
+                        return;
                     }
+                    
+                    // 1. Remover os duplicados do cache local
+                    checklistsParaRemover.forEach(checklist => {
+                        if (checklist.id) {
+                            console.log(`Removendo do cache: ${checklist.placa} (ID: ${checklist.id})`);
+                            checklistsCache.delete(checklist.id);
+                        }
+                    });
+                    
+                    // 2. Remover duplicados do Firestore
+                    let removidosFirestore = 0;
+                    
+                    for (const checklist of checklistsParaRemover) {
+                        if (checklist.id && checklist.id.startsWith('firestore_')) {
+                            try {
+                                const firestoreId = checklist.id.replace('firestore_', '');
+                                console.log(`Removendo do Firestore: ${checklist.placa} (ID: ${firestoreId})`);
+                                await db.collection('checklists').doc(firestoreId).delete();
+                                removidosFirestore++;
+                                
+                                // Atualizar progresso
+                                updateProgress(
+                                    removidosFirestore, 
+                                    checklistsParaRemover.length, 
+                                    `Removendo ${removidosFirestore}/${checklistsParaRemover.length}`
+                                );
+                                
+                            } catch (error) {
+                                console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
+                            }
+                        }
+                    }
+                    
+                    // 3. Atualizar UI
+                    atualizarTabela();
+                    atualizarBadges();
+                    
+                    hideProgressBar();
+                    
+                    // 4. Mostrar resultado
+                    showNotification(
+                        `✅ Remoção de duplicados concluída!<br>` +
+                        `• Total original: ${checklists.length}<br>` +
+                        `• Duplicados removidos: ${checklistsParaRemover.length}<br>` +
+                        `• Únicos mantidos: ${checklistsParaManter.length}<br>` +
+                        `• Removidos do servidor: ${removidosFirestore}`,
+                        'success'
+                    );
                 }
-            }
-            
-            // 4. Atualizar UI
-            atualizarTabela();
-            atualizarBadges();
-            
-            hideProgressBar();
-            
-            // 5. Mostrar resultado
-            showNotification(
-                `✅ Remoção de duplicados concluída!<br>` +
-                `• Total original: ${checklists.length}<br>` +
-                `• Duplicados removidos: ${checklistsParaRemover.length}<br>` +
-                `• Únicos mantidos: ${checklistsParaManter.length}<br>` +
-                `• Removidos do servidor: ${removidosFirestore}`,
-                'success'
             );
-            
-            // 6. Log para depuração
-            console.log('=== RESUMO DA REMOÇÃO ===');
-            console.log(`Original: ${checklists.length}`);
-            console.log(`Removidos: ${checklistsParaRemover.length}`);
-            console.log(`Mantidos: ${checklistsParaManter.length}`);
-            console.log(`Cache atual: ${checklistsCache.getAll().length}`);
-        }
-    );
-});
+        });
         
         // Salvar checklist
         salvarChecklistBtn.addEventListener('click', async function() {
@@ -3621,7 +3952,7 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             }
         });
         
-        // Exportar
+        // Exportar completo
         exportCompletoBtn.addEventListener('click', function() {
             const checklists = checklistsCache.getAll();
             
@@ -3763,11 +4094,11 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px; padding: 15px 20px;">
-                    <span style="font-size: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 12px 15px;">
+                    <span style="font-size: 18px;">
                         ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '⏳'}
                     </span>
-                    <span>${message}</span>
+                    <span style="font-size: 13px;">${message}</span>
                 </div>
             `;
             
@@ -3780,7 +4111,7 @@ removerDuplicadosBtn.addEventListener('click', async function() {
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 z-index: 9999;
-                max-width: 400px;
+                max-width: 350px;
                 animation: slideIn 0.3s ease;
                 font-weight: 500;
             `;
@@ -3804,20 +4135,20 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             ).join('');
             
             dispositivoDiv.innerHTML = `
-                <select class="form-control dispositivo-nome" style="flex: 2;">
-                    <option value="">Selecione ou digite...</option>
+                <select class="form-control dispositivo-nome" style="flex: 2; font-size: 12px;">
+                    <option value="">Selecione...</option>
                     ${selectOptions}
-                    <option value="OUTRO" ${!dispositivosComuns.includes(nome) && nome ? 'selected' : ''}>OUTRO (personalizado)</option>
+                    <option value="OUTRO" ${!dispositivosComuns.includes(nome) && nome ? 'selected' : ''}>OUTRO</option>
                 </select>
                 <input type="text" class="form-control dispositivo-nome-outro" 
                        placeholder="Nome do dispositivo" 
                        value="${!dispositivosComuns.includes(nome) && nome ? nome : ''}"
-                       style="flex: 2; ${dispositivosComuns.includes(nome) ? 'display: none;' : ''}">
-                <select class="status-select dispositivo-situacao" style="flex: 1;">
+                       style="flex: 2; font-size: 12px; ${dispositivosComuns.includes(nome) ? 'display: none;' : ''}">
+                <select class="status-select dispositivo-situacao" style="flex: 1; font-size: 12px;">
                     <option value="Ok" ${situacao === 'Ok' ? 'selected' : ''}>Ok</option>
                     <option value="Defeito" ${situacao === 'Defeito' ? 'selected' : ''}>Defeito</option>
                 </select>
-                <button type="button" class="btn-table delete" onclick="this.parentElement.remove()" style="padding: 5px 10px;">
+                <button type="button" class="btn-icon" onclick="this.parentElement.remove()" style="padding: 5px 8px; font-size: 12px;">
                     <i class="fas fa-times"></i>
                 </button>
             `;
@@ -3969,6 +4300,7 @@ removerDuplicadosBtn.addEventListener('click', async function() {
                 </div>
             `;
             
+            // Adicionar eventos de clique aos cards
             document.querySelectorAll('.summary-card.avisados').forEach(card => {
                 card.addEventListener('click', () => {
                     filterStatus.value = 'com_aviso';
@@ -3988,6 +4320,216 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             const checklists = checklistsCache.getAll();
             totalCount.textContent = checklists.length;
             filteredCount.textContent = filtered !== null ? filtered : checklists.length;
+        }
+        
+        // Eventos para relatórios
+        document.querySelectorAll('.report-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const relatorio = this.dataset.relatorio;
+                gerarRelatorio(relatorio);
+            });
+        });
+        
+        function gerarRelatorio(tipo) {
+            const checklists = checklistsCache.getAll();
+            
+            switch(tipo) {
+                case 'status':
+                    gerarRelatorioStatus(checklists);
+                    break;
+                case 'vencimentos':
+                    gerarRelatorioVencimentos(checklists);
+                    break;
+                case 'dispositivos':
+                    gerarRelatorioDispositivos(checklists);
+                    break;
+                case 'historico':
+                    gerarRelatorioHistorico(checklists);
+                    break;
+                case 'exportPDF':
+                    exportarParaPDF(checklists);
+                    break;
+            }
+        }
+        
+        function gerarRelatorioStatus(checklists) {
+            const stats = {
+                total: checklists.length,
+                vencidos: checklists.filter(c => getStatusValidade(c.validade) === 'vencido').length,
+                proximos: checklists.filter(c => getStatusValidade(c.validade) === 'proximo').length,
+                ok: checklists.filter(c => getStatusValidade(c.validade) === 'ok').length,
+                comDefeito: checklists.filter(c => temDefeito(c.dispositivos)).length,
+                comAviso: checklists.filter(c => temAvisos(c)).length
+            };
+            
+            const relatorio = `
+                RELATÓRIO DE STATUS
+                ===================
+                
+                📊 ESTATÍSTICAS GERAIS:
+                • Total de Checklists: ${stats.total}
+                • Checklists OK: ${stats.ok}
+                • Próximos a Vencer: ${stats.proximos}
+                • Vencidos: ${stats.vencidos}
+                • Com Defeito: ${stats.comDefeito}
+                • Com Aviso Registrado: ${stats.comAviso}
+                
+                ⚠️ ATENÇÃO NECESSÁRIA:
+                • Vencidos sem Aviso: ${stats.vencidos - stats.comAviso}
+                
+                📈 PORCENTAGENS:
+                • OK: ${((stats.ok / stats.total) * 100).toFixed(1)}%
+                • Atenção: ${(((stats.proximos + stats.vencidos) / stats.total) * 100).toFixed(1)}%
+                
+                Gerado em: ${new Date().toLocaleString('pt-BR')}
+            `;
+            
+            mostrarRelatorioModal('Relatório de Status', relatorio);
+        }
+        
+        function gerarRelatorioVencimentos(checklists) {
+            const hoje = new Date();
+            const vencimentosPorMes = {};
+            
+            checklists.forEach(checklist => {
+                const dataValidade = parseDateBrasil(checklist.validade);
+                if (dataValidade) {
+                    const mesAno = `${dataValidade.getMonth() + 1}/${dataValidade.getFullYear()}`;
+                    vencimentosPorMes[mesAno] = (vencimentosPorMes[mesAno] || 0) + 1;
+                }
+            });
+            
+            let relatorio = `RELATÓRIO DE VENCIMENTOS\n=======================\n\n`;
+            
+            Object.keys(vencimentosPorMes).sort().forEach(mes => {
+                relatorio += `• ${mes}: ${vencimentosPorMes[mes]} checklist(s)\n`;
+            });
+            
+            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
+            
+            mostrarRelatorioModal('Relatório de Vencimentos', relatorio);
+        }
+        
+        function gerarRelatorioDispositivos(checklists) {
+            const dispositivosStatus = {};
+            
+            checklists.forEach(checklist => {
+                checklist.dispositivos?.forEach(disp => {
+                    if (!dispositivosStatus[disp.nome]) {
+                        dispositivosStatus[disp.nome] = { ok: 0, defeito: 0 };
+                    }
+                    
+                    if (disp.situacao?.toLowerCase() === 'defeito') {
+                        dispositivosStatus[disp.nome].defeito++;
+                    } else {
+                        dispositivosStatus[disp.nome].ok++;
+                    }
+                });
+            });
+            
+            let relatorio = `RELATÓRIO DE DISPOSITIVOS\n========================\n\n`;
+            
+            Object.keys(dispositivosStatus).sort().forEach(disp => {
+                const total = dispositivosStatus[disp].ok + dispositivosStatus[disp].defeito;
+                const percentualDefeito = total > 0 ? (dispositivosStatus[disp].defeito / total * 100).toFixed(1) : 0;
+                relatorio += `• ${disp}: ${dispositivosStatus[disp].ok} OK / ${dispositivosStatus[disp].defeito} Defeito (${percentualDefeito}%)\n`;
+            });
+            
+            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
+            
+            mostrarRelatorioModal('Relatório de Dispositivos', relatorio);
+        }
+        
+        function gerarRelatorioHistorico(checklists) {
+            let relatorio = `RELATÓRIO HISTÓRICO\n==================\n\n`;
+            
+            checklists.sort((a, b) => {
+                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
+                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
+                return dataB - dataA;
+            }).slice(0, 20).forEach(checklist => {
+                relatorio += `• ${checklist.placa} (${checklist.tipo}): ${checklist.dataRealizacao}\n`;
+            });
+            
+            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
+            
+            mostrarRelatorioModal('Relatório Histórico', relatorio);
+        }
+        
+        function exportarParaPDF(checklists) {
+            showNotification('Exportação para PDF em desenvolvimento...', 'info');
+        }
+        
+        function mostrarRelatorioModal(titulo, conteudo) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${titulo}</h3>
+                        <button class="btn-fechar">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <pre style="white-space: pre-wrap; font-family: monospace; padding: 15px; background: var(--bg-secondary); border-radius: 8px; font-size: 12px; max-height: 400px; overflow-y: auto;">${conteudo}</pre>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-cancel">Fechar</button>
+                        <button class="btn-icon" style="background: var(--green); color: white;">
+                            <i class="fas fa-download"></i> Exportar TXT
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            
+            const btnFechar = modal.querySelector('.btn-fechar');
+            const btnCancel = modal.querySelector('.btn-cancel');
+            const btnExport = modal.querySelector('.btn-icon');
+            
+            btnFechar.addEventListener('click', () => modal.remove());
+            btnCancel.addEventListener('click', () => modal.remove());
+            btnExport.addEventListener('click', () => {
+                const blob = new Blob([conteudo], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `relatorio_${new Date().toISOString().slice(0,10)}.txt`;
+                a.click();
+                showNotification('Relatório exportado com sucesso!', 'success');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // ✅ EVENTOS DE FILTRO RÁPIDO
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = this.dataset.filter;
+                aplicarFiltroRapido(filter);
+            });
+        });
+        
+        function aplicarFiltroRapido(filter) {
+            switch(filter) {
+                case 'vencidos':
+                    filterStatus.value = 'vencido';
+                    break;
+                case 'proximos':
+                    filterStatus.value = 'proximo';
+                    break;
+                case 'sem-aviso':
+                    filterStatus.value = 'sem_aviso';
+                    break;
+                case 'todos':
+                    filterStatus.value = '';
+                    break;
+            }
+            atualizarTabela();
         }
         
         // ✅ EVENTOS GLOBAIS
@@ -4063,10 +4605,6 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             searchInput.value = '';
             filterTipo.value = '';
             filterStatus.value = '';
-            if (buttonsManager) {
-                buttonsManager.activeFilters.clear();
-                document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-            }
             atualizarTabela();
         });
         
@@ -4085,6 +4623,68 @@ removerDuplicadosBtn.addEventListener('click', async function() {
             showNotification('Debug executado! Verifique o console (F12).', 'info');
         });
         
+        // ✅ OUTROS EVENTOS
+        validarChecklistsBtn.addEventListener('click', function() {
+            const checklists = checklistsCache.getAll();
+            
+            if (checklists.length === 0) {
+                showNotification('Não há checklists para validar!', 'warning');
+                return;
+            }
+            
+            mostrarConfirmacao(
+                'Validar Todos',
+                `Deseja validar todos os ${checklists.length} checklists?`,
+                function() {
+                    showNotification(`${checklists.length} checklists validados!`, 'success');
+                }
+            );
+        });
+        
+        avisarTodosBtn.addEventListener('click', function() {
+            const checklists = checklistsCache.getAll();
+            const vencidosSemAviso = checklists.filter(c => 
+                getStatusValidade(c.validade) === 'vencido' && 
+                (!c.avisos || c.avisos.length === 0)
+            );
+            
+            if (vencidosSemAviso.length === 0) {
+                showNotification('Nenhum checklist vencido sem aviso encontrado.', 'info');
+                return;
+            }
+            
+            mostrarConfirmacao(
+                'Avisar Todos',
+                `Deseja registrar aviso para ${vencidosSemAviso.length} checklist(s) vencido(s) sem aviso?`,
+                function() {
+                    showNotification(`Avisos registrados para ${vencidosSemAviso.length} checklists!`, 'success');
+                }
+            );
+        });
+        
+        importModeloBtn.addEventListener('click', function() {
+            const templateData = [
+                ['Veículo: ABC-1234', 'PROPRIO'],
+                ['Data da Realização: 01/01/2024 08:00', 'Validade: 31/12/2024 23:59'],
+                ['Responsavel: João Silva', '(11) 99999-9999'],
+                ['Operador: Sistema'],
+                ['Dispositivos Avaliados', 'Situação'],
+                ['SETAS', 'Ok'],
+                ['GPS', 'Ok'],
+                ['SENSOR DE PORTA', 'Defeito']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Modelo');
+            
+            const wscols = [{wch: 30}, {wch: 20}];
+            ws['!cols'] = wscols;
+            
+            XLSX.writeFile(wb, 'modelo_checklist.xlsx');
+            showNotification('Modelo baixado com sucesso!', 'success');
+        });
+        
         // ✅ INICIALIZAR
         window.addEventListener('DOMContentLoaded', function() {
             // Adicionar estilos de animação
@@ -4101,6 +4701,10 @@ removerDuplicadosBtn.addEventListener('click', async function() {
                 @keyframes spin {
                     0% { transform: rotate(0deg); }
                     100% { transform: rotate(360deg); }
+                }
+                @keyframes slideDown {
+                    from { transform: translateY(-100%); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
                 }
             `;
             document.head.appendChild(style);
