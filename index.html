@@ -3374,63 +3374,116 @@
             reader.readAsArrayBuffer(file);
         });
         
-        // ✅ REMOVER DUPLICADOS - CORREÇÃO APLICADA
-        removerDuplicadosBtn.addEventListener('click', async function() {
-            const checklists = checklistsCache.getAll();
+        // ✅ REMOVER DUPLICADOS - VERSÃO CORRIGIDA
+removerDuplicadosBtn.addEventListener('click', async function() {
+    const checklists = checklistsCache.getAll();
+    
+    if (checklists.length === 0) {
+        showNotification('Não há checklists para processar!', 'warning');
+        return;
+    }
+    
+    mostrarConfirmacao(
+        'Remover Duplicados',
+        'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
+        async () => {
+            showProgressBar('Removendo duplicados...');
             
-            if (checklists.length === 0) {
-                showNotification('Não há checklists para processar!', 'warning');
-                return;
+            const uniquePlacas = new Map();
+            
+            // Ordenar por data mais recente
+            const checklistsOrdenados = [...checklists].sort((a, b) => {
+                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
+                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
+                return dataB - dataA; // Mais recente primeiro
+            });
+            
+            // Identificar quais serão mantidos (mais recentes) e quais serão removidos (duplicados)
+            const checklistsParaManter = [];
+            const checklistsParaRemover = [];
+            
+            checklistsOrdenados.forEach(checklist => {
+                const placaNormalizada = checklist.placa.trim().toUpperCase();
+                
+                if (!uniquePlacas.has(placaNormalizada)) {
+                    // Primeira ocorrência desta placa - MANTER
+                    uniquePlacas.set(placaNormalizada, checklist);
+                    checklistsParaManter.push(checklist);
+                } else {
+                    // Placa duplicada - REMOVER
+                    checklistsParaRemover.push(checklist);
+                }
+            });
+            
+            console.log(`📊 Removendo duplicados: ${checklistsParaRemover.length} para remover, ${checklistsParaManter.length} para manter`);
+            
+            // 1. Remover os duplicados do cache local
+            checklistsParaRemover.forEach(checklist => {
+                if (checklist.id) {
+                    checklistsCache.delete(checklist.id);
+                }
+            });
+            
+            // 2. Se algum checklist mantido tiver ID local, substituir pelo ID original
+            checklistsParaManter.forEach(checklist => {
+                if (checklist.id && checklist.id.startsWith('local_')) {
+                    // Encontrar o checklist original no cache
+                    const checklistsOriginais = checklistsCache.getAll();
+                    const original = checklistsOriginais.find(c => 
+                        c.placa === checklist.placa && 
+                        c.id && 
+                        !c.id.startsWith('local_')
+                    );
+                    
+                    if (original) {
+                        // Usar o ID original (Firestore) para manter o checklist
+                        checklist.id = original.id;
+                    }
+                }
+            });
+            
+            // 3. Atualizar cache apenas com os mantidos
+            // Limpar cache completamente
+            checklistsCache.clear();
+            
+            // Adicionar apenas os checklists únicos
+            checklistsParaManter.forEach(checklist => {
+                const id = checklist.id || performanceManager.generateId();
+                checklistsCache.set(id, checklist);
+            });
+            
+            // 4. Atualizar UI IMEDIATAMENTE
+            atualizarTabela();
+            atualizarBadges();
+            
+            // 5. Remover duplicados do Firestore (apenas se forem documentos do Firestore)
+            let removidosFirestore = 0;
+            
+            for (const checklist of checklistsParaRemover) {
+                if (checklist.id && checklist.id.startsWith('firestore_')) {
+                    try {
+                        const firestoreId = checklist.id.replace('firestore_', '');
+                        await db.collection('checklists').doc(firestoreId).delete();
+                        removidosFirestore++;
+                    } catch (error) {
+                        console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
+                    }
+                }
             }
             
-            mostrarConfirmacao(
-                'Remover Duplicados',
-                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
-                async () => {
-                    showProgressBar('Removendo duplicados...');
-                    
-                    const uniquePlacas = new Map();
-                    
-                    // Ordenar por data mais recente
-                    const checklistsOrdenados = [...checklists].sort((a, b) => {
-                        const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
-                        const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
-                        return dataB - dataA;
-                    });
-                    
-                    // Manter apenas o mais recente de cada placa
-                    checklistsOrdenados.forEach(checklist => {
-                        const placaNormalizada = checklist.placa.trim().toUpperCase();
-                        if (!uniquePlacas.has(placaNormalizada)) {
-                            uniquePlacas.set(placaNormalizada, checklist);
-                        }
-                    });
-                    
-                    // Atualizar cache
-                    checklistsCache.clear();
-                    uniquePlacas.forEach((checklist, placa) => {
-                        checklistsCache.set(checklist.id || performanceManager.generateId(), checklist);
-                    });
-                    
-                    // Sincronizar
-                    await performanceManager.syncToFirebaseInBackground(
-                        Array.from(uniquePlacas.values()), 
-                        false
-                    );
-                    
-                    hideProgressBar();
-                    
-                    // ATUALIZAR A UI IMEDIATAMENTE - CORREÇÃO CRÍTICA
-                    atualizarTabela();
-                    atualizarBadges();
-                    
-                    showNotification(
-                        `${checklists.length - uniquePlacas.size} duplicados removidos! Mantidos: ${uniquePlacas.size} checklists únicos.`,
-                        'success'
-                    );
-                }
+            hideProgressBar();
+            
+            // Mostrar resumo
+            showNotification(
+                `✅ Remoção concluída!<br>` +
+                `• ${checklistsParaRemover.length} duplicados removidos<br>` +
+                `• ${checklistsParaManter.length} checklists únicos mantidos<br>` +
+                `• ${removidosFirestore} removidos do servidor`,
+                'success'
             );
-        });
+        }
+    );
+});
         
         // Salvar checklist
         salvarChecklistBtn.addEventListener('click', async function() {
