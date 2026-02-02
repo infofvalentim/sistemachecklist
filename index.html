@@ -222,7 +222,7 @@
         .header {
             background: linear-gradient(135deg, var(--primary-black) 0%, #2d2d2d 100%);
             color: white;
-            padding: 25px 30px;
+            padding: 25px 30px 0 30px;
             position: relative;
             border-bottom: 4px solid var(--primary-red);
         }
@@ -299,128 +299,190 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* 🎭 CONTROLES - REORGANIZADO */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            border-radius: var(--radius-md);
-            margin-top: 10px;
+        /* 🎨 SISTEMA DE ABAS E BOTÕES - NOVO DESIGN */
+        .action-system {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .control-group {
+        .action-tabs {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 2px;
+            padding: 10px 10px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .action-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .action-tab {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
             align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            position: relative;
         }
 
-        .control-group-title {
+        .action-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 12px;
+            transform: translateY(-1px);
+        }
+
+        .action-tab.active {
+            background: var(--bg-primary);
+            color: var(--primary-black);
             font-weight: 600;
-            margin-right: 5px;
-            opacity: 0.9;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Botões por grupo temático */
-        .control-group.import-export .btn {
-            background: var(--purple);
-            color: white;
+        .action-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-red);
+            border-radius: 3px 3px 0 0;
         }
 
-        .control-group.import-export .btn:hover {
-            background: var(--purple-dark);
+        /* CONTEÚDO DAS ABAS */
+        .action-content {
+            background: var(--bg-primary);
+            border-radius: 0 0 12px 12px;
+            padding: 25px;
+            min-height: 80px;
         }
 
-        .control-group.data-management .btn {
-            background: var(--blue);
-            color: white;
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
 
-        .control-group.data-management .btn:hover {
-            background: var(--blue-dark);
+        .tab-content.active {
+            display: block;
         }
 
-        .control-group.checklist-management .btn {
-            background: var(--green);
-            color: white;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .control-group.checklist-management .btn:hover {
-            background: var(--green-dark);
+        /* GRUPOS DE BOTÕES */
+        .button-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .control-group.system .btn {
-            color: white;
+        .button-group:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
         }
 
-        /* 🎭 BOTÕES ESPECÍFICOS */
-        .btn-success {
-            background: var(--green);
-            color: white;
+        .group-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
-        .btn-success:hover {
-            background: var(--green-dark);
-            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+        /* BOTÕES NOVOS - DESIGN MODERNO */
+        .btn-action {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 8px 8px 0;
+            font-size: 14px;
+            min-width: 160px;
+            justify-content: flex-start;
         }
 
-        .btn-warning {
-            background: var(--yellow);
-            color: black;
-        }
-
-        .btn-warning:hover {
-            background: var(--yellow-dark);
-            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-        }
-
-        .btn-info {
-            background: var(--blue);
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: var(--blue-dark);
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        .btn-danger {
+        .btn-action:hover {
             background: var(--primary-red);
             color: white;
+            border-color: var(--primary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
         }
 
-        .btn-danger:hover {
-            background: #cc0000;
-            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        .btn-action i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
         }
 
-        .btn-purple {
-            background: var(--purple);
+        .btn-action.danger {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #dc2626;
+        }
+
+        .btn-action.danger:hover {
+            background: #dc2626;
             color: white;
         }
 
-        .btn-purple:hover {
-            background: var(--purple-dark);
-            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        /* BOTÕES DE FILTRO */
+        .btn-filter {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 5px 5px 0;
         }
 
-        /* NOVO BOTÃO - REGISTRAR AVISO */
-        .btn-notify {
-            background: #f59e0b;
+        .btn-filter:hover {
+            background: var(--primary-red);
             color: white;
+            border-color: var(--primary-red);
         }
 
-        .btn-notify:hover {
-            background: #d97706;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        .btn-filter.active {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+            font-weight: 600;
         }
 
-        .file-input-container {
+        /* INPUT DE ARQUIVO MODERNO */
+        .file-input-wrapper {
             position: relative;
+            display: inline-block;
+            margin: 0 10px 10px 0;
         }
 
         .file-input {
@@ -429,18 +491,35 @@
             height: 100%;
             opacity: 0;
             cursor: pointer;
+            z-index: 2;
         }
 
-        .file-label {
-            background: #8b5cf6;
+        .btn-file {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 12px 25px;
-            border-radius: var(--radius-md);
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .btn-file:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-info {
+            display: block;
+            font-size: 11px;
+            color: var(--gray-text);
+            margin-top: 5px;
         }
 
         /* 📊 CARDS DE RESUMO - ATUALIZADO COM AVISOS */
@@ -775,63 +854,116 @@
             color: #065f46;
         }
 
-        /* 🎭 BOTÕES DE AÇÃO - ATUALIZADO COM BOTÃO DE AVISO */
+        /* 🎭 BOTÕES DE AÇÃO NA TABELA - DESIGN NOVO */
         .action-buttons {
             display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
+            gap: 8px;
+            flex-wrap: nowrap;
+            min-width: 200px;
         }
 
-        .btn-edit {
-            padding: 6px 12px;
-            background: var(--yellow);
-            color: black;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
+        .btn-table {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 500;
             font-size: 12px;
-            font-weight: 600;
-            transition: var(--transition);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+            min-width: 70px;
         }
 
-        .btn-edit:hover {
-            background: var(--yellow-dark);
+        .btn-table.edit {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+
+        .btn-table.edit:hover {
+            background: #fbbf24;
+            color: #451a03;
             transform: translateY(-1px);
         }
 
-        .btn-delete {
-            padding: 6px 12px;
+        .btn-table.delete {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .btn-table.delete:hover {
+            background: #ef4444;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-table.notify {
+            background: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #fdba74;
+        }
+
+        .btn-table.notify:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* BOTÃO FLUTUANTE PARA MOBILE */
+        .floating-action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background: var(--primary-red);
             color: white;
             border: none;
-            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
-        .btn-delete:hover {
-            background: #cc0000;
-            transform: translateY(-1px);
+        .floating-action-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
         }
 
-        /* NOVO BOTÃO DE AVISO */
-        .btn-notify-small {
-            padding: 6px 12px;
-            background: #f59e0b;
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: var(--transition);
+        .floating-menu {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            box-shadow: var(--shadow-heavy);
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+            min-width: 200px;
+            border: 1px solid var(--border-color);
         }
 
-        .btn-notify-small:hover {
-            background: #d97706;
-            transform: translateY(-1px);
+        .floating-menu.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* 🎭 MODAL DE EDITAR/CRIAR */
@@ -1007,6 +1139,24 @@
         }
 
         /* 🔄 MODO ESCURO ESPECÍFICO */
+        .dark-mode .action-system {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-mode .action-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .dark-mode .btn-action {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+
+        .dark-mode .btn-action:hover {
+            background: var(--primary-red);
+        }
+
         .dark-mode .tipo-proprio {
             background: #1e3a8a;
             color: #dbeafe;
@@ -1054,7 +1204,6 @@
             color: #d1fae5;
         }
 
-        /* CORES MELHORADAS PARA MODO ESCURO */
         .dark-mode tbody tr.vencido {
             background: #4a1e1e !important;
             border-left: 3px solid #dc2626;
@@ -1073,7 +1222,54 @@
             background: #6b4706 !important;
         }
 
+        /* BARRA DE PROGRESSO */
+        .progress-bar-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-primary);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 9999;
+            min-width: 300px;
+            text-align: center;
+            display: none;
+        }
+
+        .progress-bar {
+            background: var(--bg-secondary);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
         /* 📱 RESPONSIVIDADE */
+        @media (max-width: 1024px) {
+            .action-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .btn-action {
+                min-width: 140px;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .action-content {
+                padding: 15px;
+            }
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -1085,20 +1281,12 @@
                 text-align: center;
             }
             
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
+            .action-system {
+                display: none;
             }
             
-            .control-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .control-group-title {
-                text-align: center;
-                margin-bottom: 5px;
-                margin-right: 0;
+            .floating-action-btn {
+                display: flex;
             }
             
             .summary-cards {
@@ -1131,6 +1319,17 @@
             
             .action-buttons {
                 flex-direction: column;
+            }
+            
+            .button-group {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .btn-action {
+                width: 100%;
+                margin: 0 0 10px 0;
             }
         }
         
@@ -1232,53 +1431,158 @@
                 </div>
             </div>
             
-            <!-- 🎭 CONTROLES REORGANIZADOS -->
-            <div class="controls">
-                <!-- Grupo 1: Importação/Exportação -->
-                <div class="control-group import-export">
-                    <span class="control-group-title">Arquivos:</span>
-                    <div class="file-input-container">
-                        <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
-                        <label for="fileInput" class="btn">
-                            <i class="fas fa-file-import"></i> Importar Excel
-                        </label>
+            <!-- 🎨 NOVO SISTEMA DE ABAS E BOTÕES -->
+            <div class="action-system">
+                <!-- 🏷️ ABA PRINCIPAL -->
+                <div class="action-tabs">
+                    <button class="action-tab active" data-tab="geral">
+                        <i class="fas fa-home"></i> Geral
+                    </button>
+                    <button class="action-tab" data-tab="importacao">
+                        <i class="fas fa-file-import"></i> Arquivos
+                    </button>
+                    <button class="action-tab" data-tab="checklist">
+                        <i class="fas fa-clipboard-check"></i> Checklist
+                    </button>
+                    <button class="action-tab" data-tab="relatorios">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </button>
+                    <button class="action-tab" data-tab="sistema">
+                        <i class="fas fa-cog"></i> Sistema
+                    </button>
+                </div>
+                
+                <!-- 🎭 CONTEÚDO DAS ABAS -->
+                <div class="action-content">
+                    <!-- 🟢 ABA GERAL -->
+                    <div class="tab-content active" id="tab-geral">
+                        <div class="button-group">
+                            <span class="group-label">Filtros Rápidos</span>
+                            <button class="btn-filter" data-filter="vencidos">
+                                <i class="fas fa-exclamation-triangle"></i> Vencidos
+                            </button>
+                            <button class="btn-filter" data-filter="proximos">
+                                <i class="fas fa-clock"></i> Próximos
+                            </button>
+                            <button class="btn-filter" data-filter="sem-aviso">
+                                <i class="fas fa-bell-slash"></i> Sem Aviso
+                            </button>
+                            <button class="btn-filter" data-filter="todos">
+                                <i class="fas fa-list"></i> Ver Todos
+                            </button>
+                        </div>
+                        
+                        <div class="button-group">
+                            <span class="group-label">Ações Rápidas</span>
+                            <button class="btn-action" id="novoChecklistBtn">
+                                <i class="fas fa-plus-circle"></i> Novo Checklist
+                            </button>
+                            <button class="btn-action" id="exportRapidoBtn">
+                                <i class="fas fa-file-export"></i> Exportar Seleção
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn" id="exportBtn">
-                        <i class="fas fa-file-export"></i> Exportar
-                    </button>
-                </div>
-                
-                <!-- Grupo 2: Gerenciamento de Dados -->
-                <div class="control-group data-management">
-                    <span class="control-group-title">Dados:</span>
-                    <button class="btn" id="removerDuplicadosBtn">
-                        <i class="fas fa-filter"></i> Remover Duplicados
-                    </button>
-                    <button class="btn" id="debugBtn">
-                        <i class="fas fa-bug"></i> Debug
-                    </button>
-                </div>
-                
-                <!-- Grupo 3: Checklist -->
-                <div class="control-group checklist-management">
-                    <span class="control-group-title">Checklist:</span>
-                    <button class="btn" id="novoChecklistBtn">
-                        <i class="fas fa-plus"></i> Novo Checklist
-                    </button>
-                </div>
-                
-                <!-- Grupo 4: Sistema -->
-                <div class="control-group system">
-                    <span class="control-group-title">Sistema:</span>
-                    <button class="btn" id="btnDarkMode">
-                        <i class="fas fa-moon"></i> Modo Escuro
-                    </button>
-                    <button class="btn" id="backupBtn" style="background: #10b981;">
-                        <i class="fas fa-database"></i> Backup
-                    </button>
-                    <button class="btn" id="limparTudoBtn" style="background: #dc2626;">
-                        <i class="fas fa-trash-alt"></i> Limpar Tudo
-                    </button>
+                    
+                    <!-- 📁 ABA ARQUIVOS -->
+                    <div class="tab-content" id="tab-importacao">
+                        <div class="button-group">
+                            <span class="group-label">Importar Dados</span>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+                                <label for="fileInput" class="btn-file">
+                                    <i class="fas fa-file-excel"></i> Importar Excel
+                                </label>
+                                <span class="file-info">Formatos: .xlsx, .xls</span>
+                            </div>
+                            <button class="btn-action" id="importModeloBtn">
+                                <i class="fas fa-download"></i> Baixar Modelo
+                            </button>
+                        </div>
+                        
+                        <div class="button-group">
+                            <span class="group-label">Exportar Dados</span>
+                            <button class="btn-action" id="exportCompletoBtn">
+                                <i class="fas fa-file-export"></i> Exportar Completo
+                            </button>
+                            <button class="btn-action" id="exportPDFBtn">
+                                <i class="fas fa-file-pdf"></i> Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 📋 ABA CHECKLIST -->
+                    <div class="tab-content" id="tab-checklist">
+                        <div class="button-group">
+                            <span class="group-label">Gerenciamento</span>
+                            <button class="btn-action" id="removerDuplicadosBtn">
+                                <i class="fas fa-filter"></i> Remover Duplicados
+                            </button>
+                            <button class="btn-action" id="validarChecklistsBtn">
+                                <i class="fas fa-check-double"></i> Validar Todos
+                            </button>
+                            <button class="btn-action" id="batchEditarBtn">
+                                <i class="fas fa-edit"></i> Edição em Lote
+                            </button>
+                        </div>
+                        
+                        <div class="button-group">
+                            <span class="group-label">Avisos</span>
+                            <button class="btn-action" id="avisarTodosBtn">
+                                <i class="fas fa-bullhorn"></i> Avisar Vencidos
+                            </button>
+                            <button class="btn-action" id="relatorioAvisosBtn">
+                                <i class="fas fa-chart-line"></i> Relatório Avisos
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 📊 ABA RELATÓRIOS -->
+                    <div class="tab-content" id="tab-relatorios">
+                        <div class="button-group">
+                            <span class="group-label">Relatórios</span>
+                            <button class="btn-action" data-relatorio="status">
+                                <i class="fas fa-chart-pie"></i> Status Geral
+                            </button>
+                            <button class="btn-action" data-relatorio="vencimentos">
+                                <i class="fas fa-calendar-times"></i> Vencimentos
+                            </button>
+                            <button class="btn-action" data-relatorio="dispositivos">
+                                <i class="fas fa-microchip"></i> Dispositivos
+                            </button>
+                            <button class="btn-action" data-relatorio="historico">
+                                <i class="fas fa-history"></i> Histórico
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- ⚙️ ABA SISTEMA -->
+                    <div class="tab-content" id="tab-sistema">
+                        <div class="button-group">
+                            <span class="group-label">Configurações</span>
+                            <button class="btn-action" id="btnDarkMode">
+                                <i class="fas fa-moon"></i> Modo Escuro
+                            </button>
+                            <button class="btn-action" id="backupBtn">
+                                <i class="fas fa-database"></i> Backup
+                            </button>
+                            <button class="btn-action" id="restoreBtn">
+                                <i class="fas fa-undo"></i> Restaurar
+                            </button>
+                        </div>
+                        
+                        <div class="button-group">
+                            <span class="group-label">Manutenção</span>
+                            <button class="btn-action" id="debugBtn">
+                                <i class="fas fa-bug"></i> Debug
+                            </button>
+                            <button class="btn-action" id="limparCacheBtn">
+                                <i class="fas fa-broom"></i> Limpar Cache
+                            </button>
+                            <button class="btn-action danger" id="limparTudoBtn">
+                                <i class="fas fa-trash-alt"></i> Limpar Tudo
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -1318,7 +1622,7 @@
                 <i class="fas fa-search"></i>
             </div>
             
-            <button class="btn btn-warning" id="limparFiltrosBtn">
+            <button class="btn-filter" id="limparFiltrosBtn">
                 <i class="fas fa-filter"></i> Limpar Filtros
             </button>
         </div>
@@ -1431,7 +1735,7 @@
                         <div class="dispositivos-container" id="dispositivosContainer">
                             <!-- Dispositivos serão adicionados dinamicamente -->
                         </div>
-                        <button type="button" class="btn btn-info" id="addDispositivoBtn" style="margin-top: 10px;">
+                        <button type="button" class="btn-action" id="addDispositivoBtn" style="margin-top: 10px;">
                             <i class="fas fa-plus"></i> Adicionar Dispositivo
                         </button>
                     </div>
@@ -1440,8 +1744,8 @@
             
             <div class="modal-actions">
                 <button class="btn-cancel" id="cancelarBtn">Cancelar</button>
-                <button class="btn btn-danger" id="excluirChecklistBtn" style="display: none;">Excluir</button>
-                <button class="btn btn-success" id="salvarChecklistBtn">Salvar Checklist</button>
+                <button class="btn-action danger" id="excluirChecklistBtn" style="display: none;">Excluir</button>
+                <button class="btn-action" id="salvarChecklistBtn" style="background: var(--green); color: white;">Salvar Checklist</button>
             </div>
         </div>
     </div>
@@ -1508,14 +1812,14 @@
             
             <div class="modal-actions">
                 <button class="btn-cancel" id="cancelarAvisoBtn">Cancelar</button>
-                <button class="btn btn-success" id="registrarAvisoBtn">
+                <button class="btn-action" id="registrarAvisoBtn" style="background: var(--green); color: white;">
                     <i class="fas fa-bell"></i> Registrar Aviso
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 🎭 MODAL DE CONFIRMAÇÃO PARA LIMPEZA -->
+    <!-- 🎭 MODAL DE CONFIRMAÇÃO -->
     <div class="modal" id="confirmacaoModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1524,15 +1828,13 @@
             </div>
             
             <div class="modal-body">
-                <div id="confirmacaoMensagem" style="padding: 20px; text-align: center;">
-                    <!-- Mensagem será preenchida via JavaScript -->
-                </div>
+                <div id="confirmacaoMensagem" style="padding: 20px; text-align: center;"></div>
                 
                 <div class="modal-actions" style="justify-content: center; gap: 20px;">
                     <button class="btn-cancel" id="cancelarConfirmacaoBtn">
                         <i class="fas fa-times"></i> Cancelar
                     </button>
-                    <button class="btn btn-danger" id="confirmarAcaoBtn">
+                    <button class="btn-action danger" id="confirmarAcaoBtn">
                         <i class="fas fa-check"></i> Confirmar
                     </button>
                 </div>
@@ -1540,8 +1842,44 @@
         </div>
     </div>
 
+    <!-- BARRA DE PROGRESSO -->
+    <div class="progress-bar-container" id="progressBar">
+        <h4 style="margin-bottom: 15px; color: var(--text-primary);">
+            <i class="fas fa-sync-alt fa-spin"></i> Processando...
+        </h4>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div id="progressText" style="color: var(--text-secondary); font-size: 14px;">
+            0 de 0 itens
+        </div>
+        <div style="margin-top: 15px; font-size: 12px; color: var(--gray-text);">
+            <i class="fas fa-info-circle"></i> Por favor, aguarde...
+        </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE MOBILE -->
+    <button id="floatingActionBtn" class="floating-action-btn">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <div id="floatingMenu" class="floating-menu">
+        <button class="btn-action" onclick="novoChecklistBtn.click()">
+            <i class="fas fa-plus"></i> Novo Checklist
+        </button>
+        <button class="btn-action" onclick="fileInput.click()">
+            <i class="fas fa-file-import"></i> Importar
+        </button>
+        <button class="btn-action" onclick="exportBtn.click()">
+            <i class="fas fa-file-export"></i> Exportar
+        </button>
+        <button class="btn-action" onclick="buttonsManager?.switchTab('relatorios')">
+            <i class="fas fa-chart-bar"></i> Relatórios
+        </button>
+    </div>
+
     <script>
-        // 🔥 CONFIGURAÇÃO DO FIREBASE COM SUAS CREDENCIAIS
+        // 🔥 CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAOQleL7RjbxTTvRbzsvrDtc0LedUG0MO4",
             authDomain: "sistema-checklists.firebaseapp.com",
@@ -1556,12 +1894,66 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Banco de dados em memória (COMPARTILHADO entre todos os usuários)
-        let checklists = [];
+        // Habilitar persistência para cache offline
+        db.enablePersistence().catch((err) => {
+            console.log("Persistência falhou: ", err.code);
+        });
+
+        // Banco de dados em memória com CACHE INTELIGENTE
+        class ChecklistCache {
+            constructor() {
+                this.cache = new Map();
+                this.lastSync = 0;
+                this.pendingOperations = new Map();
+                this.syncInterval = null;
+            }
+            
+            set(key, value) {
+                this.cache.set(key, value);
+                this.markForSync(key);
+                return value;
+            }
+            
+            get(key) {
+                return this.cache.get(key);
+            }
+            
+            getAll() {
+                return Array.from(this.cache.values());
+            }
+            
+            delete(key) {
+                this.cache.delete(key);
+                this.markForSync(key, true);
+            }
+            
+            clear() {
+                this.cache.clear();
+                this.pendingOperations.clear();
+            }
+            
+            markForSync(key, isDelete = false) {
+                this.pendingOperations.set(key, { 
+                    type: isDelete ? 'delete' : 'upsert', 
+                    timestamp: Date.now() 
+                });
+            }
+            
+            getPendingSync() {
+                return Array.from(this.pendingOperations.entries());
+            }
+            
+            clearPending(key) {
+                this.pendingOperations.delete(key);
+            }
+        }
+
+        let checklistsCache = new ChecklistCache();
         let editingIndex = -1;
         let isDarkMode = false;
         let avisoIndex = -1;
         let currentUser = null;
+        let buttonsManager = null;
         
         // Dispositivos comuns para referência
         const dispositivosComuns = [
@@ -1575,7 +1967,7 @@
             "TRAVA DE QUINTA RODA"
         ];
         
-        // Elementos DOM - Login
+        // Elementos DOM
         const loginContainer = document.getElementById('loginContainer');
         const mainContainer = document.getElementById('mainContainer');
         const loginForm = document.getElementById('loginForm');
@@ -1584,18 +1976,12 @@
         const loginBtn = document.getElementById('loginBtn');
         const loginBtnText = document.getElementById('loginBtnText');
         const loginLoading = document.getElementById('loginLoading');
-        const emailError = document.getElementById('emailError');
-        const passwordError = document.getElementById('passwordError');
         const logoutBtn = document.getElementById('logoutBtn');
-        
-        // Elementos DOM - Usuário
         const userAvatar = document.getElementById('userAvatar');
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
-        
-        // Elementos DOM - Sistema
         const fileInput = document.getElementById('fileInput');
-        const exportBtn = document.getElementById('exportBtn');
+        const exportBtn = document.getElementById('exportCompletoBtn');
         const removerDuplicadosBtn = document.getElementById('removerDuplicadosBtn');
         const novoChecklistBtn = document.getElementById('novoChecklistBtn');
         const searchInput = document.getElementById('searchInput');
@@ -1611,6 +1997,14 @@
         const debugBtn = document.getElementById('debugBtn');
         const backupBtn = document.getElementById('backupBtn');
         const limparTudoBtn = document.getElementById('limparTudoBtn');
+        const limparCacheBtn = document.getElementById('limparCacheBtn');
+        const restoreBtn = document.getElementById('restoreBtn');
+        const validarChecklistsBtn = document.getElementById('validarChecklistsBtn');
+        const avisarTodosBtn = document.getElementById('avisarTodosBtn');
+        const importModeloBtn = document.getElementById('importModeloBtn');
+        const batchEditarBtn = document.getElementById('batchEditarBtn');
+        const exportPDFBtn = document.getElementById('exportPDFBtn');
+        const exportRapidoBtn = document.getElementById('exportRapidoBtn');
         const fecharModal = document.getElementById('fecharModal');
         const cancelarBtn = document.getElementById('cancelarBtn');
         const salvarChecklistBtn = document.getElementById('salvarChecklistBtn');
@@ -1622,8 +2016,6 @@
         const totalCount = document.getElementById('totalCount');
         const filteredCount = document.getElementById('filteredCount');
         const avisadosCount = document.getElementById('avisadosCount');
-        
-        // Elementos do modal de aviso
         const fecharAvisoModal = document.getElementById('fecharAvisoModal');
         const cancelarAvisoBtn = document.getElementById('cancelarAvisoBtn');
         const registrarAvisoBtn = document.getElementById('registrarAvisoBtn');
@@ -1638,81 +2030,908 @@
         const avisoObservacao = document.getElementById('avisoObservacao');
         const listaAvisos = document.getElementById('listaAvisos');
         const historicoAvisos = document.getElementById('historicoAvisos');
-        
-        // Elementos do modal de confirmação
         const confirmacaoModal = document.getElementById('confirmacaoModal');
         const fecharConfirmacaoModal = document.getElementById('fecharConfirmacaoModal');
         const cancelarConfirmacaoBtn = document.getElementById('cancelarConfirmacaoBtn');
         const confirmarAcaoBtn = document.getElementById('confirmarAcaoBtn');
         const confirmacaoTitulo = document.getElementById('confirmacaoTitulo');
         const confirmacaoMensagem = document.getElementById('confirmacaoMensagem');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const floatingActionBtn = document.getElementById('floatingActionBtn');
+        const floatingMenu = document.getElementById('floatingMenu');
         
         let acaoConfirmadaCallback = null;
         
-        // ✅ FUNÇÃO: Mostrar modal de confirmação
-        function mostrarConfirmacao(titulo, mensagem, callback) {
-            confirmacaoTitulo.textContent = titulo;
-            confirmacaoMensagem.innerHTML = mensagem;
-            acaoConfirmadaCallback = callback;
-            confirmacaoModal.style.display = 'flex';
-        }
-        
-        // Eventos do modal de confirmação
-        fecharConfirmacaoModal.addEventListener('click', function() {
-            confirmacaoModal.style.display = 'none';
-            acaoConfirmadaCallback = null;
-        });
-        
-        cancelarConfirmacaoBtn.addEventListener('click', function() {
-            confirmacaoModal.style.display = 'none';
-            acaoConfirmadaCallback = null;
-            showNotification('Ação cancelada', 'info');
-        });
-        
-        confirmarAcaoBtn.addEventListener('click', async function() {
-            if (acaoConfirmadaCallback) {
-                confirmacaoModal.style.display = 'none';
-                await acaoConfirmadaCallback();
-                acaoConfirmadaCallback = null;
+        // 🚀 SISTEMA DE PERFORMANCE - Gerenciador de Cache e Sync
+        class PerformanceManager {
+            constructor() {
+                this.batchSize = 100;
+                this.maxConcurrent = 3;
+                this.syncQueue = [];
+                this.isSyncing = false;
             }
-        });
+            
+            // ✅ IMPORT ULTRA RÁPIDO COM BATCH
+            async importExcelUltraFast(jsonData) {
+                showProgressBar('Extraindo dados do Excel...');
+                
+                const startTime = performance.now();
+                const newChecklists = [];
+                const skipLines = new Set();
+                
+                // Extração rápida (síncrona)
+                for (let i = 0; i < jsonData.length; i++) {
+                    if (skipLines.has(i)) continue;
+                    
+                    const cellA = jsonData[i]?.[0]?.toString().trim() || '';
+                    
+                    if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
+                        const checklist = this.extractChecklistFast(jsonData, i);
+                        if (checklist?.placa) {
+                            newChecklists.push(checklist);
+                            
+                            // Marcar linhas para pular (otimização)
+                            for (let j = i + 1; j < Math.min(i + 15, jsonData.length); j++) {
+                                skipLines.add(j);
+                            }
+                        }
+                        i += 5;
+                    }
+                }
+                
+                updateProgress(0, newChecklists.length, 'Processando...');
+                
+                if (newChecklists.length === 0) {
+                    hideProgressBar();
+                    showNotification('Nenhum checklist encontrado no arquivo', 'warning');
+                    return { success: false };
+                }
+                
+                // 1. Adicionar ao cache local IMEDIATAMENTE (instantâneo)
+                const localIds = [];
+                newChecklists.forEach(checklist => {
+                    const id = this.generateId();
+                    const checklistCompleto = {
+                        id,
+                        ...checklist,
+                        criadoPor: currentUser.uid,
+                        criadoPorEmail: currentUser.email,
+                        criadoEm: new Date().toISOString(),
+                        synced: false
+                    };
+                    
+                    checklistsCache.set(id, checklistCompleto);
+                    localIds.push(id);
+                });
+                
+                // 2. Atualizar UI (instantâneo)
+                const checklists = checklistsCache.getAll();
+                atualizarTabela();
+                atualizarBadges();
+                
+                const uiTime = performance.now() - startTime;
+                console.log(`🎯 UI atualizada em ${uiTime.toFixed(0)}ms`);
+                
+                // 3. Sincronizar com Firebase em BACKGROUND (não bloqueante)
+                this.syncToFirebaseInBackground(newChecklists, false);
+                
+                hideProgressBar();
+                
+                return {
+                    success: true,
+                    imported: newChecklists.length,
+                    uiResponseTime: uiTime,
+                    immediate: true
+                };
+            }
+            
+            extractChecklistFast(data, startIndex) {
+                const checklist = {
+                    placa: '',
+                    tipo: 'PROPRIO',
+                    dataRealizacao: '',
+                    validade: '',
+                    responsavel: '',
+                    telefone: '',
+                    operador: '',
+                    dispositivos: [],
+                    avisos: [],
+                    importadoPor: currentUser.email,
+                    importadoEm: new Date().toISOString()
+                };
+                
+                const cellA = data[startIndex][0]?.toString().trim() || '';
+                const cellB = data[startIndex][1]?.toString().trim() || '';
+                
+                // Extrair placa
+                if (cellA.includes(';')) {
+                    const parts = cellA.split(';');
+                    checklist.placa = parts[0].split(':')[1]?.trim() || '';
+                    if (parts[1]) checklist.tipo = parts[1].trim().toUpperCase();
+                } else {
+                    checklist.placa = cellA.split(':')[1]?.trim() || '';
+                }
+                
+                // Extrair tipo da coluna B se disponível
+                if (cellB && ['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(cellB.toUpperCase())) {
+                    checklist.tipo = cellB.toUpperCase();
+                }
+                
+                // Buscar dados nas próximas linhas
+                for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
+                    const row = data[i];
+                    if (!row || row.length === 0) continue;
+                    
+                    const cellA = row[0]?.toString().trim() || '';
+                    const cellB = row[1]?.toString().trim() || '';
+                    
+                    if (cellA.includes('Data da Realização:')) {
+                        checklist.dataRealizacao = cellA.replace('Data da Realização:', '').trim();
+                        if (cellB.includes('Validade:')) {
+                            checklist.validade = cellB.replace('Validade:', '').trim();
+                        }
+                    }
+                    
+                    if (cellA.includes('Responsavel:')) {
+                        checklist.responsavel = cellA.replace('Responsavel:', '').split(';')[0]?.trim();
+                    }
+                    
+                    if (cellA.includes('Operador:')) {
+                        checklist.operador = cellA.replace('Operador:', '').trim();
+                    }
+                    
+                    if (cellA === 'Dispositivos Avaliados' || cellA === 'Dispositivos Avaliados;Situação') {
+                        let j = i + 1;
+                        while (j < data.length) {
+                            const nextRow = data[j];
+                            if (!nextRow || nextRow.length === 0) break;
+                            
+                            const dispositivoLinha = nextRow[0]?.toString().trim() || '';
+                            if (dispositivoLinha.includes('Veículo:') || dispositivoLinha.includes('Carreta:')) {
+                                break;
+                            }
+                            
+                            if (dispositivoLinha && dispositivoLinha !== 'Dispositivos Avaliados') {
+                                let dispositivoNome = dispositivoLinha;
+                                let situacao = 'Ok';
+                                
+                                if (dispositivoLinha.includes(';')) {
+                                    const parts = dispositivoLinha.split(';');
+                                    dispositivoNome = parts[0].trim();
+                                    situacao = parts[1]?.trim() || 'Ok';
+                                }
+                                
+                                checklist.dispositivos.push({ nome: dispositivoNome, situacao });
+                            }
+                            j++;
+                        }
+                        break;
+                    }
+                }
+                
+                return checklist;
+            }
+            
+            // ✅ SINCORNIZAÇÃO EM BACKGROUND
+            async syncToFirebaseInBackground(checklists, isEditing) {
+                setTimeout(async () => {
+                    try {
+                        // Dividir em batches
+                        const batches = [];
+                        for (let i = 0; i < checklists.length; i += this.batchSize) {
+                            batches.push(checklists.slice(i, i + this.batchSize));
+                        }
+                        
+                        // Executar batches com limite de concorrência
+                        let savedCount = 0;
+                        
+                        for (let i = 0; i < batches.length; i += this.maxConcurrent) {
+                            const currentBatches = batches.slice(i, i + this.maxConcurrent);
+                            
+                            const batchPromises = currentBatches.map(async (batch) => {
+                                const result = await this.saveBatchToFirestore(batch, isEditing);
+                                savedCount += result;
+                                return result;
+                            });
+                            
+                            await Promise.all(batchPromises);
+                        }
+                        
+                        console.log(`✅ ${savedCount} checklists sincronizados em background`);
+                        
+                        // Atualizar status de sincronização no cache
+                        checklists.forEach(checklist => {
+                            const cached = checklistsCache.get(checklist.id);
+                            if (cached) {
+                                cached.synced = true;
+                                checklistsCache.set(checklist.id, cached);
+                            }
+                        });
+                        
+                    } catch (error) {
+                        console.error('Erro na sincronização background:', error);
+                    }
+                }, 100); // Delay para não bloquear UI
+            }
+            
+            // ✅ SALVAMENTO EM BATCH NO FIRESTORE
+            async saveBatchToFirestore(checklistsBatch, isEditing) {
+                const batch = db.batch();
+                const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                
+                checklistsBatch.forEach(checklist => {
+                    let docRef;
+                    
+                    if (isEditing && checklist.id && checklist.id.startsWith('firestore_')) {
+                        // Documento já existe no Firestore
+                        const firestoreId = checklist.id.replace('firestore_', '');
+                        docRef = db.collection('checklists').doc(firestoreId);
+                    } else if (checklist.id && checklist.id.startsWith('local_')) {
+                        // Novo documento local - criar no Firestore
+                        docRef = db.collection('checklists').doc();
+                    } else {
+                        // ID do Firestore (já salvo)
+                        docRef = db.collection('checklists').doc(checklist.id);
+                    }
+                    
+                    const data = {
+                        ...checklist,
+                        updatedAt: timestamp,
+                        synced: true,
+                        version: (checklist.version || 0) + 1
+                    };
+                    
+                    // Remover campos internos
+                    delete data.id;
+                    delete data.synced;
+                    
+                    if (!isEditing) {
+                        data.createdAt = timestamp;
+                        data.createdBy = currentUser.uid;
+                        data.createdByEmail = currentUser.email;
+                    }
+                    
+                    batch.set(docRef, data, { merge: true });
+                });
+                
+                await batch.commit();
+                return checklistsBatch.length;
+            }
+            
+            // ✅ CARREGAMENTO COM CACHE INTELIGENTE
+            async loadChecklistsWithCache() {
+                showNotification('Carregando dados...', 'info');
+                
+                try {
+                    // Tentar carregar do cache primeiro
+                    const cached = checklistsCache.getAll();
+                    
+                    if (cached.length > 0) {
+                        console.log('📦 Carregando do cache:', cached.length, 'itens');
+                        atualizarTabelaComCache(cached);
+                        atualizarBadges();
+                        atualizarContadores();
+                        showNotification(`${cached.length} checklists carregados do cache`, 'success');
+                        
+                        // Sincronizar em background
+                        this.syncPendingChanges();
+                    }
+                    
+                    // Buscar do Firestore (background)
+                    this.loadFromFirestoreInBackground();
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar cache:', error);
+                    this.loadFromFirestore();
+                }
+            }
+            
+            async loadFromFirestoreInBackground() {
+                setTimeout(async () => {
+                    try {
+                        const querySnapshot = await db.collection('checklists')
+                            .orderBy('updatedAt', 'desc')
+                            .limit(500)
+                            .get();
+                        
+                        const firestoreChecklists = [];
+                        querySnapshot.forEach((doc) => {
+                            firestoreChecklists.push({
+                                id: 'firestore_' + doc.id,
+                                ...doc.data()
+                            });
+                        });
+                        
+                        console.log('🌐 Carregados do Firestore:', firestoreChecklists.length, 'itens');
+                        
+                        // Atualizar cache
+                        firestoreChecklists.forEach(checklist => {
+                            checklistsCache.set(checklist.id, checklist);
+                        });
+                        
+                        // Atualizar UI se necessário
+                        if (firestoreChecklists.length > 0) {
+                            const current = checklistsCache.getAll();
+                            atualizarTabelaComCache(current);
+                            atualizarBadges();
+                        }
+                        
+                    } catch (error) {
+                        console.error('Erro background load:', error);
+                    }
+                }, 1000); // Delay para priorizar cache
+            }
+            
+            async loadFromFirestore() {
+                try {
+                    const querySnapshot = await db.collection('checklists')
+                        .orderBy('updatedAt', 'desc')
+                        .limit(1000)
+                        .get();
+                    
+                    const firestoreChecklists = [];
+                    querySnapshot.forEach((doc) => {
+                        firestoreChecklists.push({
+                            id: 'firestore_' + doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    // Atualizar cache
+                    checklistsCache.clear();
+                    firestoreChecklists.forEach(checklist => {
+                        checklistsCache.set(checklist.id, checklist);
+                    });
+                    
+                    return firestoreChecklists;
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar do Firestore:', error);
+                    throw error;
+                }
+            }
+            
+            // ✅ EDIÇÃO INSTANTÂNEA
+            async editChecklistInstant(id, updates) {
+                const current = checklistsCache.get(id);
+                if (!current) return { success: false };
+                
+                // Atualizar cache
+                const updated = { 
+                    ...current, 
+                    ...updates, 
+                    version: (current.version || 0) + 1,
+                    synced: false 
+                };
+                checklistsCache.set(id, updated);
+                
+                // Atualizar UI
+                atualizarTabela();
+                
+                // Sincronizar background
+                this.syncToFirebaseInBackground([updated], true);
+                
+                return { success: true, immediate: true };
+            }
+            
+            // ✅ GERAR ID LOCAL TEMPORÁRIO
+            generateId() {
+                return 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+            
+            // ✅ SINCRONIZAR MUDANÇAS PENDENTES
+            async syncPendingChanges() {
+                const pending = checklistsCache.getPendingSync();
+                if (pending.length === 0 || this.isSyncing) return;
+                
+                this.isSyncing = true;
+                
+                try {
+                    const checklistsToSync = [];
+                    
+                    pending.forEach(([key, operation]) => {
+                        if (operation.type === 'delete') {
+                            // Marcar para exclusão
+                            const checklist = checklistsCache.get(key);
+                            if (checklist) {
+                                checklistsToSync.push({ ...checklist, _delete: true });
+                            }
+                        } else {
+                            const checklist = checklistsCache.get(key);
+                            if (checklist && !checklist.synced) {
+                                checklistsToSync.push(checklist);
+                            }
+                        }
+                    });
+                    
+                    if (checklistsToSync.length > 0) {
+                        await this.syncToFirebaseInBackground(checklistsToSync, false);
+                        
+                        // Limpar pendentes após sinc
+                        pending.forEach(([key]) => {
+                            checklistsCache.clearPending(key);
+                        });
+                    }
+                    
+                } catch (error) {
+                    console.error('Erro na sincronização pendente:', error);
+                } finally {
+                    this.isSyncing = false;
+                }
+            }
+        }
+
+        let performanceManager = new PerformanceManager();
         
-        // ✅ FUNÇÃO: Verificar estado de autenticação
-        function initAuth() {
+        // 🎯 GERENCIADOR DE BOTÕES
+        class ButtonsManager {
+            constructor() {
+                this.currentTab = 'geral';
+                this.activeFilters = new Set();
+            }
+            
+            init() {
+                this.setupTabs();
+                this.setupButtons();
+                this.setupFloatingMenu();
+                this.setupEventDelegation();
+            }
+            
+            setupTabs() {
+                document.querySelectorAll('.action-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabId = e.currentTarget.dataset.tab;
+                        this.switchTab(tabId);
+                    });
+                });
+            }
+            
+            switchTab(tabId) {
+                document.querySelectorAll('.action-tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.tab === tabId);
+                });
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.toggle('active', content.id === `tab-${tabId}`);
+                });
+                
+                this.currentTab = tabId;
+                localStorage.setItem('last_tab', tabId);
+            }
+            
+            setupButtons() {
+                // Filtros rápidos
+                document.querySelectorAll('.btn-filter[data-filter]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const filter = e.currentTarget.dataset.filter;
+                        this.applyFilter(filter);
+                    });
+                });
+                
+                // Baixar modelo
+                importModeloBtn?.addEventListener('click', () => this.downloadTemplate());
+                
+                // Validar checklists
+                validarChecklistsBtn?.addEventListener('click', () => this.validateAllChecklists());
+                
+                // Avisar todos
+                avisarTodosBtn?.addEventListener('click', () => this.notifyAllExpired());
+                
+                // Limpar cache
+                limparCacheBtn?.addEventListener('click', () => this.clearCache());
+                
+                // Restaurar backup
+                restoreBtn?.addEventListener('click', () => this.openRestoreModal());
+                
+                // Botões de relatório (delegação)
+                document.addEventListener('click', (e) => {
+                    const relatorioBtn = e.target.closest('[data-relatorio]');
+                    if (relatorioBtn) {
+                        this.generateReport(relatorioBtn.dataset.relatorio);
+                    }
+                });
+            }
+            
+            setupFloatingMenu() {
+                if (floatingActionBtn && floatingMenu) {
+                    floatingActionBtn.addEventListener('click', () => {
+                        floatingMenu.classList.toggle('active');
+                        floatingActionBtn.innerHTML = floatingMenu.classList.contains('active') 
+                            ? '<i class="fas fa-times"></i>' 
+                            : '<i class="fas fa-plus"></i>';
+                    });
+                    
+                    document.addEventListener('click', (e) => {
+                        if (!floatingActionBtn.contains(e.target) && !floatingMenu.contains(e.target)) {
+                            floatingMenu.classList.remove('active');
+                            floatingActionBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                        }
+                    });
+                }
+            }
+            
+            setupEventDelegation() {
+                // Delegação para botões da tabela
+                document.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.btn-table');
+                    if (!btn) return;
+                    
+                    const row = btn.closest('tr');
+                    if (!row) return;
+                    
+                    const rows = Array.from(tableBody.querySelectorAll('tr'));
+                    const index = rows.indexOf(row);
+                    
+                    if (index === -1) return;
+                    
+                    if (btn.classList.contains('edit')) {
+                        editarChecklist(index);
+                    } else if (btn.classList.contains('delete')) {
+                        excluirChecklist(index);
+                    } else if (btn.classList.contains('notify')) {
+                        registrarAviso(index);
+                    }
+                });
+            }
+            
+            applyFilter(filter) {
+                const btn = document.querySelector(`[data-filter="${filter}"]`);
+                
+                if (filter === 'todos') {
+                    this.activeFilters.clear();
+                    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+                    filterStatus.value = '';
+                } else {
+                    if (this.activeFilters.has(filter)) {
+                        this.activeFilters.delete(filter);
+                        btn.classList.remove('active');
+                    } else {
+                        this.activeFilters.add(filter);
+                        document.querySelectorAll('.btn-filter').forEach(b => {
+                            if (b.dataset.filter !== filter) b.classList.remove('active');
+                        });
+                        btn.classList.add('active');
+                    }
+                }
+                
+                let statusValue = '';
+                if (this.activeFilters.has('vencidos')) {
+                    statusValue = 'vencido';
+                } else if (this.activeFilters.has('proximos')) {
+                    statusValue = 'proximo';
+                } else if (this.activeFilters.has('sem-aviso')) {
+                    statusValue = 'sem_aviso';
+                }
+                
+                filterStatus.value = statusValue;
+                atualizarTabela();
+            }
+            
+            downloadTemplate() {
+                const templateData = [
+                    ['Veículo: ABC-1234', 'PROPRIO'],
+                    ['Data da Realização: 01/01/2024 08:00', 'Validade: 31/12/2024 23:59'],
+                    ['Responsavel: João Silva', '(11) 99999-9999'],
+                    ['Operador: Sistema'],
+                    ['Dispositivos Avaliados', 'Situação'],
+                    ['SETAS', 'Ok'],
+                    ['GPS', 'Ok'],
+                    ['SENSOR DE PORTA', 'Defeito']
+                ];
+                
+                const ws = XLSX.utils.aoa_to_sheet(templateData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Modelo');
+                
+                const wscols = [{wch: 30}, {wch: 20}];
+                ws['!cols'] = wscols;
+                
+                XLSX.writeFile(wb, 'modelo_checklist.xlsx');
+                showNotification('Modelo baixado com sucesso!', 'success');
+            }
+            
+            validateAllChecklists() {
+                const checklists = checklistsCache.getAll();
+                const erros = [];
+                const warnings = [];
+                
+                checklists.forEach((checklist) => {
+                    if (!/^[A-Z]{3}\d[A-Z0-9]\d{2}$/i.test(checklist.placa)) {
+                        erros.push(`${checklist.placa}: Placa inválida`);
+                    }
+                    
+                    const realizacao = parseDateBrasil(checklist.dataRealizacao);
+                    const validade = parseDateBrasil(checklist.validade);
+                    
+                    if (!realizacao) warnings.push(`${checklist.placa}: Data realização inválida`);
+                    if (!validade) warnings.push(`${checklist.placa}: Data validade inválida`);
+                    
+                    if (realizacao && validade && realizacao > validade) {
+                        erros.push(`${checklist.placa}: Realização posterior à validade`);
+                    }
+                    
+                    if (!checklist.dispositivos || checklist.dispositivos.length === 0) {
+                        warnings.push(`${checklist.placa}: Sem dispositivos`);
+                    }
+                });
+                
+                let message = '';
+                if (erros.length === 0 && warnings.length === 0) {
+                    message = '✅ Todos os checklists estão válidos!';
+                } else {
+                    message = `
+                        <strong>Validação Concluída:</strong><br>
+                        ${erros.length > 0 ? `❌ ${erros.length} erro(s):<br>${erros.slice(0, 3).join('<br>')}${erros.length > 3 ? '<br>...' : ''}` : ''}
+                        ${warnings.length > 0 ? `⚠️ ${warnings.length} aviso(s):<br>${warnings.slice(0, 3).join('<br>')}${warnings.length > 3 ? '<br>...' : ''}` : ''}
+                    `;
+                }
+                
+                mostrarConfirmacao('Validação', message, null);
+            }
+            
+            async notifyAllExpired() {
+                const checklists = checklistsCache.getAll();
+                const vencidosSemAviso = checklists.filter(c => 
+                    getStatusValidade(c.validade) === 'vencido' && 
+                    (!c.avisos || c.avisos.length === 0)
+                );
+                
+                if (vencidosSemAviso.length === 0) {
+                    showNotification('Nenhum checklist vencido sem aviso encontrado.', 'info');
+                    return;
+                }
+                
+                mostrarConfirmacao(
+                    'Avisar Todos',
+                    `Deseja registrar aviso para ${vencidosSemAviso.length} checklist(s) vencido(s) sem aviso?`,
+                    async () => {
+                        let count = 0;
+                        showProgressBar('Registrando avisos...');
+                        
+                        for (const checklist of vencidosSemAviso) {
+                            try {
+                                const aviso = {
+                                    data: new Date().toISOString(),
+                                    quemNotificou: currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Sistema',
+                                    quemRecebeu: 'Todos',
+                                    metodo: 'Sistema',
+                                    observacao: 'Aviso automático em lote',
+                                    registradoPor: currentUser?.email || 'Sistema',
+                                    registradoEm: new Date().toISOString()
+                                };
+                                
+                                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, aviso] : [aviso];
+                                
+                                // Atualizar localmente
+                                const updated = {
+                                    ...checklist,
+                                    avisos: avisosAtualizados
+                                };
+                                checklistsCache.set(checklist.id, updated);
+                                
+                                // Sincronizar
+                                await performanceManager.syncToFirebaseInBackground([updated], true);
+                                
+                                count++;
+                                updateProgress(count, vencidosSemAviso.length, `Processando... ${count}/${vencidosSemAviso.length}`);
+                                
+                            } catch (error) {
+                                console.error(`Erro ao avisar ${checklist.placa}:`, error);
+                            }
+                        }
+                        
+                        hideProgressBar();
+                        atualizarTabela();
+                        showNotification(`${count} aviso(s) registrado(s) com sucesso!`, 'success');
+                    }
+                );
+            }
+            
+            generateReport(tipo) {
+                const checklists = checklistsCache.getAll();
+                
+                switch (tipo) {
+                    case 'status':
+                        this.generateStatusReport(checklists);
+                        break;
+                    case 'vencimentos':
+                        this.generateExpirationReport(checklists);
+                        break;
+                    case 'dispositivos':
+                        this.generateDevicesReport(checklists);
+                        break;
+                    case 'historico':
+                        this.generateHistoryReport(checklists);
+                        break;
+                }
+            }
+            
+            generateStatusReport(checklists) {
+                const stats = {
+                    total: checklists.length,
+                    vencidos: checklists.filter(c => getStatusValidade(c.validade) === 'vencido').length,
+                    proximos: checklists.filter(c => getStatusValidade(c.validade) === 'proximo').length,
+                    ok: checklists.filter(c => getStatusValidade(c.validade) === 'ok').length,
+                    comDefeito: checklists.filter(c => temDefeito(c.dispositivos)).length,
+                    comAviso: checklists.filter(c => temAvisos(c)).length
+                };
+                
+                const report = `
+                    RELATÓRIO DE STATUS - ${new Date().toLocaleDateString('pt-BR')}
+                    
+                    📊 ESTATÍSTICAS GERAIS:
+                    • Total de Checklists: ${stats.total}
+                    • Checklists OK: ${stats.ok}
+                    • Próximos a Vencer: ${stats.proximos}
+                    • Vencidos: ${stats.vencidos}
+                    • Com Defeito: ${stats.comDefeito}
+                    • Com Aviso Registrado: ${stats.comAviso}
+                    
+                    ⚠️ ATENÇÃO NECESSÁRIA:
+                    • Vencidos sem Aviso: ${stats.vencidos - stats.comAviso}
+                    
+                    📈 PORCENTAGENS:
+                    • OK: ${((stats.ok / stats.total) * 100).toFixed(1)}%
+                    • Atenção: ${(((stats.proximos + stats.vencidos) / stats.total) * 100).toFixed(1)}%
+                `;
+                
+                this.showReportModal('Relatório de Status', report);
+            }
+            
+            showReportModal(title, content) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>${title}</h3>
+                            <button class="btn-fechar">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <pre style="white-space: pre-wrap; font-family: monospace; padding: 20px; background: var(--bg-secondary); border-radius: 8px;">${content}</pre>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-cancel">Fechar</button>
+                            <button class="btn-action" onclick="this.closest('.modal').querySelector('pre').textContent.exportToFile('relatorio.txt')" style="background: var(--green); color: white;">
+                                <i class="fas fa-download"></i> Exportar TXT
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.style.display = 'flex';
+                
+                modal.querySelector('.btn-fechar').addEventListener('click', () => modal.remove());
+                modal.querySelector('.btn-cancel').addEventListener('click', () => modal.remove());
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+            }
+            
+            clearCache() {
+                mostrarConfirmacao(
+                    'Limpar Cache',
+                    'Deseja limpar o cache local? Isso não apagará os dados do servidor.',
+                    () => {
+                        checklistsCache.clear();
+                        localStorage.removeItem('checklists_cache');
+                        showNotification('Cache limpo com sucesso!', 'success');
+                        atualizarTabela();
+                    }
+                );
+            }
+            
+            openRestoreModal() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    mostrarConfirmacao(
+                        'Restaurar Backup',
+                        'Deseja restaurar este backup? Os dados atuais serão substituídos.',
+                        async () => {
+                            showProgressBar('Restaurando backup...');
+                            
+                            const reader = new FileReader();
+                            reader.onload = async (event) => {
+                                try {
+                                    const backupData = JSON.parse(event.target.result);
+                                    
+                                    if (backupData.checklists && Array.isArray(backupData.checklists)) {
+                                        // Limpar cache atual
+                                        checklistsCache.clear();
+                                        
+                                        // Restaurar dados
+                                        backupData.checklists.forEach(checklist => {
+                                            const id = 'firestore_' + (checklist.id || performanceManager.generateId());
+                                            checklistsCache.set(id, checklist);
+                                        });
+                                        
+                                        // Sincronizar com Firebase
+                                        await performanceManager.syncToFirebaseInBackground(
+                                            checklistsCache.getAll(), 
+                                            false
+                                        );
+                                        
+                                        // Atualizar UI
+                                        atualizarTabela();
+                                        atualizarBadges();
+                                        
+                                        hideProgressBar();
+                                        showNotification('Backup restaurado com sucesso!', 'success');
+                                        
+                                    } else {
+                                        throw new Error('Formato de backup inválido');
+                                    }
+                                    
+                                } catch (error) {
+                                    hideProgressBar();
+                                    showNotification('Erro ao restaurar backup: ' + error.message, 'error');
+                                }
+                            };
+                            
+                            reader.readAsText(file);
+                        }
+                    );
+                };
+                
+                input.click();
+            }
+        }
+
+        // ✅ INICIALIZAR APLICAÇÃO
+        function initApp() {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
-                    // Usuário logado
                     currentUser = user;
                     showMainApp();
                     updateUserInfo(user);
                     
-                    // Criar/atualizar perfil do usuário na coleção 'users'
-                    await updateUserProfile(user);
+                    // Inicializar gerenciadores
+                    performanceManager = new PerformanceManager();
+                    buttonsManager = new ButtonsManager();
+                    buttonsManager.init();
                     
-                    // Carregar checklists COMPARTILHADOS da coleção 'checklists'
-                    await loadSharedChecklists();
+                    // Carregar dados com cache
+                    await performanceManager.loadChecklistsWithCache();
+                    
+                    // Restaurar última aba
+                    const lastTab = localStorage.getItem('last_tab') || 'geral';
+                    buttonsManager.switchTab(lastTab);
+                    
+                    // Restaurar modo escuro
+                    const darkModeSaved = localStorage.getItem('dark_mode_sistema');
+                    if (darkModeSaved === 'true') {
+                        toggleDarkMode();
+                    }
                     
                 } else {
-                    // Usuário não logado
                     showLogin();
                 }
             });
         }
         
-        // ✅ FUNÇÃO: Mostrar tela de login
+        // ✅ FUNÇÕES DE INTERFACE
+        
         function showLogin() {
             loginContainer.style.display = 'flex';
             mainContainer.style.display = 'none';
             currentUser = null;
         }
         
-        // ✅ FUNÇÃO: Mostrar aplicativo principal
         function showMainApp() {
             loginContainer.style.display = 'none';
             mainContainer.style.display = 'block';
         }
         
-        // ✅ FUNÇÃO: Atualizar informações do usuário na interface
         function updateUserInfo(user) {
             const displayName = user.displayName || user.email.split('@')[0];
             const initials = displayName.charAt(0).toUpperCase();
@@ -1720,473 +2939,39 @@
             userAvatar.textContent = initials;
             userName.textContent = displayName;
             userEmail.textContent = user.email;
-            
-            // Atualizar campo "quem notificou" com o nome do usuário
             avisoQuemNotificou.value = displayName;
         }
         
-        // ✅ FUNÇÃO: Criar/atualizar perfil do usuário (coleção 'users')
-        async function updateUserProfile(user) {
-            try {
-                const userRef = db.collection('users').doc(user.uid);
-                const userDoc = await userRef.get();
-                
-                if (!userDoc.exists) {
-                    // Criar novo perfil do usuário
-                    await userRef.set({
-                        email: user.email,
-                        name: user.displayName || user.email.split('@')[0],
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                        preferences: {}
-                    });
-                    console.log('Novo perfil de usuário criado');
-                } else {
-                    // Atualizar último login
-                    await userRef.update({
-                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    console.log('Perfil de usuário atualizado');
-                }
-            } catch (error) {
-                console.error('Erro ao atualizar perfil:', error);
-            }
-        }
-        
-        // ✅ FUNÇÃO: Carregar checklists COMPARTILHADOS (coleção 'checklists')
-        async function loadSharedChecklists() {
-            try {
-                showNotification('Carregando checklists compartilhados...', 'info');
-                
-                // Limpar array local
-                checklists = [];
-                
-                // Buscar TODOS os checklists da coleção compartilhada 'checklists'
-                const querySnapshot = await db.collection('checklists')
-                    .orderBy('atualizadoEm', 'desc')
-                    .get();
-                
-                querySnapshot.forEach((doc) => {
-                    checklists.push({
-                        id: doc.id, // ID do documento no Firestore
-                        ...doc.data()
-                    });
-                });
-                
-                console.log(`${checklists.length} checklists carregados da base compartilhada`);
-                
-                // Atualizar interface
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                
-                showNotification(`${checklists.length} checklists carregados!`, 'success');
-                
-            } catch (error) {
-                console.error('Erro ao carregar checklists compartilhados:', error);
-                showNotification('Erro ao carregar dados. Verifique sua conexão.', 'error');
-                carregarDoLocalStorage(); // Fallback para localStorage
-            }
-        }
-        
-        // ✅ FUNÇÃO: Salvar checklist na base COMPARTILHADA
-        async function saveChecklistToFirestore(checklistData, isEditing = false, checklistId = null) {
-            try {
-                // Adicionar metadados
-                const checklistCompleto = {
-                    ...checklistData,
-                    atualizadoPor: currentUser.uid,
-                    atualizadoPorEmail: currentUser.email,
-                    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                if (!isEditing) {
-                    // NOVO CHECKLIST
-                    checklistCompleto.criadoPor = currentUser.uid;
-                    checklistCompleto.criadoPorEmail = currentUser.email;
-                    checklistCompleto.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    
-                    const docRef = await db.collection('checklists').add(checklistCompleto);
-                    console.log('Novo checklist criado com ID:', docRef.id);
-                    return docRef.id;
-                    
-                } else {
-                    // EDITAR CHECKLIST EXISTENTE
-                    await db.collection('checklists').doc(checklistId).update(checklistCompleto);
-                    console.log('Checklist atualizado com ID:', checklistId);
-                    return checklistId;
-                }
-                
-            } catch (error) {
-                console.error('Erro ao salvar no Firestore:', error);
-                throw error;
-            }
-        }
-        
-        // ✅ FUNÇÃO: Fazer backup completo antes de limpar
-        async function fazerBackupCompleto() {
-            try {
-                showNotification('Criando backup...', 'info');
-                
-                // Coletar todos os checklists
-                const checklistsSnapshot = await db.collection('checklists').get();
-                const checklistsData = [];
-                checklistsSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    // Converter timestamps para string
-                    const formattedData = {};
-                    Object.keys(data).forEach(key => {
-                        if (data[key] && data[key].toDate) {
-                            formattedData[key] = data[key].toDate().toISOString();
-                        } else {
-                            formattedData[key] = data[key];
-                        }
-                    });
-                    checklistsData.push({
-                        id: doc.id,
-                        ...formattedData
-                    });
-                });
-                
-                // Coletar todos os usuários
-                const usersSnapshot = await db.collection('users').get();
-                const usersData = [];
-                usersSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const formattedData = {};
-                    Object.keys(data).forEach(key => {
-                        if (data[key] && data[key].toDate) {
-                            formattedData[key] = data[key].toDate().toISOString();
-                        } else {
-                            formattedData[key] = data[key];
-                        }
-                    });
-                    usersData.push({
-                        id: doc.id,
-                        ...formattedData
-                    });
-                });
-                
-                // Criar objeto de backup
-                const backupData = {
-                    timestamp: new Date().toISOString(),
-                    totalChecklists: checklistsData.length,
-                    totalUsers: usersData.length,
-                    backupCreatedBy: currentUser ? currentUser.email : 'unknown',
-                    checklists: checklistsData,
-                    users: usersData
-                };
-                
-                // Converter para JSON
-                const dataStr = JSON.stringify(backupData, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                // Nome do arquivo
-                const exportFileName = `backup_completo_${new Date().toISOString().slice(0,10)}_${Date.now()}.json`;
-                
-                // Criar link para download
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileName);
-                document.body.appendChild(linkElement);
-                linkElement.click();
-                document.body.removeChild(linkElement);
-                
-                console.log(`Backup criado: ${checklistsData.length} checklists, ${usersData.length} usuários`);
-                
-                return {
-                    success: true,
-                    checklistsCount: checklistsData.length,
-                    usersCount: usersData.length,
-                    fileName: exportFileName
-                };
-                
-            } catch (error) {
-                console.error('Erro ao fazer backup:', error);
-                return {
-                    success: false,
-                    error: error.message
-                };
-            }
-        }
-        
-        // ✅ FUNÇÃO: Limpar TODOS os dados do Firebase
-        async function limparTodosDadosFirebase() {
-            // Confirmação EXTRA com input manual
-            const confirmacao = prompt(`⚠️ PERIGO: Isso apagará TODOS os dados permanentemente!\n\nDigite "APAGAR-TUDO" para confirmar:`);
-            
-            if (confirmacao !== "APAGAR-TUDO") {
-                showNotification('Operação cancelada', 'warning');
-                return;
-            }
-            
-            // Segunda confirmação
-            if (!confirm('🚨 ATENÇÃO FINAL!\n\nIsso vai apagar:\n✅ TODOS os checklists\n✅ TODOS os usuários\n✅ TODOS os avisos\n\nNÃO HAVERÁ VOLTA!')) {
-                showNotification('Operação cancelada', 'warning');
-                return;
-            }
-            
-            try {
-                showNotification('Fazendo backup antes de apagar...', 'info');
-                
-                // 1. Primeiro, fazer backup
-                const backupResult = await fazerBackupCompleto();
-                
-                if (!backupResult.success) {
-                    showNotification('Erro ao fazer backup. Operação cancelada.', 'error');
-                    return;
-                }
-                
-                showNotification('Backup concluído. Apagando dados...', 'warning');
-                
-                // 2. Apagar todos os checklists
-                const checklistsSnapshot = await db.collection('checklists').get();
-                const checklistDeletePromises = [];
-                let checklistsCount = 0;
-                
-                checklistsSnapshot.forEach(doc => {
-                    checklistDeletePromises.push(db.collection('checklists').doc(doc.id).delete());
-                    checklistsCount++;
-                });
-                
-                await Promise.all(checklistDeletePromises);
-                console.log(`${checklistsCount} checklists apagados`);
-                
-                // 3. Apagar todos os usuários (exceto o usuário atual, se quiser manter)
-                const usersSnapshot = await db.collection('users').get();
-                const userDeletePromises = [];
-                let usersCount = 0;
-                
-                usersSnapshot.forEach(doc => {
-                    // Opcional: manter o usuário atual
-                    // if (doc.id !== currentUser?.uid) {
-                        userDeletePromises.push(db.collection('users').doc(doc.id).delete());
-                        usersCount++;
-                    // }
-                });
-                
-                await Promise.all(userDeletePromises);
-                console.log(`${usersCount} usuários apagados`);
-                
-                // 4. Limpar dados locais
-                checklists = [];
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                
-                // 5. Notificação final
-                showNotification(`✅ Dados apagados com sucesso!\n${checklistsCount} checklists e ${usersCount} usuários removidos.\nBackup salvo como: ${backupResult.fileName || 'backup.json'}`, 'success');
-                
-                // 6. Log para auditoria
-                console.log('Limpeza completa realizada por:', currentUser?.email);
-                console.log('Backup:', backupResult.fileName);
-                console.log('Checklists apagados:', checklistsCount);
-                console.log('Usuários apagados:', usersCount);
-                
-            } catch (error) {
-                console.error('Erro ao limpar dados:', error);
-                showNotification('Erro ao apagar dados. Backup foi criado com sucesso.', 'error');
-            }
-        }
-        
-        // ✅ FUNÇÃO: Limpar apenas checklists (mantém usuários)
-        async function limparApenasChecklists() {
-            const confirmacao = prompt(`⚠️ Isso apagará TODOS os checklists!\n\nDigite "APAGAR-CHECKLISTS" para confirmar:`);
-            
-            if (confirmacao !== "APAGAR-CHECKLISTS") {
-                showNotification('Operação cancelada', 'warning');
-                return;
-            }
-            
-            try {
-                showNotification('Fazendo backup dos checklists...', 'info');
-                
-                // Backup apenas dos checklists
-                const checklistsSnapshot = await db.collection('checklists').get();
-                const checklistsData = [];
-                checklistsSnapshot.forEach(doc => {
-                    checklistsData.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                // Criar backup
-                const backupData = {
-                    timestamp: new Date().toISOString(),
-                    checklists: checklistsData,
-                    backupType: 'checklists-only'
-                };
-                
-                const dataStr = JSON.stringify(backupData, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                const fileName = `backup_checklists_${new Date().toISOString().slice(0,10)}.json`;
-                
-                const link = document.createElement('a');
-                link.href = dataUri;
-                link.download = fileName;
-                link.click();
-                
-                // Apagar checklists
-                const deletePromises = [];
-                checklistsSnapshot.forEach(doc => {
-                    deletePromises.push(db.collection('checklists').doc(doc.id).delete());
-                });
-                
-                await Promise.all(deletePromises);
-                
-                // Atualizar localmente
-                checklists = [];
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                
-                showNotification(`${deletePromises.length} checklists apagados. Backup salvo.`, 'success');
-                
-            } catch (error) {
-                console.error('Erro ao limpar checklists:', error);
-                showNotification('Erro ao apagar checklists', 'error');
-            }
-        }
-        
-        // ✅ FUNÇÃO: Upload e restauração de backup
-        async function uploadERestaurarBackup() {
-            return new Promise((resolve) => {
-                // Criar input de arquivo
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                
-                input.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) {
-                        resolve({ success: false, error: 'Nenhum arquivo selecionado' });
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    
-                    reader.onload = async (event) => {
-                        try {
-                            const backupData = JSON.parse(event.target.result);
-                            
-                            // Validar estrutura do backup
-                            if (!backupData.checklists || !Array.isArray(backupData.checklists)) {
-                                showNotification('Arquivo de backup inválido', 'error');
-                                resolve({ success: false, error: 'Estrutura inválida' });
-                                return;
-                            }
-                            
-                            // Confirmar restauração
-                            if (!confirm(`Restaurar backup com ${backupData.checklists.length} checklists?`)) {
-                                resolve({ success: false, error: 'Cancelado pelo usuário' });
-                                return;
-                            }
-                            
-                            showNotification('Restaurando backup...', 'info');
-                            
-                            // Limpar checklists existentes antes de restaurar
-                            const existingSnapshot = await db.collection('checklists').get();
-                            const deletePromises = [];
-                            existingSnapshot.forEach(doc => {
-                                deletePromises.push(db.collection('checklists').doc(doc.id).delete());
-                            });
-                            
-                            await Promise.all(deletePromises);
-                            
-                            // Restaurar checklists do backup
-                            let restoredCount = 0;
-                            for (const checklist of backupData.checklists) {
-                                try {
-                                    const { id, ...checklistData } = checklist;
-                                    await db.collection('checklists').add(checklistData);
-                                    restoredCount++;
-                                } catch (error) {
-                                    console.error(`Erro ao restaurar checklist:`, error);
-                                }
-                            }
-                            
-                            // Recarregar dados
-                            await loadSharedChecklists();
-                            
-                            showNotification(`Backup restaurado: ${restoredCount} checklists`, 'success');
-                            resolve({ success: true, restoredCount });
-                            
-                        } catch (error) {
-                            console.error('Erro ao processar backup:', error);
-                            showNotification('Erro ao processar arquivo de backup', 'error');
-                            resolve({ success: false, error: error.message });
-                        }
-                    };
-                    
-                    reader.onerror = () => {
-                        showNotification('Erro ao ler arquivo', 'error');
-                        resolve({ success: false, error: 'Erro de leitura' });
-                    };
-                    
-                    reader.readAsText(file);
-                };
-                
-                input.click();
-            });
-        }
-        
-        // ✅ FUNÇÃO: Login com Firebase
+        // ✅ LOGIN
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = loginEmail.value.trim();
             const password = loginPassword.value.trim();
             
-            // Validação básica
             if (!email || !password) {
-                showError(emailError, 'Preencha todos os campos');
+                showNotification('Preencha todos os campos', 'error');
                 return;
             }
             
-            // Mostrar loading
             loginBtn.disabled = true;
             loginBtnText.style.display = 'none';
             loginLoading.style.display = 'inline-block';
             
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
+                await auth.signInWithEmailAndPassword(email, password);
                 showNotification('Login realizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro no login:', error);
-                
-                // Tratamento de erros
-                let errorMessage = 'Erro ao fazer login';
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        errorMessage = 'E-mail inválido';
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessage = 'Usuário desativado';
-                        break;
-                    case 'auth/user-not-found':
-                        errorMessage = 'Usuário não encontrado';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage = 'Senha incorreta';
-                        break;
-                    case 'auth/too-many-requests':
-                        errorMessage = 'Muitas tentativas. Tente mais tarde';
-                        break;
-                }
-                
-                showError(passwordError, errorMessage);
+                showNotification('Erro ao fazer login: ' + error.message, 'error');
             } finally {
-                // Restaurar botão
                 loginBtn.disabled = false;
                 loginBtnText.style.display = 'inline';
                 loginLoading.style.display = 'none';
             }
         });
         
-        // ✅ FUNÇÃO: Logout
+        // ✅ LOGOUT
         logoutBtn.addEventListener('click', async function() {
             try {
                 await auth.signOut();
@@ -2197,212 +2982,59 @@
             }
         });
         
-        // ✅ FUNÇÃO: Mostrar erro no formulário
-        function showError(element, message) {
-            element.textContent = message;
-            element.style.display = 'block';
-            
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
+        // ✅ MODO ESCURO
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            btnDarkMode.innerHTML = isDarkMode 
+                ? '<i class="fas fa-sun"></i> Modo Claro' 
+                : '<i class="fas fa-moon"></i> Modo Escuro';
+            localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
         }
         
-        // ✅ FUNÇÃO: Abrir modal de registro de aviso
-        window.registrarAviso = function(index) {
-            avisoIndex = index;
-            const checklist = checklists[index];
-            
-            // Preencher informações do checklist
-            avisoPlaca.textContent = `Placa: ${checklist.placa} (${checklist.tipo})`;
-            avisoDetalhes.innerHTML = `
-                Responsável: ${checklist.responsavel}<br>
-                Operador: ${checklist.operador}<br>
-                Validade: ${checklist.validade || 'N/A'}
-            `;
-            
-            // Definir data atual como padrão
-            const now = new Date();
-            const nowStr = now.toISOString().slice(0, 16);
-            avisoData.value = nowStr;
-            
-            // Preencher com nome do usuário logado
-            if (currentUser) {
-                const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-                avisoQuemNotificou.value = displayName;
-            }
-            
-            // Carregar histórico de avisos
-            carregarHistoricoAvisos(checklist);
-            
-            // Abrir modal
-            avisoModal.style.display = 'flex';
-        };
+        btnDarkMode.addEventListener('click', toggleDarkMode);
         
-        // ✅ FUNÇÃO: Carregar histórico de avisos
-        function carregarHistoricoAvisos(checklist) {
-            if (!checklist.avisos || checklist.avisos.length === 0) {
-                listaAvisos.innerHTML = '<div class="sem-aviso">Nenhum aviso registrado</div>';
-                historicoAvisos.style.display = 'block';
-                return;
-            }
-            
-            // Ordenar avisos por data (mais recente primeiro)
-            const avisosOrdenados = [...checklist.avisos].sort((a, b) => 
-                new Date(b.data) - new Date(a.data)
-            );
-            
-            listaAvisos.innerHTML = avisosOrdenados.map(aviso => {
-                const dataFormatada = new Date(aviso.data).toLocaleString('pt-BR');
-                return `
-                    <div class="aviso-item">
-                        <div class="aviso-data">
-                            <i class="fas fa-calendar-alt" style="margin-right: 5px;"></i>
-                            ${dataFormatada}
-                        </div>
-                        <div class="aviso-quem">
-                            <strong>Notificado por:</strong> ${aviso.quemNotificou} |
-                            <strong>Recebido por:</strong> ${aviso.quemRecebeu} |
-                            <strong>Método:</strong> ${aviso.metodo || 'Não especificado'}
-                        </div>
-                        ${aviso.observacao ? `<div style="margin-top: 5px; color: var(--gray-text); font-size: 0.85rem;"><i class="fas fa-comment"></i> ${aviso.observacao}</div>` : ''}
-                    </div>
-                `;
-            }).join('');
-            
-            historicoAvisos.style.display = 'block';
-        }
+        // ✅ FUNÇÕES AUXILIARES
         
-        // ✅ FUNÇÃO: Registrar novo aviso
-        registrarAvisoBtn.addEventListener('click', async function() {
-            if (!avisoForm.checkValidity()) {
-                alert('Preencha todos os campos obrigatórios!');
-                return;
-            }
-            
-            const checklist = checklists[avisoIndex];
-            const novoAviso = {
-                data: avisoData.value,
-                quemNotificou: avisoQuemNotificou.value.trim(),
-                quemRecebeu: avisoQuemRecebeu.value.trim(),
-                metodo: avisoMetodo.value,
-                observacao: avisoObservacao.value.trim(),
-                registradoPor: currentUser.email,
-                registradoEm: new Date().toISOString()
-            };
-            
-            try {
-                // Atualizar avisos na base COMPARTILHADA
-                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
-                
-                await db.collection('checklists').doc(checklist.id).update({
-                    avisos: avisosAtualizados,
-                    atualizadoPor: currentUser.uid,
-                    atualizadoPorEmail: currentUser.email,
-                    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Atualizar localmente
-                checklists[avisoIndex].avisos = avisosAtualizados;
-                
-                // Fechar modal e limpar formulário
-                avisoModal.style.display = 'none';
-                avisoForm.reset();
-                
-                // Atualizar interface
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                
-                // Mostrar notificação
-                showNotification('Aviso registrado com sucesso!', 'success');
-                
-                // Resetar índice
-                avisoIndex = -1;
-                
-            } catch (error) {
-                console.error('Erro ao registrar aviso:', error);
-                showNotification('Erro ao registrar aviso.', 'error');
-            }
-        });
-        
-        // ✅ FUNÇÃO: Verificar se tem avisos
-        function temAvisos(checklist) {
-            return checklist.avisos && checklist.avisos.length > 0;
-        }
-        
-        // ✅ FUNÇÃO: Formatar último aviso para exibição
-        function formatarUltimoAviso(checklist) {
-            if (!temAvisos(checklist)) {
-                return 'Sem aviso';
-            }
-            
-            const ultimoAviso = checklist.avisos[checklist.avisos.length - 1];
-            const data = new Date(ultimoAviso.data);
-            const dataFormatada = data.toLocaleDateString('pt-BR');
-            
-            return `${dataFormatada} - ${ultimoAviso.quemRecebeu}`;
-        }
-        
-        // ✅ FUNÇÃO MELHORADA: Verificar se uma data é válida
-        function isValidDate(d) {
-            return d instanceof Date && !isNaN(d);
-        }
-        
-        // ✅ FUNÇÃO MELHORADA: Extrair data do formato brasileiro
         function parseDateBrasil(dateStr) {
             if (!dateStr || typeof dateStr !== 'string') return null;
             
             dateStr = dateStr.trim();
             
-            // Casos especiais
-            if (dateStr.includes('Não OK') || dateStr.includes('Checklist Não OK')) {
-                return null;
-            }
-            
-            if (dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido')) {
+            if (dateStr.includes('Não OK') || dateStr.includes('Checklist Não OK') || 
+                dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido')) {
                 return null;
             }
             
             try {
-                // Padrão: dd/mm/aaaa hh:mm
                 const pattern = /(\d{2})\/(\d{2})\/(\d{4})\s+(\d{1,2}):(\d{2})/;
                 let match = dateStr.match(pattern);
                 
                 if (match) {
                     const [, day, month, year, hour, minute] = match;
-                    const date = new Date(year, month - 1, day, hour || 0, minute || 0);
-                    return isValidDate(date) ? date : null;
+                    return new Date(year, month - 1, day, hour || 0, minute || 0);
                 }
                 
-                // Padrão alternativo: dd/mm/aaaa
                 const pattern2 = /(\d{2})\/(\d{2})\/(\d{4})/;
                 match = dateStr.match(pattern2);
                 
                 if (match) {
                     const [, day, month, year] = match;
-                    const date = new Date(year, month - 1, day);
-                    return isValidDate(date) ? date : null;
+                    return new Date(year, month - 1, day);
                 }
                 
             } catch (e) {
-                console.error("Erro ao processar data:", e, dateStr);
+                console.error("Erro ao processar data:", e);
             }
             
             return null;
         }
         
-        // ✅ FUNÇÃO MELHORADA: Verificar status da validade
         function getStatusValidade(validadeStr) {
-            if (!validadeStr) {
-                return 'vencido';
-            }
+            if (!validadeStr) return 'vencido';
             
-            // Casos especiais
-            if (validadeStr.includes('Não OK') || validadeStr.includes('Checklist Não OK')) {
-                return 'vencido';
-            }
-            
-            if (validadeStr.includes('Vencido') || validadeStr.includes('Checklist Vencido')) {
+            if (validadeStr.includes('Não OK') || validadeStr.includes('Checklist Não OK') || 
+                validadeStr.includes('Vencido') || validadeStr.includes('Checklist Vencido')) {
                 return 'vencido';
             }
             
@@ -2410,16 +3042,13 @@
                 return 'proximo';
             }
             
-            // Tentar extrair data regular
             const dataValidade = parseDateBrasil(validadeStr);
-            
             if (!dataValidade) {
-                // Verificar se é uma data sem hora: dd/mm/aaaa
                 const matchSimple = validadeStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
                 if (matchSimple) {
                     const [, day, month, year] = matchSimple;
                     const data = new Date(year, month - 1, day);
-                    if (isValidDate(data)) {
+                    if (data instanceof Date && !isNaN(data)) {
                         const hoje = new Date();
                         hoje.setHours(0, 0, 0, 0);
                         
@@ -2432,7 +3061,6 @@
                     }
                 }
                 
-                // Se tem texto OK mas não é data, considerar ok
                 if (validadeStr.includes('OK') || validadeStr.includes('Ok')) {
                     return 'ok';
                 }
@@ -2452,304 +3080,25 @@
             return 'ok';
         }
         
-        // ✅ FUNÇÃO NOVA: Remover placas duplicadas
-        async function removerPlacasDuplicadas() {
-            if (checklists.length === 0) {
-                showNotification('Não há checklists para processar!', 'warning');
-                return;
-            }
-            
-            const uniquePlacas = new Map();
-            const checklistsRemovidos = [];
-            
-            // Ordenar por data mais recente primeiro
-            const checklistsOrdenados = [...checklists].sort((a, b) => {
-                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
-                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
-                return dataB - dataA; // Mais recente primeiro
-            });
-            
-            // Manter apenas o mais recente de cada placa
-            checklistsOrdenados.forEach(checklist => {
-                const placaNormalizada = checklist.placa.trim().toUpperCase();
-                
-                if (!uniquePlacas.has(placaNormalizada)) {
-                    uniquePlacas.set(placaNormalizada, checklist);
-                } else {
-                    checklistsRemovidos.push(checklist);
-                }
-            });
-            
-            // Salvar checklists únicos na base compartilhada
-            const checklistsUnicos = Array.from(uniquePlacas.values());
-            
-            // Primeiro, deletar todos os checklists antigos
-            const deletePromises = checklists.map(checklist => 
-                db.collection('checklists').doc(checklist.id).delete()
-            );
-            
-            try {
-                // Executar todas as exclusões
-                await Promise.all(deletePromises);
-                
-                // Agora salvar os checklists únicos
-                const savePromises = checklistsUnicos.map(checklist => {
-                    const { id, ...checklistData } = checklist;
-                    return saveChecklistToFirestore(checklistData, false);
-                });
-                
-                await Promise.all(savePromises);
-                
-                // Recarregar checklists
-                await loadSharedChecklists();
-                
-                // Mostrar resultado
-                const removidosCount = checklistsRemovidos.length;
-                showNotification(`${removidosCount} checklists duplicados removidos! Mantidos: ${checklistsUnicos.length} checklists únicos.`, 'success');
-                
-            } catch (error) {
-                console.error('Erro ao remover duplicados:', error);
-                showNotification('Erro ao remover duplicados.', 'error');
-            }
-        }
-        
-        // ✅ FUNÇÃO CORRIGIDA: Extrair checklist da planilha - AGORA LÊ TIPO DA COLUNA B
-        function extrairChecklistDaPlanilha(data, startIndex) {
-            const checklist = {
-                placa: '',
-                tipo: '',
-                dataRealizacao: '',
-                validade: '',
-                responsavel: '',
-                telefone: '',
-                operador: '',
-                dispositivos: [],
-                avisos: [],
-                importadoPor: currentUser ? currentUser.email : 'Sistema',
-                importadoEm: new Date().toISOString()
-            };
-            
-            // Extrair placa da primeira linha (coluna A)
-            const cellA = data[startIndex][0]?.toString().trim() || '';
-            const cellB = data[startIndex][1]?.toString().trim() || '';
-            
-            if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
-                // Extrair placa da coluna A
-                if (cellA.includes(';')) {
-                    const parts = cellA.split(';');
-                    checklist.placa = parts[0].split(':')[1]?.trim() || '';
-                } else {
-                    checklist.placa = cellA.split(':')[1]?.trim() || '';
-                }
-                
-                // ✅ CORREÇÃO CRÍTICA: VERIFICAR TIPO NA COLUNA B
-                if (cellB) {
-                    const tipo = cellB.trim().toUpperCase();
-                    if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipo)) {
-                        checklist.tipo = tipo;
-                    } else {
-                        // Fallback: verificar se tem tipo após ponto e vírgula na coluna A
-                        if (cellA.includes(';')) {
-                            const parts = cellA.split(';');
-                            if (parts.length > 1) {
-                                const tipoFromA = parts[1].trim().toUpperCase();
-                                if (['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(tipoFromA)) {
-                                    checklist.tipo = tipoFromA;
-                                }
-                            }
-                        }
-                        
-                        // Fallback 2: padrão antigo
-                        if (!checklist.tipo) {
-                            checklist.tipo = cellA.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
-                        }
-                    }
-                } else {
-                    // Se não tem coluna B, usar fallback
-                    if (cellA.includes(';')) {
-                        const parts = cellA.split(';');
-                        if (parts.length > 1) {
-                            checklist.tipo = parts[1].trim().toUpperCase();
-                        }
-                    }
-                    
-                    if (!checklist.tipo) {
-                        checklist.tipo = cellA.includes('Carreta:') ? 'AGREGADO' : 'PROPRIO';
-                    }
-                }
-            }
-            
-            // Procurar dados nas próximas linhas
-            for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                const cellA = row[0]?.toString().trim() || '';
-                const cellB = row[1]?.toString().trim() || '';
-                
-                // ✅ CORREÇÃO: Extrair datas de colunas separadas
-                if (cellA.includes('Data da Realização:')) {
-                    checklist.dataRealizacao = cellA.replace('Data da Realização:', '').trim();
-                    
-                    // ✅ EXTRAIR VALIDADE DA COLUNA B (PONTO CRÍTICO DO BUG)
-                    if (cellB.includes('Validade:')) {
-                        checklist.validade = cellB.replace('Validade:', '').trim();
-                    } else if (cellB) {
-                        checklist.validade = cellB.trim();
-                    }
-                }
-                
-                // Responsável
-                if (cellA.includes('Responsavel:')) {
-                    if (cellA.includes(';')) {
-                        const parts = cellA.split(';');
-                        checklist.responsavel = parts[0].replace('Responsavel:', '').trim();
-                        if (parts[1]) {
-                            checklist.telefone = parts[1].trim();
-                        }
-                    } else {
-                        checklist.responsavel = cellA.replace('Responsavel:', '').trim();
-                        if (cellB && !cellB.includes('Operador:')) {
-                            checklist.telefone = cellB;
-                        }
-                    }
-                }
-                
-                // Operador
-                if (cellA.includes('Operador:')) {
-                    checklist.operador = cellA.replace('Operador:', '').trim();
-                }
-                
-                // Dispositivos
-                if (cellA === 'Dispositivos Avaliados' || cellA === 'Dispositivos Avaliados;Situação') {
-                    let j = i + 1;
-                    while (j < data.length) {
-                        const nextRow = data[j];
-                        if (!nextRow || nextRow.length === 0) break;
-                        
-                        const dispositivoLinha = nextRow[0]?.toString().trim() || '';
-                        
-                        // Parar se encontrar próximo veículo
-                        if (dispositivoLinha.includes('Veículo:') || dispositivoLinha.includes('Carreta:')) {
-                            break;
-                        }
-                        
-                        // Ignorar linha vazia ou cabeçalho
-                        if (dispositivoLinha && dispositivoLinha !== 'Dispositivos Avaliados' && 
-                            dispositivoLinha !== 'Dispositivos Avaliados;Situação') {
-                            
-                            // Dispositivo pode estar no formato "SETAS;Ok"
-                            let dispositivoNome = dispositivoLinha;
-                            let situacao = 'Ok';
-                            
-                            if (dispositivoLinha.includes(';')) {
-                                const parts = dispositivoLinha.split(';');
-                                dispositivoNome = parts[0].trim();
-                                situacao = parts[1]?.trim() || 'Ok';
-                            } else if (nextRow[1]) {
-                                situacao = nextRow[1].toString().trim();
-                            }
-                            
-                            checklist.dispositivos.push({
-                                nome: dispositivoNome,
-                                situacao: situacao
-                            });
-                        }
-                        
-                        j++;
-                    }
-                    break; // Terminou de processar este checklist
-                }
-            }
-            
-            // Se ainda não tem tipo, definir como PROPRIO
-            if (!checklist.tipo) {
-                checklist.tipo = 'PROPRIO';
-            }
-            
-            return checklist;
-        }
-        
-        // ✅ FUNÇÃO CORRIGIDA: Processar dados do Excel
-        async function processarExcelData(data) {
-            const newChecklists = [];
-            
-            for (let i = 0; i < data.length; i++) {
-                const row = data[i];
-                if (!row || row.length === 0) continue;
-                
-                const cellA = row[0]?.toString().trim() || '';
-                
-                // Encontrou um novo veículo
-                if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
-                    const checklist = extrairChecklistDaPlanilha(data, i);
-                    if (checklist && checklist.placa) {
-                        newChecklists.push(checklist);
-                        i += 10;
-                    }
-                }
-            }
-            
-            // Salvar CADA novo checklist na base compartilhada
-            for (const checklist of newChecklists) {
-                try {
-                    const newId = await saveChecklistToFirestore(checklist, false);
-                    
-                    // Adicionar localmente
-                    checklists.unshift({
-                        id: newId,
-                        ...checklist
-                    });
-                    
-                } catch (error) {
-                    console.error('Erro ao salvar checklist importado:', error);
-                }
-            }
-            
-            // Atualizar interface
-            atualizarTabela();
-            atualizarBadges();
-            atualizarContadores();
-            
-            showNotification(`${newChecklists.length} checklists importados com sucesso!`, 'success');
-        }
-        
-        // ✅ FUNÇÃO DE DEBUG: Verificar datas importadas
-        function debugDatasImportadas() {
-            console.log("=== DEBUG DATAS IMPORTADAS ===");
-            console.log(`Total de checklists: ${checklists.length}`);
-            
-            checklists.forEach((checklist, index) => {
-                console.log(`\n${index + 1}. ${checklist.placa} (${checklist.tipo})`);
-                console.log(`   Realização: "${checklist.dataRealizacao}"`);
-                console.log(`   Validade: "${checklist.validade}"`);
-                console.log(`   Avisos: ${checklist.avisos ? checklist.avisos.length : 0}`);
-                
-                const dataRealizacao = parseDateBrasil(checklist.dataRealizacao);
-                const dataValidade = parseDateBrasil(checklist.validade);
-                
-                console.log(`   Realização parseada: ${dataRealizacao}`);
-                console.log(`   Validade parseada: ${dataValidade}`);
-                console.log(`   Status: ${getStatusValidade(checklist.validade)}`);
-                console.log(`   Dispositivos: ${checklist.dispositivos.length}`);
-                console.log('---');
-            });
-            
-            showNotification('Debug executado! Verifique o console (F12).', 'info');
-        }
-        
-        // Função para verificar se há dispositivos com defeito
         function temDefeito(dispositivos) {
-            return dispositivos.some(d => d.situacao && d.situacao.toLowerCase() === 'defeito');
+            return dispositivos?.some(d => d.situacao && d.situacao.toLowerCase() === 'defeito') || false;
         }
         
-        // ✅ FUNÇÃO: Formatar data para exibição
+        function temAvisos(checklist) {
+            return checklist.avisos && checklist.avisos.length > 0;
+        }
+        
+        function formatarUltimoAviso(checklist) {
+            if (!temAvisos(checklist)) return 'Sem aviso';
+            const ultimoAviso = checklist.avisos[checklist.avisos.length - 1];
+            const data = new Date(ultimoAviso.data);
+            return `${data.toLocaleDateString('pt-BR')} - ${ultimoAviso.quemRecebeu}`;
+        }
+        
         function formatarDataParaExibicao(dataStr) {
             if (!dataStr) return 'N/A';
-            
             const date = parseDateBrasil(dataStr);
             if (!date) return dataStr;
-            
             return date.toLocaleString('pt-BR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -2759,18 +3108,15 @@
             });
         }
         
-        // ✅ FUNÇÃO ATUALIZADA: Mostra todos os dispositivos e avisos
-        function atualizarTabela() {
+        // ✅ ATUALIZAR TABELA COM CACHE
+        function atualizarTabelaComCache(checklists) {
             const searchTerm = searchInput.value.toLowerCase();
             const tipoFiltro = filterTipo.value;
             const statusFiltro = filterStatus.value;
             
-            // Filtrar checklists
             let filteredChecklists = checklists.filter(checklist => {
-                // Filtro por tipo
                 if (tipoFiltro && checklist.tipo !== tipoFiltro) return false;
                 
-                // Filtro por status
                 if (statusFiltro) {
                     const statusValidade = getStatusValidade(checklist.validade);
                     const temDefeitoChecklist = temDefeito(checklist.dispositivos);
@@ -2784,7 +3130,6 @@
                     if (statusFiltro === 'com_aviso' && (statusValidade !== 'vencido' || !temAvisoChecklist)) return false;
                 }
                 
-                // Filtro por busca
                 if (searchTerm) {
                     const searchFields = [
                         checklist.placa,
@@ -2799,16 +3144,13 @@
                 return true;
             });
             
-            // Limpar tabela
             tableBody.innerHTML = '';
             
-            // Mostrar/ocultar mensagem de sem dados
             if (filteredChecklists.length === 0) {
                 noDataMessage.style.display = 'block';
             } else {
                 noDataMessage.style.display = 'none';
                 
-                // Adicionar linhas à tabela
                 filteredChecklists.forEach((checklist, index) => {
                     const statusValidade = getStatusValidade(checklist.validade);
                     const temDefeitoChecklist = temDefeito(checklist.dispositivos);
@@ -2818,27 +3160,22 @@
                     if (statusValidade === 'vencido') row.classList.add('vencido');
                     if (statusValidade === 'proximo') row.classList.add('proximo-vencer');
                     
-                    // Determinar classe do tipo
                     let tipoClass = 'tipo-proprio';
                     if (checklist.tipo === 'AGREGADO') tipoClass = 'tipo-agregado';
                     if (checklist.tipo === 'TERCEIRO') tipoClass = 'tipo-terceiro';
                     
-                    // Dispositivos (todos visíveis)
-                    const dispositivosHTML = checklist.dispositivos.map(d => {
-                        const statusClass = d.situacao && d.situacao.toLowerCase() === 'defeito' ? 'status-defeito' : 'status-ok';
-                        const icon = d.situacao && d.situacao.toLowerCase() === 'defeito' ? '❌' : '✅';
+                    const dispositivosHTML = checklist.dispositivos?.map(d => {
+                        const statusClass = d.situacao?.toLowerCase() === 'defeito' ? 'status-defeito' : 'status-ok';
+                        const icon = d.situacao?.toLowerCase() === 'defeito' ? '❌' : '✅';
                         return `<span class="status-item ${statusClass}" title="${d.nome}: ${d.situacao}">${icon} ${d.nome}</span>`;
-                    }).join('');
+                    }).join('') || '<span class="status-item">Nenhum dispositivo</span>';
                     
-                    // Classe da validade
                     let validadeClass = 'validade-ok';
                     if (statusValidade === 'vencido') validadeClass = 'validade-vencida';
                     if (statusValidade === 'proximo') validadeClass = 'validade-proxima';
                     
-                    // Formatar data para exibição
                     const dataFormatada = formatarDataParaExibicao(checklist.dataRealizacao);
                     
-                    // HTML dos avisos
                     let avisosHTML = '';
                     if (temAvisoChecklist) {
                         const ultimoAviso = formatarUltimoAviso(checklist);
@@ -2875,22 +3212,20 @@
                         <td>${checklist.operador}</td>
                         <td>${avisosHTML}</td>
                         <td>
-                            <div class="status-cell" title="${checklist.dispositivos.length} dispositivos avaliados">
-                                ${dispositivosHTML || '<span class="status-item">Nenhum dispositivo</span>'}
+                            <div class="status-cell" title="${checklist.dispositivos?.length || 0} dispositivos avaliados">
+                                ${dispositivosHTML}
                             </div>
                         </td>
                         <td>
                             <div class="action-buttons">
-                                ${statusValidade === 'vencido' ? `
-                                    <button class="btn-notify-small" onclick="registrarAviso(${index})">
-                                        <i class="fas fa-bell"></i> Avisar
-                                    </button>
-                                ` : ''}
-                                <button class="btn-edit" onclick="editarChecklist(${index})">
-                                    Editar
+                                <button class="btn-table notify" ${statusValidade !== 'vencido' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                                    <i class="fas fa-bell"></i> Avisar
                                 </button>
-                                <button class="btn-delete" onclick="excluirChecklist(${index})">
-                                    Excluir
+                                <button class="btn-table edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn-table delete">
+                                    <i class="fas fa-trash"></i> Excluir
                                 </button>
                             </div>
                         </td>
@@ -2900,109 +3235,26 @@
                 });
             }
             
-            // Atualizar contadores
             atualizarContadores(filteredChecklists.length);
         }
         
-        // ✅ FUNÇÃO ATUALIZADA: Atualizar badges com estatísticas de avisos
-        function atualizarBadges() {
-            let vencidos = 0;
-            let proximos = 0;
-            let ok = 0;
-            let comDefeito = 0;
-            let comAviso = 0;
-            let semAviso = 0;
-            
-            checklists.forEach(checklist => {
-                const statusValidade = getStatusValidade(checklist.validade);
-                const temDefeitoChecklist = temDefeito(checklist.dispositivos);
-                const temAvisoChecklist = temAvisos(checklist);
-                
-                if (statusValidade === 'vencido') {
-                    vencidos++;
-                    if (temAvisoChecklist) {
-                        comAviso++;
-                    } else {
-                        semAviso++;
-                    }
-                }
-                if (statusValidade === 'proximo') proximos++;
-                if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
-                if (temDefeitoChecklist) comDefeito++;
-            });
-            
-            // Atualizar contador de avisados no footer
-            avisadosCount.textContent = comAviso;
-            
-            // Criar cards de resumo
-            statusBadges.innerHTML = `
-                <div class="summary-card total">
-                    <div class="card-number">${checklists.length}</div>
-                    <div class="card-label">Total de Checklists</div>
-                    <div class="card-subtitle">Carregados no sistema</div>
-                </div>
-                <div class="summary-card valid">
-                    <div class="card-number">${ok}</div>
-                    <div class="card-label">Checklists OK</div>
-                    <div class="card-subtitle">Em conformidade</div>
-                </div>
-                <div class="summary-card warning">
-                    <div class="card-number">${proximos}</div>
-                    <div class="card-label">Próximos a Vencer</div>
-                    <div class="card-subtitle">Atenção necessária</div>
-                </div>
-                <div class="summary-card expired">
-                    <div class="card-number">${vencidos}</div>
-                    <div class="card-label">Checklists Vencidos</div>
-                    <div class="card-subtitle">Fora da validade</div>
-                </div>
-                <div class="summary-card avisados">
-                    <div class="card-number">${comAviso}</div>
-                    <div class="card-label">Vencidos Avisados</div>
-                    <div class="card-subtitle">Com notificação registrada</div>
-                </div>
-                <div class="summary-card sem-aviso">
-                    <div class="card-number">${semAviso}</div>
-                    <div class="card-label">Vencidos sem Aviso</div>
-                    <div class="card-subtitle">Necessitam notificação</div>
-                </div>
-            `;
-            
-            // Adicionar evento de clique nos cards
-            document.querySelectorAll('.summary-card.avisados').forEach(card => {
-                card.addEventListener('click', () => {
-                    filterStatus.value = 'com_aviso';
-                    atualizarTabela();
-                });
-            });
-            
-            document.querySelectorAll('.summary-card.sem-aviso').forEach(card => {
-                card.addEventListener('click', () => {
-                    filterStatus.value = 'sem_aviso';
-                    atualizarTabela();
-                });
-            });
-        }
+        // ✅ ATUALIZAR FUNÇÕES EXISTENTES PARA USAR CACHE
         
-        // Função para atualizar contadores
-        function atualizarContadores(filtered = null) {
-            totalCount.textContent = checklists.length;
-            filteredCount.textContent = filtered !== null ? filtered : checklists.length;
-        }
-        
-        // ✅ FUNÇÃO MODIFICADA: Abrir modal de edição
-        window.editarChecklist = function(index) {
+        window.editarChecklist = async function(index) {
+            const checklists = checklistsCache.getAll();
+            const filteredChecklists = getFilteredChecklists(checklists);
+            
+            if (index >= filteredChecklists.length) return;
+            
             editingIndex = index;
-            const checklist = checklists[index];
+            const checklist = filteredChecklists[index];
             
             modalTitle.textContent = 'Editar Checklist';
             excluirChecklistBtn.style.display = 'block';
             
-            // Preencher formulário
             document.getElementById('editPlaca').value = checklist.placa;
             document.getElementById('editTipo').value = checklist.tipo;
             
-            // Converter datas para formato datetime-local
             const dataRealizacao = converterParaDateTimeLocal(checklist.dataRealizacao);
             const dataValidade = converterParaDateTimeLocal(checklist.validade);
             
@@ -3012,113 +3264,111 @@
             document.getElementById('editTelefone').value = checklist.telefone || '';
             document.getElementById('editOperador').value = checklist.operador;
             
-            // Limpar e adicionar dispositivos
             dispositivosContainer.innerHTML = '';
-            checklist.dispositivos.forEach(dispositivo => {
+            checklist.dispositivos?.forEach(dispositivo => {
                 adicionarDispositivoInput(dispositivo.nome, dispositivo.situacao);
             });
             
-            // Abrir modal
             editModal.style.display = 'flex';
         };
         
-        // Função para converter data para formato datetime-local
-        function converterParaDateTimeLocal(dataStr) {
-            const date = parseDateBrasil(dataStr);
-            if (!date) return '';
+        window.excluirChecklist = async function(index) {
+            const checklists = checklistsCache.getAll();
+            const filteredChecklists = getFilteredChecklists(checklists);
             
-            try {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                
-                return `${year}-${month}-${day}T${hours}:${minutes}`;
-            } catch (e) {
-                console.error("Erro ao converter data:", e);
-                return '';
-            }
-        }
+            if (index >= filteredChecklists.length) return;
+            
+            const checklist = filteredChecklists[index];
+            
+            mostrarConfirmacao(
+                'Excluir Checklist',
+                `Tem certeza que deseja excluir o checklist da placa ${checklist.placa}?`,
+                async () => {
+                    // Remover do cache
+                    checklistsCache.delete(checklist.id);
+                    
+                    // Se for do Firestore, marcar para exclusão
+                    if (checklist.id.startsWith('firestore_')) {
+                        const firestoreId = checklist.id.replace('firestore_', '');
+                        try {
+                            await db.collection('checklists').doc(firestoreId).delete();
+                        } catch (error) {
+                            console.error('Erro ao excluir do Firestore:', error);
+                        }
+                    }
+                    
+                    // Atualizar UI
+                    atualizarTabela();
+                    showNotification('Checklist excluído com sucesso!', 'success');
+                }
+            );
+        };
         
-        // Função para converter datetime-local para formato do sistema
-        function converterParaFormatoSistema(datetimeStr) {
-            if (!datetimeStr) return '';
+        window.registrarAviso = function(index) {
+            const checklists = checklistsCache.getAll();
+            const filteredChecklists = getFilteredChecklists(checklists);
             
-            try {
-                const date = new Date(datetimeStr);
-                if (!isValidDate(date)) return '';
-                
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                
-                return `${day}/${month}/${year} ${hours}:${minutes}`;
-            } catch (e) {
-                console.error("Erro ao converter datetime:", e);
-                return datetimeStr;
-            }
-        }
-        
-        // Função para adicionar input de dispositivo
-        function adicionarDispositivoInput(nome = '', situacao = 'Ok') {
-            const dispositivoDiv = document.createElement('div');
-            dispositivoDiv.className = 'dispositivo-item';
+            if (index >= filteredChecklists.length) return;
             
-            const selectOptions = dispositivosComuns.map(d => 
-                `<option value="${d}" ${d === nome ? 'selected' : ''}>${d}</option>`
-            ).join('');
+            avisoIndex = index;
+            const checklist = filteredChecklists[index];
             
-            dispositivoDiv.innerHTML = `
-                <select class="form-control dispositivo-nome" style="flex: 2;">
-                    <option value="">Selecione ou digite...</option>
-                    ${selectOptions}
-                    <option value="OUTRO" ${!dispositivosComuns.includes(nome) && nome ? 'selected' : ''}>OUTRO (personalizado)</option>
-                </select>
-                <input type="text" class="form-control dispositivo-nome-outro" 
-                       placeholder="Nome do dispositivo" 
-                       value="${!dispositivosComuns.includes(nome) && nome ? nome : ''}"
-                       style="flex: 2; ${dispositivosComuns.includes(nome) ? 'display: none;' : ''}">
-                <select class="status-select dispositivo-situacao" style="flex: 1;">
-                    <option value="Ok" ${situacao === 'Ok' ? 'selected' : ''}>Ok</option>
-                    <option value="Defeito" ${situacao === 'Defeito' ? 'selected' : ''}>Defeito</option>
-                </select>
-                <button type="button" class="btn-delete" onclick="this.parentElement.remove()" style="padding: 5px 10px;">
-                    <i class="fas fa-times"></i>
-                </button>
+            avisoPlaca.textContent = `Placa: ${checklist.placa} (${checklist.tipo})`;
+            avisoDetalhes.innerHTML = `
+                Responsável: ${checklist.responsavel}<br>
+                Operador: ${checklist.operador}<br>
+                Validade: ${checklist.validade || 'N/A'}
             `;
             
-            dispositivosContainer.appendChild(dispositivoDiv);
+            const now = new Date();
+            const nowStr = now.toISOString().slice(0, 16);
+            avisoData.value = nowStr;
             
-            // Adicionar evento para mostrar/ocultar input personalizado
-            const select = dispositivoDiv.querySelector('.dispositivo-nome');
-            const outroInput = dispositivoDiv.querySelector('.dispositivo-nome-outro');
+            if (currentUser) {
+                const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+                avisoQuemNotificou.value = displayName;
+            }
             
-            select.addEventListener('change', function() {
-                if (this.value === 'OUTRO') {
-                    outroInput.style.display = 'block';
-                } else {
-                    outroInput.style.display = 'none';
-                }
-            });
-        }
+            carregarHistoricoAvisos(checklist);
+            avisoModal.style.display = 'flex';
+        };
         
-        // Evento para adicionar dispositivo
-        addDispositivoBtn.addEventListener('click', function() {
-            adicionarDispositivoInput();
+        // ✅ EVENTOS
+        
+        // Importar Excel
+        fileInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    await performanceManager.importExcelUltraFast(jsonData);
+                    
+                } catch (error) {
+                    console.error('Erro ao importar:', error);
+                    showNotification('Erro na importação: ' + error.message, 'error');
+                }
+                
+                fileInput.value = '';
+            };
+            
+            reader.readAsArrayBuffer(file);
         });
         
-        // ✅ EVENTO MODIFICADO: Salvar checklist
+        // Salvar checklist
         salvarChecklistBtn.addEventListener('click', async function() {
-            // Validar formulário
             if (!checklistForm.checkValidity()) {
-                alert('Preencha todos os campos obrigatórios!');
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
                 return;
             }
             
-            // Coletar dados do formulário
             const checklistData = {
                 placa: document.getElementById('editPlaca').value.toUpperCase(),
                 tipo: document.getElementById('editTipo').value,
@@ -3128,10 +3378,9 @@
                 telefone: document.getElementById('editTelefone').value,
                 operador: document.getElementById('editOperador').value,
                 dispositivos: [],
-                avisos: editingIndex !== -1 ? checklists[editingIndex].avisos || [] : []
+                avisos: editingIndex !== -1 ? checklistsCache.getAll()[editingIndex]?.avisos || [] : []
             };
             
-            // Coletar dispositivos
             const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
             dispositivoItems.forEach(item => {
                 const select = item.querySelector('.dispositivo-nome');
@@ -3155,37 +3404,31 @@
             
             try {
                 if (editingIndex === -1) {
-                    // NOVO CHECKLIST - salvar na base compartilhada
-                    const newId = await saveChecklistToFirestore(checklistData, false);
+                    // NOVO CHECKLIST
+                    const id = performanceManager.generateId();
+                    const checklistCompleto = {
+                        id,
+                        ...checklistData,
+                        criadoPor: currentUser.uid,
+                        criadoPorEmail: currentUser.email,
+                        criadoEm: new Date().toISOString(),
+                        synced: false
+                    };
                     
-                    // Adicionar localmente
-                    checklists.unshift({
-                        id: newId,
-                        ...checklistData
-                    });
-                    
+                    checklistsCache.set(id, checklistCompleto);
                     showNotification('Checklist criado com sucesso!', 'success');
                     
                 } else {
                     // EDITAR CHECKLIST EXISTENTE
-                    const existingChecklist = checklists[editingIndex];
-                    await saveChecklistToFirestore(checklistData, true, existingChecklist.id);
+                    const checklists = checklistsCache.getAll();
+                    const checklist = checklists[editingIndex];
                     
-                    // Atualizar localmente
-                    checklists[editingIndex] = {
-                        id: existingChecklist.id,
-                        ...checklistData
-                    };
-                    
+                    await performanceManager.editChecklistInstant(checklist.id, checklistData);
                     showNotification('Checklist atualizado com sucesso!', 'success');
                 }
                 
-                // Fechar modal e atualizar
                 editModal.style.display = 'none';
                 atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
-                
                 editingIndex = -1;
                 
             } catch (error) {
@@ -3194,235 +3437,126 @@
             }
         });
         
-        // ✅ EVENTO MODIFICADO: Excluir checklist do modal
-        excluirChecklistBtn.addEventListener('click', async function() {
-            if (editingIndex !== -1 && confirm('Tem certeza que deseja excluir este checklist?')) {
-                const checklist = checklists[editingIndex];
+        // Registrar aviso
+        registrarAvisoBtn.addEventListener('click', async function() {
+            if (!avisoForm.checkValidity()) {
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
+                return;
+            }
+            
+            const checklists = checklistsCache.getAll();
+            const filteredChecklists = getFilteredChecklists(checklists);
+            const checklist = filteredChecklists[avisoIndex];
+            
+            const novoAviso = {
+                data: avisoData.value,
+                quemNotificou: avisoQuemNotificou.value.trim(),
+                quemRecebeu: avisoQuemRecebeu.value.trim(),
+                metodo: avisoMetodo.value,
+                observacao: avisoObservacao.value.trim(),
+                registradoPor: currentUser.email,
+                registradoEm: new Date().toISOString()
+            };
+            
+            try {
+                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
+                const updated = { ...checklist, avisos: avisosAtualizados };
                 
-                try {
-                    // Excluir da base compartilhada
-                    await db.collection('checklists').doc(checklist.id).delete();
-                    
-                    // Excluir localmente
-                    checklists.splice(editingIndex, 1);
-                    
-                    // Fechar modal
-                    editModal.style.display = 'none';
-                    
-                    // Atualizar interface
-                    atualizarTabela();
-                    atualizarBadges();
-                    atualizarContadores();
-                    
-                    showNotification('Checklist excluído com sucesso!', 'success');
-                    
-                    editingIndex = -1;
-                    
-                } catch (error) {
-                    console.error('Erro ao excluir:', error);
-                    showNotification('Erro ao excluir checklist.', 'error');
-                }
-            }
-        });
-        
-        // ✅ FUNÇÃO MODIFICADA: Excluir checklist da tabela
-        window.excluirChecklist = async function(index) {
-            if (confirm('Tem certeza que deseja excluir este checklist?')) {
-                const checklist = checklists[index];
+                await performanceManager.editChecklistInstant(checklist.id, { avisos: avisosAtualizados });
                 
-                try {
-                    // Excluir da base compartilhada
-                    await db.collection('checklists').doc(checklist.id).delete();
-                    
-                    // Excluir localmente
-                    checklists.splice(index, 1);
-                    
-                    // Atualizar interface
-                    atualizarTabela();
-                    atualizarBadges();
-                    atualizarContadores();
-                    
-                    showNotification('Checklist excluído com sucesso!', 'success');
-                    
-                } catch (error) {
-                    console.error('Erro ao excluir:', error);
-                    showNotification('Erro ao excluir checklist.', 'error');
-                }
-            }
-        };
-        
-        // Evento para novo checklist
-        novoChecklistBtn.addEventListener('click', function() {
-            editingIndex = -1;
-            modalTitle.textContent = 'Novo Checklist';
-            excluirChecklistBtn.style.display = 'none';
-            
-            // Limpar formulário
-            checklistForm.reset();
-            dispositivosContainer.innerHTML = '';
-            
-            // Adicionar alguns dispositivos padrão
-            adicionarDispositivoInput('SETAS', 'Ok');
-            adicionarDispositivoInput('SENSOR DE PORTA DE MOTORISTA', 'Ok');
-            adicionarDispositivoInput('GPS', 'Ok');
-            
-            // Definir data atual
-            const now = new Date();
-            const nowStr = now.toISOString().slice(0, 16);
-            document.getElementById('editDataRealizacao').value = nowStr;
-            
-            // Definir validade para 30 dias
-            const validade = new Date(now);
-            validade.setDate(validade.getDate() + 30);
-            const validadeStr = validade.toISOString().slice(0, 16);
-            document.getElementById('editValidade').value = validadeStr;
-            
-            // Abrir modal
-            editModal.style.display = 'flex';
-        });
-        
-        // Eventos para fechar modais
-        fecharModal.addEventListener('click', function() {
-            editModal.style.display = 'none';
-            editingIndex = -1;
-        });
-        
-        cancelarBtn.addEventListener('click', function() {
-            editModal.style.display = 'none';
-            editingIndex = -1;
-        });
-        
-        fecharAvisoModal.addEventListener('click', function() {
-            avisoModal.style.display = 'none';
-            avisoForm.reset();
-            avisoIndex = -1;
-        });
-        
-        cancelarAvisoBtn.addEventListener('click', function() {
-            avisoModal.style.display = 'none';
-            avisoForm.reset();
-            avisoIndex = -1;
-        });
-        
-        // Fechar modal ao clicar fora
-        window.addEventListener('click', function(e) {
-            if (e.target === editModal) {
-                editModal.style.display = 'none';
-                editingIndex = -1;
-            }
-            if (e.target === avisoModal) {
                 avisoModal.style.display = 'none';
                 avisoForm.reset();
-                avisoIndex = -1;
-            }
-            if (e.target === confirmacaoModal) {
-                confirmacaoModal.style.display = 'none';
-                acaoConfirmadaCallback = null;
-            }
-        });
-        
-        // Eventos de filtro e busca
-        searchInput.addEventListener('input', atualizarTabela);
-        filterTipo.addEventListener('change', atualizarTabela);
-        filterStatus.addEventListener('change', atualizarTabela);
-        
-        limparFiltrosBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            filterTipo.value = '';
-            filterStatus.value = '';
-            atualizarTabela();
-        });
-        
-        // ✅ EVENTO: Botão para remover duplicados
-        removerDuplicadosBtn.addEventListener('click', removerPlacasDuplicadas);
-        
-        // ✅ EVENTO: Botão de debug
-        debugBtn.addEventListener('click', debugDatasImportadas);
-        
-        // ✅ EVENTO: Botão de Backup
-        if (backupBtn) {
-            backupBtn.addEventListener('click', async function() {
-                try {
-                    showNotification('Criando backup completo...', 'info');
-                    const result = await fazerBackupCompleto();
-                    
-                    if (result.success) {
-                        showNotification(`Backup criado com sucesso! ${result.checklistsCount} checklists e ${result.usersCount} usuários.`, 'success');
-                    } else {
-                        showNotification('Erro ao criar backup', 'error');
-                    }
-                } catch (error) {
-                    console.error('Erro no backup:', error);
-                    showNotification('Erro ao criar backup', 'error');
-                }
-            });
-        }
-        
-        // ✅ EVENTO: Botão Limpar Tudo (com menu de opções)
-        if (limparTudoBtn) {
-            limparTudoBtn.addEventListener('click', async function() {
-                // Criar menu de opções
-                const opcao = prompt(
-                    `🚨 LIMPEZA DE DADOS 🚨\n\n` +
-                    `Escolha uma opção:\n` +
-                    `1 - Limpar TUDO (checklists + usuários)\n` +
-                    `2 - Limpar apenas checklists\n` +
-                    `3 - Restaurar backup\n` +
-                    `4 - Cancelar\n\n` +
-                    `Digite o número da opção:`
-                );
                 
-                switch (opcao) {
-                    case '1':
-                        await limparTodosDadosFirebase();
-                        break;
-                        
-                    case '2':
-                        await limparApenasChecklists();
-                        break;
-                        
-                    case '3':
-                        await uploadERestaurarBackup();
-                        break;
-                        
-                    case '4':
-                    default:
-                        showNotification('Operação cancelada', 'info');
-                        break;
-                }
-            });
-        }
+                atualizarTabela();
+                showNotification('Aviso registrado com sucesso!', 'success');
+                
+                avisoIndex = -1;
+                
+            } catch (error) {
+                console.error('Erro ao registrar aviso:', error);
+                showNotification('Erro ao registrar aviso.', 'error');
+            }
+        });
         
-        // ✅ EVENTO MODIFICADO: Exportar dados
-        exportBtn.addEventListener('click', function() {
+        // Remover duplicados
+        removerDuplicadosBtn.addEventListener('click', async function() {
+            const checklists = checklistsCache.getAll();
+            
+            if (checklists.length === 0) {
+                showNotification('Não há checklists para processar!', 'warning');
+                return;
+            }
+            
+            mostrarConfirmacao(
+                'Remover Duplicados',
+                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
+                async () => {
+                    showProgressBar('Removendo duplicados...');
+                    
+                    const uniquePlacas = new Map();
+                    
+                    // Ordenar por data mais recente
+                    const checklistsOrdenados = [...checklists].sort((a, b) => {
+                        const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
+                        const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
+                        return dataB - dataA;
+                    });
+                    
+                    // Manter apenas o mais recente de cada placa
+                    checklistsOrdenados.forEach(checklist => {
+                        const placaNormalizada = checklist.placa.trim().toUpperCase();
+                        if (!uniquePlacas.has(placaNormalizada)) {
+                            uniquePlacas.set(placaNormalizada, checklist);
+                        }
+                    });
+                    
+                    // Atualizar cache
+                    checklistsCache.clear();
+                    uniquePlacas.forEach((checklist, placa) => {
+                        checklistsCache.set(checklist.id || performanceManager.generateId(), checklist);
+                    });
+                    
+                    // Sincronizar
+                    await performanceManager.syncToFirebaseInBackground(
+                        Array.from(uniquePlacas.values()), 
+                        false
+                    );
+                    
+                    hideProgressBar();
+                    atualizarTabela();
+                    
+                    showNotification(
+                        `${checklists.length - uniquePlacas.size} duplicados removidos! Mantidos: ${uniquePlacas.size} checklists únicos.`,
+                        'success'
+                    );
+                }
+            );
+        });
+        
+        // Exportar
+        exportCompletoBtn.addEventListener('click', function() {
+            const checklists = checklistsCache.getAll();
+            
             if (checklists.length === 0) {
                 showNotification('Não há dados para exportar!', 'warning');
                 return;
             }
             
-            // Criar uma nova planilha
-            const wb = XLSX.utils.book_new();
-            
-            // Preparar dados para exportação
             const exportData = [];
-            
-            // Adicionar cabeçalho
             exportData.push(['Relatório Checklist - Dados Compartilhados']);
             exportData.push([]);
             exportData.push(['Empresa: Sistema de Checklists']);
             exportData.push(['Periodo: ' + new Date().toLocaleDateString('pt-BR')]);
-            exportData.push(['Exportado por: ' + (currentUser ? currentUser.email : 'Sistema')]);
+            exportData.push(['Exportado por: ' + (currentUser?.email || 'Sistema')]);
             exportData.push(['Data exportação: ' + new Date().toLocaleString('pt-BR')]);
             exportData.push([]);
             
-            // Adicionar cada checklist
             checklists.forEach(checklist => {
                 exportData.push([`Veículo: ${checklist.placa}`, checklist.tipo]);
                 exportData.push([`Data da Realização: ${checklist.dataRealizacao}`, `Validade: ${checklist.validade}`]);
                 exportData.push([`Responsavel: ${checklist.responsavel}`, checklist.telefone]);
                 exportData.push([`Operador: ${checklist.operador}`]);
                 
-                // Adicionar informações de avisos
                 if (checklist.avisos && checklist.avisos.length > 0) {
                     exportData.push(['Histórico de Avisos:', '']);
                     checklist.avisos.forEach(aviso => {
@@ -3434,98 +3568,110 @@
                 }
                 
                 exportData.push(['Dispositivos Avaliados', 'Situação']);
-                
-                checklist.dispositivos.forEach(d => {
+                checklist.dispositivos?.forEach(d => {
                     exportData.push([d.nome, d.situacao]);
                 });
-                
                 exportData.push([]);
             });
             
-            // Criar worksheet
             const ws = XLSX.utils.aoa_to_sheet(exportData);
-            
-            // Adicionar worksheet ao workbook
+            const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'RelatorioChecklist');
             
-            // Exportar arquivo
-            XLSX.writeFile(wb, `checklists_compartilhados_${new Date().toISOString().slice(0,10)}_${currentUser ? currentUser.email.split('@')[0] : 'sistema'}.xlsx`);
+            XLSX.writeFile(wb, `checklists_${new Date().toISOString().slice(0,10)}.xlsx`);
             showNotification('Arquivo exportado com sucesso!', 'success');
         });
         
-        // Função para salvar no localStorage (backup)
-        function salvarNoLocalStorage() {
-            localStorage.setItem('checklists_veiculares', JSON.stringify(checklists));
-            localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
-        }
-        
-        // Função para carregar do localStorage (fallback)
-        function carregarDoLocalStorage() {
-            const saved = localStorage.getItem('checklists_veiculares');
-            if (saved) {
-                checklists = JSON.parse(saved);
-                atualizarTabela();
-                atualizarBadges();
-                atualizarContadores();
+        // Limpar tudo
+        limparTudoBtn.addEventListener('click', async function() {
+            const opcao = prompt(
+                `🚨 LIMPEZA DE DADOS 🚨\n\n` +
+                `Escolha uma opção:\n` +
+                `1 - Limpar TUDO (dados locais e servidor)\n` +
+                `2 - Limpar apenas dados locais\n` +
+                `3 - Cancelar\n\n` +
+                `Digite o número da opção:`
+            );
+            
+            switch (opcao) {
+                case '1':
+                    await limparTodosDados();
+                    break;
+                case '2':
+                    checklistsCache.clear();
+                    localStorage.clear();
+                    atualizarTabela();
+                    showNotification('Dados locais limpos!', 'success');
+                    break;
+                default:
+                    showNotification('Operação cancelada', 'info');
+                    break;
             }
-            
-            // Carregar modo escuro
-            const darkModeSaved = localStorage.getItem('dark_mode_sistema');
-            if (darkModeSaved === 'true') {
-                toggleDarkMode();
-            }
-        }
-        
-        // Função para alternar modo escuro
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode', isDarkMode);
-            
-            if (isDarkMode) {
-                btnDarkMode.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
-            } else {
-                btnDarkMode.innerHTML = '<i class="fas fa-moon"></i> Modo Escuro';
-            }
-            
-            // Salvar preferência
-            localStorage.setItem('dark_mode_sistema', isDarkMode.toString());
-        }
-        
-        // Evento para modo escuro
-        btnDarkMode.addEventListener('click', toggleDarkMode);
-        
-        // ✅ EVENTO MODIFICADO: Importar arquivo Excel
-        fileInput.addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            
-            reader.onload = async function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // Processar a planilha "RelatorioChecklist"
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    
-                    await processarExcelData(jsonData);
-                } catch (error) {
-                    console.error('Erro ao importar arquivo:', error);
-                    showNotification('Erro ao importar arquivo Excel', 'error');
-                }
-            };
-            
-            reader.readAsArrayBuffer(file);
         });
         
-        // ✅ FUNÇÃO: Notificação de sucesso
-        function showNotification(message, type = 'info') {
-            // Remover notificações anteriores
-            const existingNotifications = document.querySelectorAll('.notification');
-            existingNotifications.forEach(n => n.remove());
+        async function limparTodosDados() {
+            const confirmacao = prompt(`⚠️ PERIGO: Isso apagará TODOS os dados permanentemente!\n\nDigite "APAGAR-TUDO" para confirmar:`);
             
+            if (confirmacao !== "APAGAR-TUDO") {
+                showNotification('Operação cancelada', 'warning');
+                return;
+            }
+            
+            try {
+                showProgressBar('Apagando dados...');
+                
+                // Apagar do Firestore
+                const checklistsSnapshot = await db.collection('checklists').get();
+                const deletePromises = [];
+                checklistsSnapshot.forEach(doc => {
+                    deletePromises.push(db.collection('checklists').doc(doc.id).delete());
+                });
+                
+                await Promise.all(deletePromises);
+                
+                // Limpar local
+                checklistsCache.clear();
+                localStorage.clear();
+                
+                hideProgressBar();
+                atualizarTabela();
+                
+                showNotification(`${deletePromises.length} checklists apagados permanentemente!`, 'success');
+                
+            } catch (error) {
+                hideProgressBar();
+                console.error('Erro ao limpar dados:', error);
+                showNotification('Erro ao apagar dados', 'error');
+            }
+        }
+        
+        // ✅ FUNÇÕES AUXILIARES DE UI
+        
+        function mostrarConfirmacao(titulo, mensagem, callback) {
+            confirmacaoTitulo.textContent = titulo;
+            confirmacaoMensagem.innerHTML = mensagem;
+            acaoConfirmadaCallback = callback;
+            confirmacaoModal.style.display = 'flex';
+        }
+        
+        function showProgressBar(message = 'Processando...') {
+            progressBar.style.display = 'block';
+            progressBar.querySelector('h4').innerHTML = `<i class="fas fa-sync-alt fa-spin"></i> ${message}`;
+        }
+        
+        function updateProgress(current, total, message = '') {
+            const porcentagem = Math.round((current / total) * 100);
+            progressFill.style.width = `${porcentagem}%`;
+            progressText.textContent = message || `${current} de ${total} itens (${porcentagem}%)`;
+        }
+        
+        function hideProgressBar() {
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0 de 0 itens';
+        }
+        
+        function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.innerHTML = `
@@ -3561,69 +3707,353 @@
             }, 4000);
         }
         
-        // Adicionar estilo para animação
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
+        function adicionarDispositivoInput(nome = '', situacao = 'Ok') {
+            const dispositivoDiv = document.createElement('div');
+            dispositivoDiv.className = 'dispositivo-item';
             
-            @keyframes slideOut {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // ✅ Inicializar aplicação
-        window.addEventListener('DOMContentLoaded', function() {
-            // Inicializar autenticação
-            initAuth();
+            const selectOptions = dispositivosComuns.map(d => 
+                `<option value="${d}" ${d === nome ? 'selected' : ''}>${d}</option>`
+            ).join('');
             
-            // Carregar preferências
-            const darkModeSaved = localStorage.getItem('dark_mode_sistema');
-            if (darkModeSaved === 'true') {
-                toggleDarkMode();
-            }
-        });
-        
-        // Permitir arrastar e soltar arquivo
-        document.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.body.style.backgroundColor = 'rgba(102, 126, 234, 0.8)';
-        });
-        
-        document.addEventListener('dragleave', function(e) {
-            document.body.style.backgroundColor = '';
-        });
-        
-        document.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.body.style.backgroundColor = '';
+            dispositivoDiv.innerHTML = `
+                <select class="form-control dispositivo-nome" style="flex: 2;">
+                    <option value="">Selecione ou digite...</option>
+                    ${selectOptions}
+                    <option value="OUTRO" ${!dispositivosComuns.includes(nome) && nome ? 'selected' : ''}>OUTRO (personalizado)</option>
+                </select>
+                <input type="text" class="form-control dispositivo-nome-outro" 
+                       placeholder="Nome do dispositivo" 
+                       value="${!dispositivosComuns.includes(nome) && nome ? nome : ''}"
+                       style="flex: 2; ${dispositivosComuns.includes(nome) ? 'display: none;' : ''}">
+                <select class="status-select dispositivo-situacao" style="flex: 1;">
+                    <option value="Ok" ${situacao === 'Ok' ? 'selected' : ''}>Ok</option>
+                    <option value="Defeito" ${situacao === 'Defeito' ? 'selected' : ''}>Defeito</option>
+                </select>
+                <button type="button" class="btn-table delete" onclick="this.parentElement.remove()" style="padding: 5px 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
             
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
+            dispositivosContainer.appendChild(dispositivoDiv);
+            
+            const select = dispositivoDiv.querySelector('.dispositivo-nome');
+            const outroInput = dispositivoDiv.querySelector('.dispositivo-nome-outro');
+            
+            select.addEventListener('change', function() {
+                outroInput.style.display = this.value === 'OUTRO' ? 'block' : 'none';
+            });
+        }
+        
+        function converterParaDateTimeLocal(dataStr) {
+            const date = parseDateBrasil(dataStr);
+            if (!date) return '';
+            
+            try {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
                 
-                // Disparar evento change manualmente
-                const event = new Event('change');
-                fileInput.dispatchEvent(event);
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            } catch (e) {
+                console.error("Erro ao converter data:", e);
+                return '';
             }
+        }
+        
+        function converterParaFormatoSistema(datetimeStr) {
+            if (!datetimeStr) return '';
+            
+            try {
+                const date = new Date(datetimeStr);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (e) {
+                console.error("Erro ao converter datetime:", e);
+                return datetimeStr;
+            }
+        }
+        
+        function carregarHistoricoAvisos(checklist) {
+            if (!checklist.avisos || checklist.avisos.length === 0) {
+                listaAvisos.innerHTML = '<div class="sem-aviso">Nenhum aviso registrado</div>';
+                historicoAvisos.style.display = 'block';
+                return;
+            }
+            
+            const avisosOrdenados = [...checklist.avisos].sort((a, b) => 
+                new Date(b.data) - new Date(a.data)
+            );
+            
+            listaAvisos.innerHTML = avisosOrdenados.map(aviso => {
+                const dataFormatada = new Date(aviso.data).toLocaleString('pt-BR');
+                return `
+                    <div class="aviso-item">
+                        <div class="aviso-data">
+                            <i class="fas fa-calendar-alt" style="margin-right: 5px;"></i>
+                            ${dataFormatada}
+                        </div>
+                        <div class="aviso-quem">
+                            <strong>Notificado por:</strong> ${aviso.quemNotificou} |
+                            <strong>Recebido por:</strong> ${aviso.quemRecebeu} |
+                            <strong>Método:</strong> ${aviso.metodo || 'Não especificado'}
+                        </div>
+                        ${aviso.observacao ? `<div style="margin-top: 5px; color: var(--gray-text); font-size: 0.85rem;"><i class="fas fa-comment"></i> ${aviso.observacao}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            historicoAvisos.style.display = 'block';
+        }
+        
+        function getFilteredChecklists(checklists) {
+            const searchTerm = searchInput.value.toLowerCase();
+            const tipoFiltro = filterTipo.value;
+            const statusFiltro = filterStatus.value;
+            
+            return checklists.filter(checklist => {
+                if (tipoFiltro && checklist.tipo !== tipoFiltro) return false;
+                
+                if (statusFiltro) {
+                    const statusValidade = getStatusValidade(checklist.validade);
+                    const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                    const temAvisoChecklist = temAvisos(checklist);
+                    
+                    if (statusFiltro === 'vencido' && statusValidade !== 'vencido') return false;
+                    if (statusFiltro === 'proximo' && statusValidade !== 'proximo') return false;
+                    if (statusFiltro === 'ok' && (statusValidade !== 'ok' || temDefeitoChecklist)) return false;
+                    if (statusFiltro === 'defeito' && !temDefeitoChecklist) return false;
+                    if (statusFiltro === 'sem_aviso' && (statusValidade !== 'vencido' || temAvisoChecklist)) return false;
+                    if (statusFiltro === 'com_aviso' && (statusValidade !== 'vencido' || !temAvisoChecklist)) return false;
+                }
+                
+                if (searchTerm) {
+                    const searchFields = [
+                        checklist.placa,
+                        checklist.responsavel,
+                        checklist.operador,
+                        checklist.tipo
+                    ].join(' ').toLowerCase();
+                    
+                    if (!searchFields.includes(searchTerm)) return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        function atualizarTabela() {
+            const checklists = checklistsCache.getAll();
+            atualizarTabelaComCache(checklists);
+        }
+        
+        function atualizarBadges() {
+            const checklists = checklistsCache.getAll();
+            
+            let vencidos = 0;
+            let proximos = 0;
+            let ok = 0;
+            let comDefeito = 0;
+            let comAviso = 0;
+            let semAviso = 0;
+            
+            checklists.forEach(checklist => {
+                const statusValidade = getStatusValidade(checklist.validade);
+                const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                const temAvisoChecklist = temAvisos(checklist);
+                
+                if (statusValidade === 'vencido') {
+                    vencidos++;
+                    if (temAvisoChecklist) {
+                        comAviso++;
+                    } else {
+                        semAviso++;
+                    }
+                }
+                if (statusValidade === 'proximo') proximos++;
+                if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
+                if (temDefeitoChecklist) comDefeito++;
+            });
+            
+            avisadosCount.textContent = comAviso;
+            
+            statusBadges.innerHTML = `
+                <div class="summary-card total">
+                    <div class="card-number">${checklists.length}</div>
+                    <div class="card-label">Total de Checklists</div>
+                    <div class="card-subtitle">Carregados no sistema</div>
+                </div>
+                <div class="summary-card valid">
+                    <div class="card-number">${ok}</div>
+                    <div class="card-label">Checklists OK</div>
+                    <div class="card-subtitle">Em conformidade</div>
+                </div>
+                <div class="summary-card warning">
+                    <div class="card-number">${proximos}</div>
+                    <div class="card-label">Próximos a Vencer</div>
+                    <div class="card-subtitle">Atenção necessária</div>
+                </div>
+                <div class="summary-card expired">
+                    <div class="card-number">${vencidos}</div>
+                    <div class="card-label">Checklists Vencidos</div>
+                    <div class="card-subtitle">Fora da validade</div>
+                </div>
+                <div class="summary-card avisados">
+                    <div class="card-number">${comAviso}</div>
+                    <div class="card-label">Vencidos Avisados</div>
+                    <div class="card-subtitle">Com notificação registrada</div>
+                </div>
+                <div class="summary-card sem-aviso">
+                    <div class="card-number">${semAviso}</div>
+                    <div class="card-label">Vencidos sem Aviso</div>
+                    <div class="card-subtitle">Necessitam notificação</div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.summary-card.avisados').forEach(card => {
+                card.addEventListener('click', () => {
+                    filterStatus.value = 'com_aviso';
+                    atualizarTabela();
+                });
+            });
+            
+            document.querySelectorAll('.summary-card.sem-aviso').forEach(card => {
+                card.addEventListener('click', () => {
+                    filterStatus.value = 'sem_aviso';
+                    atualizarTabela();
+                });
+            });
+        }
+        
+        function atualizarContadores(filtered = null) {
+            const checklists = checklistsCache.getAll();
+            totalCount.textContent = checklists.length;
+            filteredCount.textContent = filtered !== null ? filtered : checklists.length;
+        }
+        
+        // ✅ EVENTOS GLOBAIS
+        
+        // Fechar modais
+        fecharModal.addEventListener('click', () => { editModal.style.display = 'none'; editingIndex = -1; });
+        cancelarBtn.addEventListener('click', () => { editModal.style.display = 'none'; editingIndex = -1; });
+        fecharAvisoModal.addEventListener('click', () => { avisoModal.style.display = 'none'; avisoForm.reset(); avisoIndex = -1; });
+        cancelarAvisoBtn.addEventListener('click', () => { avisoModal.style.display = 'none'; avisoForm.reset(); avisoIndex = -1; });
+        fecharConfirmacaoModal.addEventListener('click', () => { confirmacaoModal.style.display = 'none'; acaoConfirmadaCallback = null; });
+        cancelarConfirmacaoBtn.addEventListener('click', () => { confirmacaoModal.style.display = 'none'; acaoConfirmadaCallback = null; });
+        
+        confirmarAcaoBtn.addEventListener('click', async function() {
+            if (acaoConfirmadaCallback) {
+                confirmacaoModal.style.display = 'none';
+                await acaoConfirmadaCallback();
+                acaoConfirmadaCallback = null;
+            }
+        });
+        
+        // Fechar modais ao clicar fora
+        window.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+                editingIndex = -1;
+            }
+            if (e.target === avisoModal) {
+                avisoModal.style.display = 'none';
+                avisoForm.reset();
+                avisoIndex = -1;
+            }
+            if (e.target === confirmacaoModal) {
+                confirmacaoModal.style.display = 'none';
+                acaoConfirmadaCallback = null;
+            }
+        });
+        
+        // Adicionar dispositivo
+        addDispositivoBtn.addEventListener('click', function() {
+            adicionarDispositivoInput();
+        });
+        
+        // Novo checklist
+        novoChecklistBtn.addEventListener('click', function() {
+            editingIndex = -1;
+            modalTitle.textContent = 'Novo Checklist';
+            excluirChecklistBtn.style.display = 'none';
+            
+            checklistForm.reset();
+            dispositivosContainer.innerHTML = '';
+            
+            adicionarDispositivoInput('SETAS', 'Ok');
+            adicionarDispositivoInput('SENSOR DE PORTA DE MOTORISTA', 'Ok');
+            adicionarDispositivoInput('GPS', 'Ok');
+            
+            const now = new Date();
+            const nowStr = now.toISOString().slice(0, 16);
+            document.getElementById('editDataRealizacao').value = nowStr;
+            
+            const validade = new Date(now);
+            validade.setDate(validade.getDate() + 30);
+            const validadeStr = validade.toISOString().slice(0, 16);
+            document.getElementById('editValidade').value = validadeStr;
+            
+            editModal.style.display = 'flex';
+        });
+        
+        // Filtros
+        searchInput.addEventListener('input', atualizarTabela);
+        filterTipo.addEventListener('change', atualizarTabela);
+        filterStatus.addEventListener('change', atualizarTabela);
+        limparFiltrosBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterTipo.value = '';
+            filterStatus.value = '';
+            if (buttonsManager) {
+                buttonsManager.activeFilters.clear();
+                document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            }
+            atualizarTabela();
+        });
+        
+        // Debug
+        debugBtn.addEventListener('click', function() {
+            const checklists = checklistsCache.getAll();
+            console.log("=== DEBUG ===");
+            console.log(`Total checklists: ${checklists.length}`);
+            console.log(`Cache size: ${checklistsCache.cache.size}`);
+            console.log(`Pending sync: ${checklistsCache.getPendingSync().length}`);
+            
+            checklists.slice(0, 3).forEach((checklist, i) => {
+                console.log(`${i + 1}. ${checklist.placa} (${checklist.tipo}) - Synced: ${checklist.synced}`);
+            });
+            
+            showNotification('Debug executado! Verifique o console (F12).', 'info');
+        });
+        
+        // ✅ INICIALIZAR
+        window.addEventListener('DOMContentLoaded', function() {
+            // Adicionar estilos de animação
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Iniciar app
+            initApp();
         });
     </script>
 </body>
