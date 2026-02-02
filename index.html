@@ -3108,13 +3108,20 @@
             });
         }
         
-        // ✅ ATUALIZAR TABELA COM CACHE
-        function atualizarTabelaComCache(checklists) {
-            const searchTerm = searchInput.value.toLowerCase();
-            const tipoFiltro = filterTipo.value;
-            const statusFiltro = filterStatus.value;
+        // ✅ FUNÇÃO GLOBAL PARA FILTRAR CHECKLISTS (CORREÇÃO APLICADA)
+        function getFilteredChecklists(checklists) {
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const tipoFiltro = filterTipo ? filterTipo.value : '';
+            const statusFiltro = filterStatus ? filterStatus.value : '';
             
-            let filteredChecklists = checklists.filter(checklist => {
+            if (!checklists || !Array.isArray(checklists)) {
+                console.error('getFilteredChecklists: checklists inválido', checklists);
+                return [];
+            }
+            
+            return checklists.filter(checklist => {
+                if (!checklist) return false;
+                
                 if (tipoFiltro && checklist.tipo !== tipoFiltro) return false;
                 
                 if (statusFiltro) {
@@ -3132,10 +3139,10 @@
                 
                 if (searchTerm) {
                     const searchFields = [
-                        checklist.placa,
-                        checklist.responsavel,
-                        checklist.operador,
-                        checklist.tipo
+                        checklist.placa || '',
+                        checklist.responsavel || '',
+                        checklist.operador || '',
+                        checklist.tipo || ''
                     ].join(' ').toLowerCase();
                     
                     if (!searchFields.includes(searchTerm)) return false;
@@ -3143,6 +3150,11 @@
                 
                 return true;
             });
+        }
+        
+        // ✅ ATUALIZAR TABELA COM CACHE
+        function atualizarTabelaComCache(checklists) {
+            const filteredChecklists = getFilteredChecklists(checklists);
             
             tableBody.innerHTML = '';
             
@@ -3362,6 +3374,64 @@
             reader.readAsArrayBuffer(file);
         });
         
+        // ✅ REMOVER DUPLICADOS - CORREÇÃO APLICADA
+        removerDuplicadosBtn.addEventListener('click', async function() {
+            const checklists = checklistsCache.getAll();
+            
+            if (checklists.length === 0) {
+                showNotification('Não há checklists para processar!', 'warning');
+                return;
+            }
+            
+            mostrarConfirmacao(
+                'Remover Duplicados',
+                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
+                async () => {
+                    showProgressBar('Removendo duplicados...');
+                    
+                    const uniquePlacas = new Map();
+                    
+                    // Ordenar por data mais recente
+                    const checklistsOrdenados = [...checklists].sort((a, b) => {
+                        const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
+                        const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
+                        return dataB - dataA;
+                    });
+                    
+                    // Manter apenas o mais recente de cada placa
+                    checklistsOrdenados.forEach(checklist => {
+                        const placaNormalizada = checklist.placa.trim().toUpperCase();
+                        if (!uniquePlacas.has(placaNormalizada)) {
+                            uniquePlacas.set(placaNormalizada, checklist);
+                        }
+                    });
+                    
+                    // Atualizar cache
+                    checklistsCache.clear();
+                    uniquePlacas.forEach((checklist, placa) => {
+                        checklistsCache.set(checklist.id || performanceManager.generateId(), checklist);
+                    });
+                    
+                    // Sincronizar
+                    await performanceManager.syncToFirebaseInBackground(
+                        Array.from(uniquePlacas.values()), 
+                        false
+                    );
+                    
+                    hideProgressBar();
+                    
+                    // ATUALIZAR A UI IMEDIATAMENTE - CORREÇÃO CRÍTICA
+                    atualizarTabela();
+                    atualizarBadges();
+                    
+                    showNotification(
+                        `${checklists.length - uniquePlacas.size} duplicados removidos! Mantidos: ${uniquePlacas.size} checklists únicos.`,
+                        'success'
+                    );
+                }
+            );
+        });
+        
         // Salvar checklist
         salvarChecklistBtn.addEventListener('click', async function() {
             if (!checklistForm.checkValidity()) {
@@ -3476,61 +3546,6 @@
                 console.error('Erro ao registrar aviso:', error);
                 showNotification('Erro ao registrar aviso.', 'error');
             }
-        });
-        
-        // Remover duplicados
-        removerDuplicadosBtn.addEventListener('click', async function() {
-            const checklists = checklistsCache.getAll();
-            
-            if (checklists.length === 0) {
-                showNotification('Não há checklists para processar!', 'warning');
-                return;
-            }
-            
-            mostrarConfirmacao(
-                'Remover Duplicados',
-                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
-                async () => {
-                    showProgressBar('Removendo duplicados...');
-                    
-                    const uniquePlacas = new Map();
-                    
-                    // Ordenar por data mais recente
-                    const checklistsOrdenados = [...checklists].sort((a, b) => {
-                        const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
-                        const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
-                        return dataB - dataA;
-                    });
-                    
-                    // Manter apenas o mais recente de cada placa
-                    checklistsOrdenados.forEach(checklist => {
-                        const placaNormalizada = checklist.placa.trim().toUpperCase();
-                        if (!uniquePlacas.has(placaNormalizada)) {
-                            uniquePlacas.set(placaNormalizada, checklist);
-                        }
-                    });
-                    
-                    // Atualizar cache
-                    checklistsCache.clear();
-                    uniquePlacas.forEach((checklist, placa) => {
-                        checklistsCache.set(checklist.id || performanceManager.generateId(), checklist);
-                    });
-                    
-                    // Sincronizar
-                    await performanceManager.syncToFirebaseInBackground(
-                        Array.from(uniquePlacas.values()), 
-                        false
-                    );
-                    
-                    hideProgressBar();
-                    atualizarTabela();
-                    
-                    showNotification(
-                        `${checklists.length - uniquePlacas.size} duplicados removidos! Mantidos: ${uniquePlacas.size} checklists únicos.`,
-                        'success'
-                    );
-                }
-            );
         });
         
         // Exportar
@@ -3812,44 +3827,9 @@
             historicoAvisos.style.display = 'block';
         }
         
-        function getFilteredChecklists(checklists) {
-            const searchTerm = searchInput.value.toLowerCase();
-            const tipoFiltro = filterTipo.value;
-            const statusFiltro = filterStatus.value;
-            
-            return checklists.filter(checklist => {
-                if (tipoFiltro && checklist.tipo !== tipoFiltro) return false;
-                
-                if (statusFiltro) {
-                    const statusValidade = getStatusValidade(checklist.validade);
-                    const temDefeitoChecklist = temDefeito(checklist.dispositivos);
-                    const temAvisoChecklist = temAvisos(checklist);
-                    
-                    if (statusFiltro === 'vencido' && statusValidade !== 'vencido') return false;
-                    if (statusFiltro === 'proximo' && statusValidade !== 'proximo') return false;
-                    if (statusFiltro === 'ok' && (statusValidade !== 'ok' || temDefeitoChecklist)) return false;
-                    if (statusFiltro === 'defeito' && !temDefeitoChecklist) return false;
-                    if (statusFiltro === 'sem_aviso' && (statusValidade !== 'vencido' || temAvisoChecklist)) return false;
-                    if (statusFiltro === 'com_aviso' && (statusValidade !== 'vencido' || !temAvisoChecklist)) return false;
-                }
-                
-                if (searchTerm) {
-                    const searchFields = [
-                        checklist.placa,
-                        checklist.responsavel,
-                        checklist.operador,
-                        checklist.tipo
-                    ].join(' ').toLowerCase();
-                    
-                    if (!searchFields.includes(searchTerm)) return false;
-                }
-                
-                return true;
-            });
-        }
-        
         function atualizarTabela() {
             const checklists = checklistsCache.getAll();
+            console.log('📊 Atualizando tabela com', checklists.length, 'checklists');
             atualizarTabelaComCache(checklists);
         }
         
