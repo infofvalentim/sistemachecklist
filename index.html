@@ -28,6 +28,12 @@
             --purple: #9c27b0;
             --purple-dark: #7b1fa2;
             
+            /* Cores específicas das operações */
+            --rondolog-primary: #ff0000;
+            --rondolog-secondary: #000000;
+            --saster-primary: #1e3a8a;
+            --saster-secondary: #fbbf24;
+            
             /* Sistema de Cores */
             --bg-primary: #ffffff;
             --bg-secondary: #f8f9fa;
@@ -224,7 +230,6 @@
             color: white;
             padding: 20px 30px 15px 30px;
             position: relative;
-            border-bottom: 4px solid var(--primary-red);
         }
 
         .header-content {
@@ -247,6 +252,87 @@
             font-size: 14px;
             opacity: 0.9;
             font-weight: 400;
+        }
+
+        /* 🔘 SISTEMA DE ABAS PRINCIPAL */
+        .operacao-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 3px solid var(--border-color);
+            position: relative;
+        }
+
+        .operacao-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .operacao-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .operacao-tab.active {
+            border-bottom: 3px solid;
+        }
+
+        .operacao-tab.rondolog {
+            color: white;
+            background: linear-gradient(135deg, var(--rondolog-secondary) 0%, #333333 100%);
+            border-color: var(--rondolog-primary);
+        }
+
+        .operacao-tab.rondolog.active {
+            background: linear-gradient(135deg, var(--rondolog-primary) 0%, #cc0000 100%);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        .operacao-tab.saster {
+            color: white;
+            background: linear-gradient(135deg, var(--saster-primary) 0%, #2d4fa3 100%);
+            border-color: var(--saster-secondary);
+        }
+
+        .operacao-tab.saster.active {
+            background: linear-gradient(135deg, var(--saster-primary) 0%, #3b5fc9 100%);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: -3px;
+            height: 3px;
+            background: var(--rondolog-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Conteúdo das abas */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* 🎭 USER INFO */
@@ -1397,6 +1483,14 @@
                 gap: 8px;
             }
             
+            .operacao-tabs {
+                flex-direction: column;
+            }
+            
+            .operacao-tab {
+                padding: 12px;
+            }
+            
             .top-action-bar {
                 justify-content: center;
             }
@@ -1848,6 +1942,19 @@
                 </div>
             </div>
             
+            <!-- 🔘 SISTEMA DE ABAS PRINCIPAL -->
+            <div class="operacao-tabs" id="operacaoTabs">
+                <div class="operacao-tab rondolog active" data-tab="rondolog">
+                    <i class="fas fa-truck"></i>
+                    <span>RONDOLOG</span>
+                </div>
+                <div class="operacao-tab saster" data-tab="saster">
+                    <i class="fas fa-ship"></i>
+                    <span>SASTER</span>
+                </div>
+                <div class="tab-indicator" id="tabIndicator"></div>
+            </div>
+            
             <!-- 🔘 BARRA DE AÇÕES COMPACTA -->
             <div class="top-action-bar">
                 <!-- GRUPO 1: Ações principais -->
@@ -1938,66 +2045,134 @@
             </div>
         </header>
         
-        <!-- 📊 FILTROS ATIVOS -->
-        <div class="filtros-ativos" id="filtrosAtivos">
-            <!-- Filtros ativos serão mostrados aqui -->
-        </div>
-        
-        <!-- 📊 CARDS DE RESUMO -->
-        <div class="summary-cards" id="statusBadges">
-            <!-- Badges serão preenchidos via JavaScript -->
-        </div>
-        
-        <!-- 🔍 FILTROS -->
-        <div class="filters">
-            <div class="filter-group">
-                <div class="filter-label">Tipo do Veículo</div>
-                <select class="filter-select" id="filterTipo">
-                    <option value="">Todos os Tipos</option>
-                    <option value="PROPRIO">Próprio</option>
-                    <option value="AGREGADO">Agregado</option>
-                    <option value="TERCEIRO">Terceiro</option>
-                </select>
+        <!-- 📊 CONTEÚDO DAS ABAS -->
+        <div class="tab-content active" id="tabRondolog">
+            <!-- 📊 FILTROS ATIVOS -->
+            <div class="filtros-ativos" id="filtrosAtivosRondolog">
+                <!-- Filtros ativos serão mostrados aqui -->
             </div>
             
-            <div class="filter-group">
-                <div class="filter-label">Status</div>
-                <select class="filter-select" id="filterStatus">
-                    <option value="">Todos os Status</option>
-                    <option value="vencido">Vencidos</option>
-                    <option value="proximo">Próximos a Vencer</option>
-                    <option value="ok">OK</option>
-                    <option value="defeito">Com Defeito</option>
-                    <option value="sem_aviso">Vencidos sem Aviso</option>
-                    <option value="com_aviso">Vencidos com Aviso</option>
-                </select>
+            <!-- 📊 CARDS DE RESUMO -->
+            <div class="summary-cards" id="statusBadgesRondolog">
+                <!-- Badges serão preenchidos via JavaScript -->
+            </div>
+            
+            <!-- 🔍 FILTROS -->
+            <div class="filters">
+                <div class="filter-group">
+                    <div class="filter-label">Tipo do Veículo</div>
+                    <select class="filter-select" id="filterTipoRondolog">
+                        <option value="">Todos os Tipos</option>
+                        <option value="PROPRIO">Próprio</option>
+                        <option value="AGREGADO">Agregado</option>
+                        <option value="TERCEIRO">Terceiro</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-label">Status</div>
+                    <select class="filter-select" id="filterStatusRondolog">
+                        <option value="">Todos os Status</option>
+                        <option value="vencido">Vencidos</option>
+                        <option value="proximo">Próximos a Vencer</option>
+                        <option value="ok">OK</option>
+                        <option value="defeito">Com Defeito</option>
+                        <option value="sem_aviso">Vencidos sem Aviso</option>
+                        <option value="com_aviso">Vencidos com Aviso</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 📋 TABELA PRINCIPAL -->
+            <div class="table-container">
+                <table id="checklistTableRondolog">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>Data Realização</th>
+                            <th>Validade</th>
+                            <th>Responsável</th>
+                            <th>Operador</th>
+                            <th>Avisos</th>
+                            <th>Dispositivos</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyRondolog">
+                        <!-- Dados serão carregados aqui -->
+                    </tbody>
+                </table>
+                
+                <div class="no-data" id="noDataMessageRondolog">
+                    <i class="fas fa-file-excel"></i>
+                    <h3>Nenhum checklist carregado</h3>
+                    <p>Importe um arquivo Excel ou crie um novo checklist para começar</p>
+                </div>
             </div>
         </div>
         
-        <!-- 📋 TABELA PRINCIPAL -->
-        <div class="table-container">
-            <table id="checklistTable">
-                <thead>
-                    <tr>
-                        <th>Veículo</th>
-                        <th>Data Realização</th>
-                        <th>Validade</th>
-                        <th>Responsável</th>
-                        <th>Operador</th>
-                        <th>Avisos</th>
-                        <th>Dispositivos</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Dados serão carregados aqui -->
-                </tbody>
-            </table>
+        <div class="tab-content" id="tabSaster">
+            <!-- 📊 FILTROS ATIVOS -->
+            <div class="filtros-ativos" id="filtrosAtivosSaster">
+                <!-- Filtros ativos serão mostrados aqui -->
+            </div>
             
-            <div class="no-data" id="noDataMessage">
-                <i class="fas fa-file-excel"></i>
-                <h3>Nenhum checklist carregado</h3>
-                <p>Importe um arquivo Excel ou crie um novo checklist para começar</p>
+            <!-- 📊 CARDS DE RESUMO -->
+            <div class="summary-cards" id="statusBadgesSaster">
+                <!-- Badges serão preenchidos via JavaScript -->
+            </div>
+            
+            <!-- 🔍 FILTROS -->
+            <div class="filters">
+                <div class="filter-group">
+                    <div class="filter-label">Tipo do Veículo</div>
+                    <select class="filter-select" id="filterTipoSaster">
+                        <option value="">Todos os Tipos</option>
+                        <option value="PROPRIO">Próprio</option>
+                        <option value="AGREGADO">Agregado</option>
+                        <option value="TERCEIRO">Terceiro</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="filter-label">Status</div>
+                    <select class="filter-select" id="filterStatusSaster">
+                        <option value="">Todos os Status</option>
+                        <option value="vencido">Vencidos</option>
+                        <option value="proximo">Próximos a Vencer</option>
+                        <option value="ok">OK</option>
+                        <option value="defeito">Com Defeito</option>
+                        <option value="sem_aviso">Vencidos sem Aviso</option>
+                        <option value="com_aviso">Vencidos com Aviso</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 📋 TABELA PRINCIPAL -->
+            <div class="table-container">
+                <table id="checklistTableSaster">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>Data Realização</th>
+                            <th>Validade</th>
+                            <th>Responsável</th>
+                            <th>Operador</th>
+                            <th>Avisos</th>
+                            <th>Dispositivos</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodySaster">
+                        <!-- Dados serão carregados aqui -->
+                    </tbody>
+                </table>
+                
+                <div class="no-data" id="noDataMessageSaster">
+                    <i class="fas fa-file-excel"></i>
+                    <h3>Nenhum checklist carregado</h3>
+                    <p>Importe um arquivo Excel ou crie um novo checklist para começar</p>
+                </div>
             </div>
         </div>
         
@@ -2005,7 +2180,7 @@
         <div class="footer">
             <div class="footer-info">
                 <div>Sistema de Gestão de Checklists</div>
-                <div>Controle veicular completo e integrado</div>
+                <div id="operacaoAtual">Operação: RONDOLOG</div>
             </div>
             <div class="stats">
                 <div class="stat-item">
@@ -2074,6 +2249,8 @@
             
             <div class="modal-body">
                 <form id="checklistForm">
+                    <input type="hidden" id="editOperacao" value="rondolog">
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="editPlaca">Placa do Veículo *</label>
@@ -2265,13 +2442,58 @@
             console.log("Persistência falhou: ", err.code);
         });
 
-        // Banco de dados em memória com CACHE INTELIGENTE
-        class ChecklistCache {
+        // 🎯 SISTEMA DE GERENCIAMENTO DE ABAS E OPERAÇÕES
+        class SistemaAbas {
             constructor() {
+                this.operacaoAtual = 'rondolog';
+                this.caches = {
+                    rondolog: new ChecklistCache('rondolog'),
+                    saster: new ChecklistCache('saster')
+                };
+                this.filtrosAtivos = {
+                    rondolog: {},
+                    saster: {}
+                };
+            }
+            
+            getOperacaoAtual() {
+                return this.operacaoAtual;
+            }
+            
+            setOperacaoAtual(operacao) {
+                this.operacaoAtual = operacao;
+                localStorage.setItem('ultima_operacao', operacao);
+                return operacao;
+            }
+            
+            getCacheAtual() {
+                return this.caches[this.operacaoAtual];
+            }
+            
+            getCache(operacao) {
+                return this.caches[operacao] || this.caches.rondolog;
+            }
+            
+            getFiltrosAtivos() {
+                return this.filtrosAtivos[this.operacaoAtual];
+            }
+            
+            setFiltroAtivo(tipo, valor) {
+                this.filtrosAtivos[this.operacaoAtual][tipo] = valor;
+            }
+            
+            limparFiltrosAtivos() {
+                this.filtrosAtivos[this.operacaoAtual] = {};
+            }
+        }
+
+        // Banco de dados em memória com CACHE INTELIGENTE POR OPERAÇÃO
+        class ChecklistCache {
+            constructor(operacao) {
+                this.operacao = operacao;
                 this.cache = new Map();
                 this.lastSync = 0;
                 this.pendingOperations = new Map();
-                this.syncInterval = null;
             }
             
             set(key, value) {
@@ -2314,10 +2536,12 @@
             }
         }
 
-        let checklistsCache = new ChecklistCache();
+        let sistemaAbas = new SistemaAbas();
         let editingIndex = -1;
+        let editingOperacao = 'rondolog';
         let isDarkMode = false;
         let avisoIndex = -1;
+        let avisoOperacao = 'rondolog';
         let currentUser = null;
         
         // Dispositivos comuns para referência
@@ -2349,13 +2573,32 @@
         const exportBtn = document.getElementById('exportCompletoBtn');
         const removerDuplicadosBtn = document.getElementById('removerDuplicadosBtn');
         const novoChecklistBtn = document.getElementById('novoChecklistBtn');
+        const operacaoTabs = document.getElementById('operacaoTabs');
+        const tabIndicator = document.getElementById('tabIndicator');
+        const tabRondolog = document.getElementById('tabRondolog');
+        const tabSaster = document.getElementById('tabSaster');
         const searchInput = document.getElementById('searchInput');
-        const filterTipo = document.getElementById('filterTipo');
-        const filterStatus = document.getElementById('filterStatus');
         const limparFiltrosBtn = document.getElementById('limparFiltrosBtn');
-        const tableBody = document.getElementById('tableBody');
-        const noDataMessage = document.getElementById('noDataMessage');
-        const statusBadges = document.getElementById('statusBadges');
+        const operacaoAtualElement = document.getElementById('operacaoAtual');
+        
+        // Elementos específicos por operação
+        const filtrosAtivosRondolog = document.getElementById('filtrosAtivosRondolog');
+        const filtrosAtivosSaster = document.getElementById('filtrosAtivosSaster');
+        const statusBadgesRondolog = document.getElementById('statusBadgesRondolog');
+        const statusBadgesSaster = document.getElementById('statusBadgesSaster');
+        const filterTipoRondolog = document.getElementById('filterTipoRondolog');
+        const filterTipoSaster = document.getElementById('filterTipoSaster');
+        const filterStatusRondolog = document.getElementById('filterStatusRondolog');
+        const filterStatusSaster = document.getElementById('filterStatusSaster');
+        const tableBodyRondolog = document.getElementById('tableBodyRondolog');
+        const tableBodySaster = document.getElementById('tableBodySaster');
+        const noDataMessageRondolog = document.getElementById('noDataMessageRondolog');
+        const noDataMessageSaster = document.getElementById('noDataMessageSaster');
+        const totalCount = document.getElementById('totalCount');
+        const filteredCount = document.getElementById('filteredCount');
+        const avisadosCount = document.getElementById('avisadosCount');
+        
+        // Modais e outros elementos
         const editModal = document.getElementById('editModal');
         const avisoModal = document.getElementById('avisoModal');
         const btnDarkMode = document.getElementById('btnDarkMode');
@@ -2376,9 +2619,6 @@
         const dispositivosContainer = document.getElementById('dispositivosContainer');
         const checklistForm = document.getElementById('checklistForm');
         const modalTitle = document.getElementById('modalTitle');
-        const totalCount = document.getElementById('totalCount');
-        const filteredCount = document.getElementById('filteredCount');
-        const avisadosCount = document.getElementById('avisadosCount');
         const fecharAvisoModal = document.getElementById('fecharAvisoModal');
         const cancelarAvisoBtn = document.getElementById('cancelarAvisoBtn');
         const registrarAvisoBtn = document.getElementById('registrarAvisoBtn');
@@ -2406,6 +2646,7 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarContent = document.getElementById('sidebarContent');
         const sidebarBadge = document.getElementById('sidebarBadge');
+        const editOperacao = document.getElementById('editOperacao');
         
         let acaoConfirmadaCallback = null;
         
@@ -2419,7 +2660,7 @@
             }
             
             // ✅ IMPORT ULTRA RÁPIDO COM BATCH
-            async importExcelUltraFast(jsonData) {
+            async importExcelUltraFast(jsonData, operacao) {
                 showProgressBar('Extraindo dados do Excel...');
                 
                 const startTime = performance.now();
@@ -2435,6 +2676,7 @@
                     if (cellA.includes('Veículo:') || cellA.includes('Carreta:')) {
                         const checklist = this.extractChecklistFast(jsonData, i);
                         if (checklist?.placa) {
+                            checklist.operacao = operacao;
                             newChecklists.push(checklist);
                             
                             // Marcar linhas para pular (otimização)
@@ -2461,13 +2703,14 @@
                     const checklistCompleto = {
                         id,
                         ...checklist,
+                        operacao: operacao,
                         criadoPor: currentUser.uid,
                         criadoPorEmail: currentUser.email,
                         criadoEm: new Date().toISOString(),
                         synced: false
                     };
                     
-                    checklistsCache.set(id, checklistCompleto);
+                    sistemaAbas.getCache(operacao).set(id, checklistCompleto);
                     localIds.push(id);
                 });
                 
@@ -2479,7 +2722,7 @@
                 console.log(`🎯 UI atualizada em ${uiTime.toFixed(0)}ms`);
                 
                 // 3. Sincronizar com Firebase em BACKGROUND (não bloqueante)
-                this.syncToFirebaseInBackground(newChecklists, false);
+                this.syncToFirebaseInBackground(newChecklists, operacao, false);
                 
                 hideProgressBar();
                 
@@ -2579,7 +2822,7 @@
             }
             
             // ✅ SINCORNIZAÇÃO EM BACKGROUND
-            async syncToFirebaseInBackground(checklists, isEditing) {
+            async syncToFirebaseInBackground(checklists, operacao, isEditing) {
                 setTimeout(async () => {
                     try {
                         // Dividir em batches
@@ -2595,7 +2838,7 @@
                             const currentBatches = batches.slice(i, i + this.maxConcurrent);
                             
                             const batchPromises = currentBatches.map(async (batch) => {
-                                const result = await this.saveBatchToFirestore(batch, isEditing);
+                                const result = await this.saveBatchToFirestore(batch, operacao, isEditing);
                                 savedCount += result;
                                 return result;
                             });
@@ -2603,14 +2846,14 @@
                             await Promise.all(batchPromises);
                         }
                         
-                        console.log(`✅ ${savedCount} checklists sincronizados em background`);
+                        console.log(`✅ ${savedCount} checklists sincronizados em background (${operacao})`);
                         
                         // Atualizar status de sincronização no cache
                         checklists.forEach(checklist => {
-                            const cached = checklistsCache.get(checklist.id);
+                            const cached = sistemaAbas.getCache(operacao).get(checklist.id);
                             if (cached) {
                                 cached.synced = true;
-                                checklistsCache.set(checklist.id, cached);
+                                sistemaAbas.getCache(operacao).set(checklist.id, cached);
                             }
                         });
                         
@@ -2621,9 +2864,10 @@
             }
             
             // ✅ SALVAMENTO EM BATCH NO FIRESTORE
-            async saveBatchToFirestore(checklistsBatch, isEditing) {
+            async saveBatchToFirestore(checklistsBatch, operacao, isEditing) {
                 const batch = db.batch();
                 const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                const colecao = `checklists_${operacao}`;
                 
                 checklistsBatch.forEach(checklist => {
                     let docRef;
@@ -2631,17 +2875,18 @@
                     if (isEditing && checklist.id && checklist.id.startsWith('firestore_')) {
                         // Documento já existe no Firestore
                         const firestoreId = checklist.id.replace('firestore_', '');
-                        docRef = db.collection('checklists').doc(firestoreId);
+                        docRef = db.collection(colecao).doc(firestoreId);
                     } else if (checklist.id && checklist.id.startsWith('local_')) {
                         // Novo documento local - criar no Firestore
-                        docRef = db.collection('checklists').doc();
+                        docRef = db.collection(colecao).doc();
                     } else {
                         // ID do Firestore (já salvo)
-                        docRef = db.collection('checklists').doc(checklist.id);
+                        docRef = db.collection(colecao).doc(checklist.id);
                     }
                     
                     const data = {
                         ...checklist,
+                        operacao: operacao,
                         updatedAt: timestamp,
                         synced: true,
                         version: (checklist.version || 0) + 1
@@ -2650,6 +2895,7 @@
                     // Remover campos internos
                     delete data.id;
                     delete data.synced;
+                    delete data.operacao;
                     
                     if (!isEditing) {
                         data.createdAt = timestamp;
@@ -2669,33 +2915,63 @@
                 showNotification('Carregando dados...', 'info');
                 
                 try {
-                    // Tentar carregar do cache primeiro
-                    const cached = checklistsCache.getAll();
+                    const operacaoAtual = sistemaAbas.getOperacaoAtual();
+                    
+                    // 1. Primeiro tentar carregar das novas coleções
+                    const cached = sistemaAbas.getCacheAtual().getAll();
+                    
+                    if (cached.length === 0) {
+                        console.log('📭 Cache vazio, tentando carregar do Firestore...');
+                        
+                        // 2. Tentar carregar da coleção antiga se as novas estiverem vazias
+                        try {
+                            const oldSnapshot = await db.collection('checklists')
+                                .orderBy('updatedAt', 'desc')
+                                .limit(100)
+                                .get();
+                            
+                            if (!oldSnapshot.empty) {
+                                console.log(`🔄 Encontrados ${oldSnapshot.size} checklists na coleção antiga`);
+                                
+                                // Sugerir migração
+                                setTimeout(() => {
+                                    mostrarConfirmacao(
+                                        'Migração de Dados',
+                                        `Foram encontrados ${oldSnapshot.size} checklists na coleção antiga.<br><br>
+                                        Deseja migrá-los automaticamente para o sistema de abas?`,
+                                        () => migrarDadosAutomaticamente()
+                                    );
+                                }, 2000);
+                            }
+                        } catch (error) {
+                            console.log('ℹ️ Coleção antiga não encontrada ou vazia');
+                        }
+                    }
                     
                     if (cached.length > 0) {
-                        console.log('📦 Carregando do cache:', cached.length, 'itens');
+                        console.log(`📦 Carregando do cache ${operacaoAtual}:`, cached.length, 'itens');
                         atualizarTabelaComCache(cached);
                         atualizarBadges();
                         atualizarContadores();
-                        showNotification(`${cached.length} checklists carregados do cache`, 'success');
-                        
-                        // Sincronizar em background
-                        this.syncPendingChanges();
+                        showNotification(`${cached.length} checklists carregados do cache (${operacaoAtual})`, 'success');
+                    } else {
+                        showNotification('Nenhum checklist encontrado. Importe dados ou migre da coleção antiga.', 'info');
                     }
                     
-                    // Buscar do Firestore (background)
-                    this.loadFromFirestoreInBackground();
+                    // Sincronizar em background
+                    this.loadFromFirestoreInBackground(operacaoAtual);
                     
                 } catch (error) {
                     console.error('Erro ao carregar cache:', error);
-                    this.loadFromFirestore();
+                    this.loadFromFirestore(sistemaAbas.getOperacaoAtual());
                 }
             }
             
-            async loadFromFirestoreInBackground() {
+            async loadFromFirestoreInBackground(operacao) {
                 setTimeout(async () => {
                     try {
-                        const querySnapshot = await db.collection('checklists')
+                        const colecao = `checklists_${operacao}`;
+                        const querySnapshot = await db.collection(colecao)
                             .orderBy('updatedAt', 'desc')
                             .limit(500)
                             .get();
@@ -2704,33 +2980,35 @@
                         querySnapshot.forEach((doc) => {
                             firestoreChecklists.push({
                                 id: 'firestore_' + doc.id,
+                                operacao: operacao,
                                 ...doc.data()
                             });
                         });
                         
-                        console.log('🌐 Carregados do Firestore:', firestoreChecklists.length, 'itens');
+                        console.log(`🌐 Carregados do Firestore (${operacao}):`, firestoreChecklists.length, 'itens');
                         
                         // Atualizar cache
                         firestoreChecklists.forEach(checklist => {
-                            checklistsCache.set(checklist.id, checklist);
+                            sistemaAbas.getCache(operacao).set(checklist.id, checklist);
                         });
                         
                         // Atualizar UI se necessário
-                        if (firestoreChecklists.length > 0) {
-                            const current = checklistsCache.getAll();
+                        if (firestoreChecklists.length > 0 && operacao === sistemaAbas.getOperacaoAtual()) {
+                            const current = sistemaAbas.getCacheAtual().getAll();
                             atualizarTabelaComCache(current);
                             atualizarBadges();
                         }
                         
                     } catch (error) {
-                        console.error('Erro background load:', error);
+                        console.error(`Erro background load (${operacao}):`, error);
                     }
                 }, 1000); // Delay para priorizar cache
             }
             
-            async loadFromFirestore() {
+            async loadFromFirestore(operacao) {
                 try {
-                    const querySnapshot = await db.collection('checklists')
+                    const colecao = `checklists_${operacao}`;
+                    const querySnapshot = await db.collection(colecao)
                         .orderBy('updatedAt', 'desc')
                         .limit(1000)
                         .get();
@@ -2739,27 +3017,28 @@
                     querySnapshot.forEach((doc) => {
                         firestoreChecklists.push({
                             id: 'firestore_' + doc.id,
+                            operacao: operacao,
                             ...doc.data()
                         });
                     });
                     
                     // Atualizar cache
-                    checklistsCache.clear();
+                    sistemaAbas.getCache(operacao).clear();
                     firestoreChecklists.forEach(checklist => {
-                        checklistsCache.set(checklist.id, checklist);
+                        sistemaAbas.getCache(operacao).set(checklist.id, checklist);
                     });
                     
                     return firestoreChecklists;
                     
                 } catch (error) {
-                    console.error('Erro ao carregar do Firestore:', error);
+                    console.error(`Erro ao carregar do Firestore (${operacao}):`, error);
                     throw error;
                 }
             }
             
             // ✅ EDIÇÃO INSTANTÂNEA
-            async editChecklistInstant(id, updates) {
-                const current = checklistsCache.get(id);
+            async editChecklistInstant(id, operacao, updates) {
+                const current = sistemaAbas.getCache(operacao).get(id);
                 if (!current) return { success: false };
                 
                 // Atualizar cache
@@ -2769,13 +3048,15 @@
                     version: (current.version || 0) + 1,
                     synced: false 
                 };
-                checklistsCache.set(id, updated);
+                sistemaAbas.getCache(operacao).set(id, updated);
                 
-                // Atualizar UI
-                atualizarTabela();
+                // Atualizar UI se for a operação atual
+                if (operacao === sistemaAbas.getOperacaoAtual()) {
+                    atualizarTabela();
+                }
                 
                 // Sincronizar background
-                this.syncToFirebaseInBackground([updated], true);
+                this.syncToFirebaseInBackground([updated], operacao, true);
                 
                 return { success: true, immediate: true };
             }
@@ -2786,8 +3067,8 @@
             }
             
             // ✅ SINCRONIZAR MUDANÇAS PENDENTES
-            async syncPendingChanges() {
-                const pending = checklistsCache.getPendingSync();
+            async syncPendingChanges(operacao) {
+                const pending = sistemaAbas.getCache(operacao).getPendingSync();
                 if (pending.length === 0 || this.isSyncing) return;
                 
                 this.isSyncing = true;
@@ -2798,12 +3079,12 @@
                     pending.forEach(([key, operation]) => {
                         if (operation.type === 'delete') {
                             // Marcar para exclusão
-                            const checklist = checklistsCache.get(key);
+                            const checklist = sistemaAbas.getCache(operacao).get(key);
                             if (checklist) {
                                 checklistsToSync.push({ ...checklist, _delete: true });
                             }
                         } else {
-                            const checklist = checklistsCache.get(key);
+                            const checklist = sistemaAbas.getCache(operacao).get(key);
                             if (checklist && !checklist.synced) {
                                 checklistsToSync.push(checklist);
                             }
@@ -2811,23 +3092,92 @@
                     });
                     
                     if (checklistsToSync.length > 0) {
-                        await this.syncToFirebaseInBackground(checklistsToSync, false);
+                        await this.syncToFirebaseInBackground(checklistsToSync, operacao, false);
                         
                         // Limpar pendentes após sinc
                         pending.forEach(([key]) => {
-                            checklistsCache.clearPending(key);
+                            sistemaAbas.getCache(operacao).clearPending(key);
                         });
                     }
                     
                 } catch (error) {
-                    console.error('Erro na sincronização pendente:', error);
+                    console.error(`Erro na sincronização pendente (${operacao}):`, error);
                 } finally {
                     this.isSyncing = false;
+                }
+            }
+            
+            // ✅ CARREGAR DADOS DE AMBAS AS OPERAÇÕES AO LOGIN
+            async loadAllOperations() {
+                try {
+                    // Carregar RONDOLOG
+                    await this.loadFromFirestoreInBackground('rondolog');
+                    
+                    // Carregar SASTER
+                    await this.loadFromFirestoreInBackground('saster');
+                    
+                    // Atualizar UI com operação atual
+                    atualizarTabela();
+                    atualizarBadges();
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar todas as operações:', error);
                 }
             }
         }
 
         let performanceManager = new PerformanceManager();
+        
+        // ✅ FUNÇÃO PARA MIGRAR DADOS AUTOMATICAMENTE
+        async function migrarDadosAutomaticamente() {
+            try {
+                console.log('🔄 Iniciando migração de dados...');
+                
+                // 1. Ler dados da coleção antiga
+                const snapshot = await db.collection('checklists').get();
+                
+                if (snapshot.empty) {
+                    console.log('ℹ️ Nenhum dado para migrar');
+                    return;
+                }
+                
+                console.log(`📦 Encontrados ${snapshot.size} checklists para migrar`);
+                
+                // 2. Migrar para checklists_rondolog (assumindo que todos são RONDOLOG)
+                const batch = db.batch();
+                let migratedCount = 0;
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Adicionar campo operacao para organização
+                    const newData = {
+                        ...data,
+                        operacao: 'rondolog',
+                        migratedAt: new Date().toISOString(),
+                        migratedFrom: 'checklists',
+                        originalId: doc.id
+                    };
+                    
+                    const newRef = db.collection('checklists_rondolog').doc(doc.id);
+                    batch.set(newRef, newData);
+                    migratedCount++;
+                });
+                
+                // 3. Executar migração
+                await batch.commit();
+                console.log(`✅ ${migratedCount} checklists migrados para RONDOLOG`);
+                
+                // 4. Recarregar dados
+                await performanceManager.loadFromFirestore('rondolog');
+                atualizarTabela();
+                
+                showNotification(`${migratedCount} checklists migrados com sucesso!`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro na migração:', error);
+                showNotification('Erro ao migrar dados: ' + error.message, 'error');
+            }
+        }
         
         // ✅ INICIALIZAR APLICAÇÃO
         function initApp() {
@@ -2838,10 +3188,16 @@
                     updateUserInfo(user);
                     
                     // Inicializar gerenciadores
+                    sistemaAbas = new SistemaAbas();
                     performanceManager = new PerformanceManager();
                     
-                    // Carregar dados com cache
-                    await performanceManager.loadChecklistsWithCache();
+                    // Restaurar última operação
+                    const ultimaOperacao = localStorage.getItem('ultima_operacao') || 'rondolog';
+                    sistemaAbas.setOperacaoAtual(ultimaOperacao);
+                    ativarAba(ultimaOperacao);
+                    
+                    // Carregar dados de ambas as operações (background)
+                    await performanceManager.loadAllOperations();
                     
                     // Restaurar modo escuro
                     const darkModeSaved = localStorage.getItem('dark_mode_sistema');
@@ -2882,6 +3238,75 @@
             userName.textContent = displayName;
             userEmail.textContent = user.email;
             avisoQuemNotificou.value = displayName;
+        }
+        
+        // ✅ SISTEMA DE ABAS
+        function ativarAba(operacao) {
+            // Desativar todas as abas
+            document.querySelectorAll('.operacao-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Ativar aba selecionada
+            const tabElement = document.querySelector(`.operacao-tab[data-tab="${operacao}"]`);
+            const contentElement = document.getElementById(`tab${operacao.charAt(0).toUpperCase() + operacao.slice(1)}`);
+            
+            if (tabElement && contentElement) {
+                tabElement.classList.add('active');
+                contentElement.classList.add('active');
+                
+                // Atualizar indicador visual
+                updateTabIndicator(tabElement);
+                
+                // Atualizar sistema
+                sistemaAbas.setOperacaoAtual(operacao);
+                
+                // Atualizar interface
+                atualizarInterfaceParaOperacao(operacao);
+                
+                // Atualizar contadores
+                atualizarTabela();
+            }
+        }
+        
+        function updateTabIndicator(tabElement) {
+            if (!tabElement || !tabIndicator) return;
+            
+            const tabRect = tabElement.getBoundingClientRect();
+            const tabsRect = operacaoTabs.getBoundingClientRect();
+            
+            tabIndicator.style.width = `${tabRect.width}px`;
+            tabIndicator.style.left = `${tabRect.left - tabsRect.left}px`;
+            
+            // Definir cor baseada na operação
+            const operacao = tabElement.dataset.tab;
+            tabIndicator.style.background = operacao === 'rondolog' ? 
+                'var(--rondolog-primary)' : 'var(--saster-secondary)';
+        }
+        
+        function atualizarInterfaceParaOperacao(operacao) {
+            // Atualizar texto no footer
+            operacaoAtualElement.textContent = `Operação: ${operacao.toUpperCase()}`;
+            
+            // Atualizar campo oculto no formulário
+            editOperacao.value = operacao;
+            
+            // Aplicar tema visual se necessário
+            aplicarTemaOperacao(operacao);
+        }
+        
+        function aplicarTemaOperacao(operacao) {
+            // Esta função pode ser expandida para alterar mais elementos visuais
+            const header = document.querySelector('.header');
+            if (operacao === 'saster') {
+                header.style.borderBottom = '4px solid var(--saster-secondary)';
+            } else {
+                header.style.borderBottom = '4px solid var(--rondolog-primary)';
+            }
         }
         
         // ✅ LOGIN
@@ -2935,6 +3360,28 @@
         }
         
         btnDarkMode.addEventListener('click', toggleDarkMode);
+        
+        // ✅ EVENTOS DAS ABAS
+        document.querySelectorAll('.operacao-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const operacao = this.dataset.tab;
+                ativarAba(operacao);
+            });
+        });
+        
+        // Atalhos de teclado para alternar entre abas
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+1 = RONDOLOG, Ctrl+2 = SASTER
+            if (e.ctrlKey) {
+                if (e.key === '1') {
+                    e.preventDefault();
+                    ativarAba('rondolog');
+                } else if (e.key === '2') {
+                    e.preventDefault();
+                    ativarAba('saster');
+                }
+            }
+        });
         
         // ✅ FUNÇÕES AUXILIARES
         
@@ -3051,10 +3498,18 @@
         }
         
         // ✅ FUNÇÃO GLOBAL PARA FILTRAR CHECKLISTS
-        function getFilteredChecklists(checklists) {
+        function getFilteredChecklists(checklists, operacao) {
             const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-            const tipoFiltro = filterTipo ? filterTipo.value : '';
-            const statusFiltro = filterStatus ? filterStatus.value : '';
+            
+            // Obter elementos de filtro específicos da operação
+            let tipoFiltro, statusFiltro;
+            if (operacao === 'rondolog') {
+                tipoFiltro = filterTipoRondolog ? filterTipoRondolog.value : '';
+                statusFiltro = filterStatusRondolog ? filterStatusRondolog.value : '';
+            } else {
+                tipoFiltro = filterTipoSaster ? filterTipoSaster.value : '';
+                statusFiltro = filterStatusSaster ? filterStatusSaster.value : '';
+            }
             
             if (!checklists || !Array.isArray(checklists)) {
                 console.error('getFilteredChecklists: checklists inválido', checklists);
@@ -3096,7 +3551,17 @@
         
         // ✅ ATUALIZAR TABELA COM CACHE
         function atualizarTabelaComCache(checklists) {
-            const filteredChecklists = getFilteredChecklists(checklists);
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const filteredChecklists = getFilteredChecklists(checklists, operacao);
+            
+            let tableBody, noDataMessage;
+            if (operacao === 'rondolog') {
+                tableBody = tableBodyRondolog;
+                noDataMessage = noDataMessageRondolog;
+            } else {
+                tableBody = tableBodySaster;
+                noDataMessage = noDataMessageSaster;
+            }
             
             tableBody.innerHTML = '';
             
@@ -3207,471 +3672,125 @@
             atualizarBadgeSidebar();
         }
         
-        // ✅ FUNÇÕES DE MELHORIA DE USABILIDADE
+        // ✅ ATUALIZAR TABELA
+        function atualizarTabela() {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
+            console.log(`📊 Atualizando tabela ${operacao} com`, checklists.length, 'checklists');
+            atualizarTabelaComCache(checklists);
+        }
         
-        // 1. 🔍 BUSCA INTELIGENTE COM AUTOCOMPLETE
-        searchInput.addEventListener('input', function() {
-            const term = this.value.toLowerCase();
-            if (term.length >= 2) {
-                mostrarSugestoes(term);
-            } else {
-                esconderSugestoes();
-            }
-            atualizarTabela();
-        });
-        
-        function mostrarSugestoes(term) {
-            const checklists = checklistsCache.getAll();
-            const sugestoes = new Set();
+        // ✅ ATUALIZAR BADGES
+        function atualizarBadges() {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
             
-            checklists.forEach(c => {
-                if (c.placa.toLowerCase().includes(term)) sugestoes.add(c.placa);
-                if (c.responsavel.toLowerCase().includes(term)) sugestoes.add(c.responsavel);
-                if (c.operador.toLowerCase().includes(term)) sugestoes.add(c.operador);
-            });
+            let vencidos = 0;
+            let proximos = 0;
+            let ok = 0;
+            let comDefeito = 0;
+            let comAviso = 0;
+            let semAviso = 0;
             
-            if (sugestoes.size > 0) {
-                let dropdown = document.querySelector('.sugestoes-dropdown');
-                if (!dropdown) {
-                    dropdown = document.createElement('div');
-                    dropdown.className = 'sugestoes-dropdown';
-                    searchInput.parentNode.appendChild(dropdown);
-                }
+            checklists.forEach(checklist => {
+                const statusValidade = getStatusValidade(checklist.validade);
+                const temDefeitoChecklist = temDefeito(checklist.dispositivos);
+                const temAvisoChecklist = temAvisos(checklist);
                 
-                dropdown.innerHTML = Array.from(sugestoes).slice(0, 5).map(s => 
-                    `<div class="sugestao-item">${s}</div>`
-                ).join('');
-                
-                dropdown.querySelectorAll('.sugestao-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        searchInput.value = item.textContent;
-                        esconderSugestoes();
-                        atualizarTabela();
-                    });
-                });
-            }
-        }
-        
-        function esconderSugestoes() {
-            const dropdown = document.querySelector('.sugestoes-dropdown');
-            if (dropdown) dropdown.remove();
-        }
-        
-        // 2. 📊 FILTROS ATIVOS VISÍVEIS
-        function atualizarFiltrosAtivos() {
-            const container = document.getElementById('filtrosAtivos');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            const filtros = [];
-            
-            if (searchInput.value) {
-                filtros.push({
-                    tipo: 'Busca',
-                    valor: searchInput.value,
-                    limpar: () => { searchInput.value = ''; atualizarTabela(); }
-                });
-            }
-            
-            if (filterTipo.value) {
-                filtros.push({
-                    tipo: 'Tipo',
-                    valor: filterTipo.options[filterTipo.selectedIndex].text,
-                    limpar: () => { filterTipo.value = ''; atualizarTabela(); }
-                });
-            }
-            
-            if (filterStatus.value) {
-                filtros.push({
-                    tipo: 'Status',
-                    valor: filterStatus.options[filterStatus.selectedIndex].text,
-                    limpar: () => { filterStatus.value = ''; atualizarTabela(); }
-                });
-            }
-            
-            filtros.forEach(filtro => {
-                const badge = document.createElement('div');
-                badge.className = 'filtro-ativo';
-                badge.innerHTML = `
-                    ${filtro.tipo}: ${filtro.valor}
-                    <i class="fas fa-times"></i>
-                `;
-                badge.addEventListener('click', () => {
-                    filtro.limpar();
-                    atualizarFiltrosAtivos();
-                });
-                container.appendChild(badge);
-            });
-            
-            // Mostrar/ocultar container
-            container.style.display = filtros.length > 0 ? 'flex' : 'none';
-        }
-        
-        // 3. 📱 MENU CONTEXTUAL (CLIQUE DIREITO)
-        document.addEventListener('contextmenu', function(e) {
-            const row = e.target.closest('tr');
-            if (row && row.parentElement === tableBody) {
-                e.preventDefault();
-                mostrarMenuContextual(e, row);
-            }
-        });
-        
-        function mostrarMenuContextual(e, row) {
-            const menu = document.createElement('div');
-            menu.className = 'context-menu';
-            menu.style.cssText = `
-                position: fixed;
-                top: ${e.clientY}px;
-                left: ${e.clientX}px;
-                background: var(--bg-primary);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                box-shadow: var(--shadow-medium);
-                z-index: 10000;
-                min-width: 180px;
-            `;
-            
-            const index = Array.from(tableBody.querySelectorAll('tr')).indexOf(row);
-            const checklist = getFilteredChecklists(checklistsCache.getAll())[index];
-            
-            menu.innerHTML = `
-                <div class="context-item" data-action="editar">
-                    <i class="fas fa-edit"></i> Editar Checklist
-                </div>
-                <div class="context-item" data-action="avisar" ${getStatusValidade(checklist.validade) !== 'vencido' ? 'style="opacity: 0.5;"' : ''}>
-                    <i class="fas fa-bell"></i> Registrar Aviso
-                </div>
-                <div class="context-item" data-action="duplicar">
-                    <i class="fas fa-copy"></i> Duplicar
-                </div>
-                <hr style="margin: 5px 0; border-color: var(--border-color);">
-                <div class="context-item danger" data-action="excluir">
-                    <i class="fas fa-trash"></i> Excluir
-                </div>
-            `;
-            
-            document.body.appendChild(menu);
-            
-            // Fechar menu ao clicar fora
-            setTimeout(() => {
-                const closeMenu = () => {
-                    menu.remove();
-                    document.removeEventListener('click', closeMenu);
-                };
-                document.addEventListener('click', closeMenu);
-            }, 100);
-            
-            // Eventos do menu
-            menu.querySelectorAll('.context-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const action = this.dataset.action;
-                    switch(action) {
-                        case 'editar':
-                            window.editarChecklist(index);
-                            break;
-                        case 'avisar':
-                            if (getStatusValidade(checklist.validade) === 'vencido') {
-                                window.registrarAviso(index);
-                            }
-                            break;
-                        case 'duplicar':
-                            duplicarChecklist(checklist);
-                            break;
-                        case 'excluir':
-                            window.excluirChecklist(index);
-                            break;
+                if (statusValidade === 'vencido') {
+                    vencidos++;
+                    if (temAvisoChecklist) {
+                        comAviso++;
+                    } else {
+                        semAviso++;
                     }
-                    menu.remove();
+                }
+                if (statusValidade === 'proximo') proximos++;
+                if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
+                if (temDefeitoChecklist) comDefeito++;
+            });
+            
+            avisadosCount.textContent = comAviso;
+            
+            let statusBadges;
+            if (operacao === 'rondolog') {
+                statusBadges = statusBadgesRondolog;
+            } else {
+                statusBadges = statusBadgesSaster;
+            }
+            
+            statusBadges.innerHTML = `
+                <div class="summary-card total">
+                    <div class="card-number">${checklists.length}</div>
+                    <div class="card-label">Total de Checklists</div>
+                    <div class="card-subtitle">Carregados no sistema</div>
+                </div>
+                <div class="summary-card valid">
+                    <div class="card-number">${ok}</div>
+                    <div class="card-label">Checklists OK</div>
+                    <div class="card-subtitle">Em conformidade</div>
+                </div>
+                <div class="summary-card warning">
+                    <div class="card-number">${proximos}</div>
+                    <div class="card-label">Próximos a Vencer</div>
+                    <div class="card-subtitle">Atenção necessária</div>
+                </div>
+                <div class="summary-card expired">
+                    <div class="card-number">${vencidos}</div>
+                    <div class="card-label">Checklists Vencidos</div>
+                    <div class="card-subtitle">Fora da validade</div>
+                </div>
+                <div class="summary-card avisados">
+                    <div class="card-number">${comAviso}</div>
+                    <div class="card-label">Vencidos Avisados</div>
+                    <div class="card-subtitle">Com notificação registrada</div>
+                </div>
+                <div class="summary-card sem-aviso">
+                    <div class="card-number">${semAviso}</div>
+                    <div class="card-label">Vencidos sem Aviso</div>
+                    <div class="card-subtitle">Necessitam notificação</div>
+                </div>
+            `;
+            
+            // Adicionar eventos de clique aos cards
+            statusBadges.querySelectorAll('.summary-card.avisados').forEach(card => {
+                card.addEventListener('click', () => {
+                    if (operacao === 'rondolog') {
+                        filterStatusRondolog.value = 'com_aviso';
+                    } else {
+                        filterStatusSaster.value = 'com_aviso';
+                    }
+                    atualizarTabela();
+                });
+            });
+            
+            statusBadges.querySelectorAll('.summary-card.sem-aviso').forEach(card => {
+                card.addEventListener('click', () => {
+                    if (operacao === 'rondolog') {
+                        filterStatusRondolog.value = 'sem_aviso';
+                    } else {
+                        filterStatusSaster.value = 'sem_aviso';
+                    }
+                    atualizarTabela();
                 });
             });
         }
         
-        function duplicarChecklist(checklist) {
-            const novoChecklist = {
-                ...checklist,
-                placa: checklist.placa + '-COPIA',
-                id: performanceManager.generateId(),
-                criadoPor: currentUser.uid,
-                criadoPorEmail: currentUser.email,
-                criadoEm: new Date().toISOString(),
-                synced: false
-            };
-            
-            checklistsCache.set(novoChecklist.id, novoChecklist);
-            atualizarTabela();
-            showNotification('Checklist duplicado com sucesso!', 'success');
-        }
-        
-        // 4. 🔔 BARRA DE NOTIFICAÇÕES INTELIGENTES
-        function criarBarraNotificacoes() {
-            const barra = document.createElement('div');
-            barra.id = 'barra-notificacoes';
-            barra.innerHTML = `
-                <div>
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span id="contador-notificacoes">0</span> checklists necessitam atenção!
-                </div>
-                <button id="ver-notificacoes" style="background: white; color: #ff0000; border: none; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;">
-                    Ver Agora
-                </button>
-                <button id="fechar-notificacoes" style="background: transparent; color: white; border: none; font-size: 18px; cursor: pointer;">
-                    ×
-                </button>
-            `;
-            
-            document.body.appendChild(barra);
-            
-            // Eventos
-            document.getElementById('ver-notificacoes').addEventListener('click', () => {
-                filterStatus.value = 'vencido';
-                atualizarTabela();
-                barra.style.display = 'none';
-            });
-            
-            document.getElementById('fechar-notificacoes').addEventListener('click', () => {
-                barra.style.display = 'none';
-            });
-            
-            // Verificar notificações inicialmente
-            verificarNotificacoes();
-        }
-        
-        function verificarNotificacoes() {
-            const checklists = checklistsCache.getAll();
-            const urgentes = checklists.filter(c => 
-                getStatusValidade(c.validade) === 'vencido' && 
-                (!c.avisos || c.avisos.length === 0)
-            ).length;
-            
-            if (urgentes > 0) {
-                const barra = document.getElementById('barra-notificacoes');
-                barra.querySelector('#contador-notificacoes').textContent = urgentes;
-                barra.style.display = 'flex';
-            }
-        }
-        
-        // 5. ⚡ ATALHOS DE TECLADO
-        document.addEventListener('keydown', function(e) {
-            // Ctrl + N = Novo Checklist
-            if (e.ctrlKey && e.key === 'n') {
-                e.preventDefault();
-                novoChecklistBtn.click();
-            }
-            
-            // Ctrl + F = Focar na busca
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-                searchInput.select();
-            }
-            
-            // Esc = Limpar filtros/fechar modais
-            if (e.key === 'Escape') {
-                if (editModal.style.display === 'flex') {
-                    editModal.style.display = 'none';
-                } else if (avisoModal.style.display === 'flex') {
-                    avisoModal.style.display = 'none';
-                } else {
-                    limparFiltrosBtn.click();
-                }
-            }
-            
-            // Ctrl + E = Exportar
-            if (e.ctrlKey && e.key === 'e') {
-                e.preventDefault();
-                exportCompletoBtn.click();
-            }
-            
-            // Ctrl + R = Abrir relatórios
-            if (e.ctrlKey && e.key === 'r') {
-                e.preventDefault();
-                sidebarToggle.click();
-            }
-        });
-        
-        // Mostrar tooltip de atalhos
-        searchInput.addEventListener('focus', function() {
-            this.title = 'Use Ctrl+F para buscar rapidamente';
-        });
-        
-        // 6. 📈 PREVIEW RÁPIDO AO PASSAR MOUSE
-        tableBody.addEventListener('mouseover', function(e) {
-            const row = e.target.closest('tr');
-            if (row && row.parentElement === tableBody) {
-                const index = Array.from(tableBody.querySelectorAll('tr')).indexOf(row);
-                const checklist = getFilteredChecklists(checklistsCache.getAll())[index];
-                
-                mostrarPreview(e.clientX, e.clientY, checklist);
-            }
-        });
-        
-        tableBody.addEventListener('mouseout', function() {
-            esconderPreview();
-        });
-        
-        function mostrarPreview(x, y, checklist) {
-            let preview = document.getElementById('preview-rapido');
-            if (!preview) {
-                preview = document.createElement('div');
-                preview.id = 'preview-rapido';
-                preview.className = 'preview-rapido';
-                document.body.appendChild(preview);
-            }
-            
-            preview.innerHTML = `
-                <strong>${checklist.placa}</strong> (${checklist.tipo})<br>
-                <small>Validade: ${checklist.validade}</small><br>
-                <small>Responsável: ${checklist.responsavel}</small><br>
-                <small>Dispositivos: ${checklist.dispositivos?.length || 0}</small>
-                <div style="margin-top: 8px; font-size: 11px;">
-                    ${getStatusValidade(checklist.validade) === 'vencido' ? '⚠️ VENCIDO' : '✅ OK'}
-                </div>
-            `;
-            
-            preview.style.left = (x + 15) + 'px';
-            preview.style.top = (y + 15) + 'px';
-            preview.classList.add('visible');
-        }
-        
-        function esconderPreview() {
-            const preview = document.getElementById('preview-rapido');
-            if (preview) {
-                preview.classList.remove('visible');
-            }
-        }
-        
-        // 7. 🎛️ CONTROLES RÁPIDOS DE VISUALIZAÇÃO
-        function criarControlesVisualizacao() {
-            const controles = document.createElement('div');
-            controles.className = 'controles-visualizacao';
-            controles.innerHTML = `
-                <button class="btn-icon" id="btnCompacto" title="Visualização compacta">
-                    <i class="fas fa-compress-alt"></i>
-                </button>
-                <button class="btn-icon" id="btnNormal" title="Visualização normal">
-                    <i class="fas fa-list"></i>
-                </button>
-                <button class="btn-icon" id="btnExpandido" title="Visualização expandida">
-                    <i class="fas fa-expand-alt"></i>
-                </button>
-            `;
-            
-            document.body.appendChild(controles);
-            
-            // Eventos
-            document.getElementById('btnCompacto').addEventListener('click', () => {
-                document.body.classList.add('modo-compacto');
-                document.body.classList.remove('modo-expandido');
-                localStorage.setItem('visualizacao', 'compacto');
-            });
-            
-            document.getElementById('btnNormal').addEventListener('click', () => {
-                document.body.classList.remove('modo-compacto', 'modo-expandido');
-                localStorage.setItem('visualizacao', 'normal');
-            });
-            
-            document.getElementById('btnExpandido').addEventListener('click', () => {
-                document.body.classList.add('modo-expandido');
-                document.body.classList.remove('modo-compacto');
-                localStorage.setItem('visualizacao', 'expandido');
-            });
-            
-            // Restaurar preferência
-            const preferencia = localStorage.getItem('visualizacao') || 'normal';
-            if (preferencia === 'compacto') document.body.classList.add('modo-compacto');
-            if (preferencia === 'expandido') document.body.classList.add('modo-expandido');
-        }
-        
-        // 8. 🏷️ ETIQUETAS DE STATUS COLORIDAS
-        function criarEtiquetasDinamicas() {
-            const estilo = document.createElement('style');
-            estilo.textContent = `
-                .status-dinamico-0 { background: #10b981; color: white; }
-                .status-dinamico-1 { background: #f59e0b; color: black; }
-                .status-dinamico-2 { background: #ef4444; color: white; }
-                .status-dinamico-3 { background: #8b5cf6; color: white; }
-            `;
-            document.head.appendChild(estilo);
-        }
-        
-        // ✅ SIDEBAR DE RELATÓRIOS - VERSÃO MELHORADA E REPOSICIONADA
-        sidebarToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            sidebarReports.classList.toggle('expanded');
-            
-            if (sidebarReports.classList.contains('expanded')) {
-                this.innerHTML = '<i class="fas fa-times"></i>';
-                this.title = 'Fechar Relatórios';
-            } else {
-                this.innerHTML = '<i class="fas fa-chart-pie"></i>';
-                this.title = 'Relatórios Rápidos';
-            }
-        });
-
-        // Fechar sidebar ao clicar fora
-        document.addEventListener('click', function(e) {
-            if (!sidebarReports.contains(e.target) && 
-                !sidebarToggle.contains(e.target) &&
-                sidebarReports.classList.contains('expanded')) {
-                sidebarReports.classList.remove('expanded');
-                sidebarToggle.innerHTML = '<i class="fas fa-chart-pie"></i>';
-                sidebarToggle.title = 'Relatórios Rápidos';
-            }
-        });
-
-        // Prevenir que eventos do conteúdo fechem a sidebar
-        if (sidebarContent) {
-            sidebarContent.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-        
-        // Função para atualizar badge da sidebar
-        function atualizarBadgeSidebar() {
-            const checklists = checklistsCache.getAll();
-            const vencidosSemAviso = checklists.filter(c => 
-                getStatusValidade(c.validade) === 'vencido' && 
-                (!c.avisos || c.avisos.length === 0)
-            ).length;
-            
-            if (vencidosSemAviso > 0) {
-                sidebarBadge.textContent = vencidosSemAviso;
-                sidebarBadge.style.display = 'flex';
-            } else {
-                sidebarBadge.style.display = 'none';
-            }
-        }
-        
-        // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
-        function inicializarMelhoriasUsabilidade() {
-            criarBarraNotificacoes();
-            criarControlesVisualizacao();
-            criarEtiquetasDinamicas();
-            atualizarFiltrosAtivos();
-            
-            // Verificar notificações periodicamente
-            setInterval(verificarNotificacoes, 60000);
-            
-            // Atualizar filtros ativos quando os filtros mudarem
-            searchInput.addEventListener('input', atualizarFiltrosAtivos);
-            filterTipo.addEventListener('change', atualizarFiltrosAtivos);
-            filterStatus.addEventListener('change', atualizarFiltrosAtivos);
-        }
-        
-        // ✅ FUNÇÕES EXISTENTES PARA USAR CACHE
-        
+        // ✅ FUNÇÕES PARA INTERAGIR COM CHECKLISTS
         window.editarChecklist = async function(index) {
-            const checklists = checklistsCache.getAll();
-            const filteredChecklists = getFilteredChecklists(checklists);
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
+            const filteredChecklists = getFilteredChecklists(checklists, operacao);
             
             if (index >= filteredChecklists.length) return;
             
             editingIndex = index;
+            editingOperacao = operacao;
             const checklist = filteredChecklists[index];
             
             modalTitle.textContent = 'Editar Checklist';
             excluirChecklistBtn.style.display = 'block';
+            editOperacao.value = operacao;
             
             document.getElementById('editPlaca').value = checklist.placa;
             document.getElementById('editTipo').value = checklist.tipo;
@@ -3694,8 +3813,9 @@
         };
         
         window.excluirChecklist = async function(index) {
-            const checklists = checklistsCache.getAll();
-            const filteredChecklists = getFilteredChecklists(checklists);
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
+            const filteredChecklists = getFilteredChecklists(checklists, operacao);
             
             if (index >= filteredChecklists.length) return;
             
@@ -3706,13 +3826,14 @@
                 `Tem certeza que deseja excluir o checklist da placa ${checklist.placa}?`,
                 async () => {
                     // Remover do cache
-                    checklistsCache.delete(checklist.id);
+                    sistemaAbas.getCache(operacao).delete(checklist.id);
                     
                     // Se for do Firestore, marcar para exclusão
                     if (checklist.id.startsWith('firestore_')) {
                         const firestoreId = checklist.id.replace('firestore_', '');
                         try {
-                            await db.collection('checklists').doc(firestoreId).delete();
+                            const colecao = `checklists_${operacao}`;
+                            await db.collection(colecao).doc(firestoreId).delete();
                         } catch (error) {
                             console.error('Erro ao excluir do Firestore:', error);
                         }
@@ -3726,12 +3847,14 @@
         };
         
         window.registrarAviso = function(index) {
-            const checklists = checklistsCache.getAll();
-            const filteredChecklists = getFilteredChecklists(checklists);
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
+            const filteredChecklists = getFilteredChecklists(checklists, operacao);
             
             if (index >= filteredChecklists.length) return;
             
             avisoIndex = index;
+            avisoOperacao = operacao;
             const checklist = filteredChecklists[index];
             
             avisoPlaca.textContent = `Placa: ${checklist.placa} (${checklist.tipo})`;
@@ -3754,13 +3877,12 @@
             avisoModal.style.display = 'flex';
         };
         
-        // ✅ EVENTOS
-        
-        // Importar Excel
+        // ✅ IMPORTAR EXCEL
         fileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
+            const operacao = sistemaAbas.getOperacaoAtual();
             const reader = new FileReader();
             
             reader.onload = async function(e) {
@@ -3770,7 +3892,7 @@
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                     
-                    await performanceManager.importExcelUltraFast(jsonData);
+                    await performanceManager.importExcelUltraFast(jsonData, operacao);
                     
                 } catch (error) {
                     console.error('Erro ao importar:', error);
@@ -3783,9 +3905,139 @@
             reader.readAsArrayBuffer(file);
         });
         
-        // ✅ REMOVER DUPLICADOS
+        // ✅ SALVAR CHECKLIST
+        salvarChecklistBtn.addEventListener('click', async function() {
+            if (!checklistForm.checkValidity()) {
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
+                return;
+            }
+            
+            const operacao = editOperacao.value;
+            const checklistData = {
+                placa: document.getElementById('editPlaca').value.toUpperCase(),
+                tipo: document.getElementById('editTipo').value,
+                dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
+                validade: converterParaFormatoSistema(document.getElementById('editValidade').value),
+                responsavel: document.getElementById('editResponsavel').value,
+                telefone: document.getElementById('editTelefone').value,
+                operador: document.getElementById('editOperador').value,
+                dispositivos: [],
+                avisos: editingIndex !== -1 ? sistemaAbas.getCache(operacao).getAll()[editingIndex]?.avisos || [] : []
+            };
+            
+            const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
+            dispositivoItems.forEach(item => {
+                const select = item.querySelector('.dispositivo-nome');
+                const outroInput = item.querySelector('.dispositivo-nome-outro');
+                const situacaoSelect = item.querySelector('.dispositivo-situacao');
+                
+                let nome;
+                if (select.value === 'OUTRO') {
+                    nome = outroInput.value.trim();
+                } else {
+                    nome = select.value;
+                }
+                
+                if (nome) {
+                    checklistData.dispositivos.push({
+                        nome: nome,
+                        situacao: situacaoSelect.value
+                    });
+                }
+            });
+            
+            try {
+                if (editingIndex === -1) {
+                    // NOVO CHECKLIST
+                    const id = performanceManager.generateId();
+                    const checklistCompleto = {
+                        id,
+                        ...checklistData,
+                        operacao: operacao,
+                        criadoPor: currentUser.uid,
+                        criadoPorEmail: currentUser.email,
+                        criadoEm: new Date().toISOString(),
+                        synced: false
+                    };
+                    
+                    sistemaAbas.getCache(operacao).set(id, checklistCompleto);
+                    showNotification('Checklist criado com sucesso!', 'success');
+                    
+                } else {
+                    // EDITAR CHECKLIST EXISTENTE
+                    const checklists = sistemaAbas.getCache(operacao).getAll();
+                    const checklist = checklists[editingIndex];
+                    
+                    await performanceManager.editChecklistInstant(checklist.id, operacao, checklistData);
+                    showNotification('Checklist atualizado com sucesso!', 'success');
+                }
+                
+                editModal.style.display = 'none';
+                
+                // Se estiver na mesma operação, atualizar a tabela
+                if (operacao === sistemaAbas.getOperacaoAtual()) {
+                    atualizarTabela();
+                }
+                
+                editingIndex = -1;
+                editingOperacao = 'rondolog';
+                
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                showNotification('Erro ao salvar checklist. Tente novamente.', 'error');
+            }
+        });
+        
+        // ✅ REGISTRAR AVISO
+        registrarAvisoBtn.addEventListener('click', async function() {
+            if (!avisoForm.checkValidity()) {
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
+                return;
+            }
+            
+            const operacao = avisoOperacao;
+            const checklists = sistemaAbas.getCache(operacao).getAll();
+            const filteredChecklists = getFilteredChecklists(checklists, operacao);
+            const checklist = filteredChecklists[avisoIndex];
+            
+            const novoAviso = {
+                data: avisoData.value,
+                quemNotificou: avisoQuemNotificou.value.trim(),
+                quemRecebeu: avisoQuemRecebeu.value.trim(),
+                metodo: avisoMetodo.value,
+                observacao: avisoObservacao.value.trim(),
+                registradoPor: currentUser.email,
+                registradoEm: new Date().toISOString()
+            };
+            
+            try {
+                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
+                const updated = { ...checklist, avisos: avisosAtualizados };
+                
+                await performanceManager.editChecklistInstant(checklist.id, operacao, { avisos: avisosAtualizados });
+                
+                avisoModal.style.display = 'none';
+                avisoForm.reset();
+                
+                if (operacao === sistemaAbas.getOperacaoAtual()) {
+                    atualizarTabela();
+                }
+                
+                showNotification('Aviso registrado com sucesso!', 'success');
+                
+                avisoIndex = -1;
+                avisoOperacao = 'rondolog';
+                
+            } catch (error) {
+                console.error('Erro ao registrar aviso:', error);
+                showNotification('Erro ao registrar aviso.', 'error');
+            }
+        });
+        
+        // ✅ REMOVER DUPLICADOS (por operação)
         removerDuplicadosBtn.addEventListener('click', async function() {
-            const checklists = checklistsCache.getAll();
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
             
             if (checklists.length === 0) {
                 showNotification('Não há checklists para processar!', 'warning');
@@ -3794,11 +4046,11 @@
             
             mostrarConfirmacao(
                 'Remover Duplicados',
-                'Deseja remover checklists duplicados? Serão mantidos apenas os mais recentes.',
+                `Deseja remover checklists duplicados da operação ${operacao.toUpperCase()}? Serão mantidos apenas os mais recentes.`,
                 async () => {
                     showProgressBar('Removendo duplicados...');
                     
-                    console.log('📊 Iniciando remoção de duplicados...');
+                    console.log(`📊 Iniciando remoção de duplicados (${operacao})...`);
                     console.log(`Total antes: ${checklists.length}`);
                     
                     // Agrupar por placa normalizada
@@ -3856,7 +4108,7 @@
                     checklistsParaRemover.forEach(checklist => {
                         if (checklist.id) {
                             console.log(`Removendo do cache: ${checklist.placa} (ID: ${checklist.id})`);
-                            checklistsCache.delete(checklist.id);
+                            sistemaAbas.getCache(operacao).delete(checklist.id);
                         }
                     });
                     
@@ -3867,8 +4119,9 @@
                         if (checklist.id && checklist.id.startsWith('firestore_')) {
                             try {
                                 const firestoreId = checklist.id.replace('firestore_', '');
+                                const colecao = `checklists_${operacao}`;
                                 console.log(`Removendo do Firestore: ${checklist.placa} (ID: ${firestoreId})`);
-                                await db.collection('checklists').doc(firestoreId).delete();
+                                await db.collection(colecao).doc(firestoreId).delete();
                                 removidosFirestore++;
                                 
                                 // Atualizar progresso
@@ -3893,6 +4146,7 @@
                     // 4. Mostrar resultado
                     showNotification(
                         `✅ Remoção de duplicados concluída!<br>` +
+                        `• Operação: ${operacao.toUpperCase()}<br>` +
                         `• Total original: ${checklists.length}<br>` +
                         `• Duplicados removidos: ${checklistsParaRemover.length}<br>` +
                         `• Únicos mantidos: ${checklistsParaManter.length}<br>` +
@@ -3903,125 +4157,10 @@
             );
         });
         
-        // Salvar checklist
-        salvarChecklistBtn.addEventListener('click', async function() {
-            if (!checklistForm.checkValidity()) {
-                showNotification('Preencha todos os campos obrigatórios!', 'error');
-                return;
-            }
-            
-            const checklistData = {
-                placa: document.getElementById('editPlaca').value.toUpperCase(),
-                tipo: document.getElementById('editTipo').value,
-                dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
-                validade: converterParaFormatoSistema(document.getElementById('editValidade').value),
-                responsavel: document.getElementById('editResponsavel').value,
-                telefone: document.getElementById('editTelefone').value,
-                operador: document.getElementById('editOperador').value,
-                dispositivos: [],
-                avisos: editingIndex !== -1 ? checklistsCache.getAll()[editingIndex]?.avisos || [] : []
-            };
-            
-            const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
-            dispositivoItems.forEach(item => {
-                const select = item.querySelector('.dispositivo-nome');
-                const outroInput = item.querySelector('.dispositivo-nome-outro');
-                const situacaoSelect = item.querySelector('.dispositivo-situacao');
-                
-                let nome;
-                if (select.value === 'OUTRO') {
-                    nome = outroInput.value.trim();
-                } else {
-                    nome = select.value;
-                }
-                
-                if (nome) {
-                    checklistData.dispositivos.push({
-                        nome: nome,
-                        situacao: situacaoSelect.value
-                    });
-                }
-            });
-            
-            try {
-                if (editingIndex === -1) {
-                    // NOVO CHECKLIST
-                    const id = performanceManager.generateId();
-                    const checklistCompleto = {
-                        id,
-                        ...checklistData,
-                        criadoPor: currentUser.uid,
-                        criadoPorEmail: currentUser.email,
-                        criadoEm: new Date().toISOString(),
-                        synced: false
-                    };
-                    
-                    checklistsCache.set(id, checklistCompleto);
-                    showNotification('Checklist criado com sucesso!', 'success');
-                    
-                } else {
-                    // EDITAR CHECKLIST EXISTENTE
-                    const checklists = checklistsCache.getAll();
-                    const checklist = checklists[editingIndex];
-                    
-                    await performanceManager.editChecklistInstant(checklist.id, checklistData);
-                    showNotification('Checklist atualizado com sucesso!', 'success');
-                }
-                
-                editModal.style.display = 'none';
-                atualizarTabela();
-                editingIndex = -1;
-                
-            } catch (error) {
-                console.error('Erro ao salvar:', error);
-                showNotification('Erro ao salvar checklist. Tente novamente.', 'error');
-            }
-        });
-        
-        // Registrar aviso
-        registrarAvisoBtn.addEventListener('click', async function() {
-            if (!avisoForm.checkValidity()) {
-                showNotification('Preencha todos os campos obrigatórios!', 'error');
-                return;
-            }
-            
-            const checklists = checklistsCache.getAll();
-            const filteredChecklists = getFilteredChecklists(checklists);
-            const checklist = filteredChecklists[avisoIndex];
-            
-            const novoAviso = {
-                data: avisoData.value,
-                quemNotificou: avisoQuemNotificou.value.trim(),
-                quemRecebeu: avisoQuemRecebeu.value.trim(),
-                metodo: avisoMetodo.value,
-                observacao: avisoObservacao.value.trim(),
-                registradoPor: currentUser.email,
-                registradoEm: new Date().toISOString()
-            };
-            
-            try {
-                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
-                const updated = { ...checklist, avisos: avisosAtualizados };
-                
-                await performanceManager.editChecklistInstant(checklist.id, { avisos: avisosAtualizados });
-                
-                avisoModal.style.display = 'none';
-                avisoForm.reset();
-                
-                atualizarTabela();
-                showNotification('Aviso registrado com sucesso!', 'success');
-                
-                avisoIndex = -1;
-                
-            } catch (error) {
-                console.error('Erro ao registrar aviso:', error);
-                showNotification('Erro ao registrar aviso.', 'error');
-            }
-        });
-        
-        // Exportar completo
+        // ✅ EXPORTAR COMPLETO (por operação)
         exportCompletoBtn.addEventListener('click', function() {
-            const checklists = checklistsCache.getAll();
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
             
             if (checklists.length === 0) {
                 showNotification('Não há dados para exportar!', 'warning');
@@ -4029,9 +4168,10 @@
             }
             
             const exportData = [];
-            exportData.push(['Relatório Checklist - Dados Compartilhados']);
+            exportData.push([`Relatório Checklist - ${operacao.toUpperCase()} - Dados Compartilhados`]);
             exportData.push([]);
             exportData.push(['Empresa: Sistema de Checklists']);
+            exportData.push(['Operação: ' + operacao.toUpperCase()]);
             exportData.push(['Periodo: ' + new Date().toLocaleDateString('pt-BR')]);
             exportData.push(['Exportado por: ' + (currentUser?.email || 'Sistema')]);
             exportData.push(['Data exportação: ' + new Date().toLocaleString('pt-BR')]);
@@ -4062,77 +4202,139 @@
             
             const ws = XLSX.utils.aoa_to_sheet(exportData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'RelatorioChecklist');
+            XLSX.utils.book_append_sheet(wb, ws, `Relatorio${operacao.charAt(0).toUpperCase() + operacao.slice(1)}`);
             
-            XLSX.writeFile(wb, `checklists_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showNotification('Arquivo exportado com sucesso!', 'success');
+            XLSX.writeFile(wb, `checklists_${operacao}_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showNotification(`Arquivo exportado com sucesso! (${operacao.toUpperCase()})`, 'success');
         });
         
-        // Limpar tudo
-        limparTudoBtn.addEventListener('click', async function() {
-            const opcao = prompt(
-                `🚨 LIMPEZA DE DADOS 🚨\n\n` +
-                `Escolha uma opção:\n` +
-                `1 - Limpar TUDO (dados locais e servidor)\n` +
-                `2 - Limpar apenas dados locais\n` +
-                `3 - Cancelar\n\n` +
-                `Digite o número da opção:`
-            );
-            
-            switch (opcao) {
-                case '1':
-                    await limparTodosDados();
-                    break;
-                case '2':
-                    checklistsCache.clear();
-                    localStorage.clear();
-                    atualizarTabela();
-                    showNotification('Dados locais limpos!', 'success');
-                    break;
-                default:
-                    showNotification('Operação cancelada', 'info');
-                    break;
-            }
-        });
-        
-        async function limparTodosDados() {
-            const confirmacao = prompt(`⚠️ PERIGO: Isso apagará TODOS os dados permanentemente!\n\nDigite "APAGAR-TUDO" para confirmar:`);
-            
-            if (confirmacao !== "APAGAR-TUDO") {
-                showNotification('Operação cancelada', 'warning');
-                return;
-            }
-            
-            try {
-                showProgressBar('Apagando dados...');
-                
-                // Apagar do Firestore
-                const checklistsSnapshot = await db.collection('checklists').get();
-                const deletePromises = [];
-                checklistsSnapshot.forEach(doc => {
-                    deletePromises.push(db.collection('checklists').doc(doc.id).delete());
-                });
-                
-                await Promise.all(deletePromises);
-                
-                // Limpar local
-                checklistsCache.clear();
-                localStorage.clear();
-                
-                hideProgressBar();
-                atualizarTabela();
-                
-                showNotification(`${deletePromises.length} checklists apagados permanentemente!`, 'success');
-                
-            } catch (error) {
-                hideProgressBar();
-                console.error('Erro ao limpar dados:', error);
-                showNotification('Erro ao apagar dados', 'error');
-            }
+        // ✅ ATUALIZAR CONTADORES
+        function atualizarContadores(filtered = null) {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
+            totalCount.textContent = checklists.length;
+            filteredCount.textContent = filtered !== null ? filtered : checklists.length;
         }
         
-        // ✅ FUNÇÕES AUXILIARES DE UI
+        // ✅ FILTROS ATIVOS
+        function atualizarFiltrosAtivos() {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            let container;
+            if (operacao === 'rondolog') {
+                container = filtrosAtivosRondolog;
+            } else {
+                container = filtrosAtivosSaster;
+            }
+            
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const filtros = [];
+            
+            if (searchInput.value) {
+                filtros.push({
+                    tipo: 'Busca',
+                    valor: searchInput.value,
+                    limpar: () => { searchInput.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            let tipoFiltro, statusFiltro;
+            if (operacao === 'rondolog') {
+                tipoFiltro = filterTipoRondolog;
+                statusFiltro = filterStatusRondolog;
+            } else {
+                tipoFiltro = filterTipoSaster;
+                statusFiltro = filterStatusSaster;
+            }
+            
+            if (tipoFiltro.value) {
+                filtros.push({
+                    tipo: 'Tipo',
+                    valor: tipoFiltro.options[tipoFiltro.selectedIndex].text,
+                    limpar: () => { tipoFiltro.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            if (statusFiltro.value) {
+                filtros.push({
+                    tipo: 'Status',
+                    valor: statusFiltro.options[statusFiltro.selectedIndex].text,
+                    limpar: () => { statusFiltro.value = ''; atualizarTabela(); }
+                });
+            }
+            
+            filtros.forEach(filtro => {
+                const badge = document.createElement('div');
+                badge.className = 'filtro-ativo';
+                badge.innerHTML = `
+                    ${filtro.tipo}: ${filtro.valor}
+                    <i class="fas fa-times"></i>
+                `;
+                badge.addEventListener('click', () => {
+                    filtro.limpar();
+                    atualizarFiltrosAtivos();
+                });
+                container.appendChild(badge);
+            });
+            
+            // Mostrar/ocultar container
+            container.style.display = filtros.length > 0 ? 'flex' : 'none';
+        }
         
+        // ✅ EVENTOS DE FILTRO
+        searchInput.addEventListener('input', atualizarTabela);
+        
+        // Eventos de filtro específicos por operação
+        if (filterTipoRondolog) {
+            filterTipoRondolog.addEventListener('change', function() {
+                if (sistemaAbas.getOperacaoAtual() === 'rondolog') {
+                    atualizarTabela();
+                }
+            });
+        }
+        
+        if (filterStatusRondolog) {
+            filterStatusRondolog.addEventListener('change', function() {
+                if (sistemaAbas.getOperacaoAtual() === 'rondolog') {
+                    atualizarTabela();
+                }
+            });
+        }
+        
+        if (filterTipoSaster) {
+            filterTipoSaster.addEventListener('change', function() {
+                if (sistemaAbas.getOperacaoAtual() === 'saster') {
+                    atualizarTabela();
+                }
+            });
+        }
+        
+        if (filterStatusSaster) {
+            filterStatusSaster.addEventListener('change', function() {
+                if (sistemaAbas.getOperacaoAtual() === 'saster') {
+                    atualizarTabela();
+                }
+            });
+        }
+        
+        limparFiltrosBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            
+            const operacao = sistemaAbas.getOperacaoAtual();
+            if (operacao === 'rondolog') {
+                filterTipoRondolog.value = '';
+                filterStatusRondolog.value = '';
+            } else {
+                filterTipoSaster.value = '';
+                filterStatusSaster.value = '';
+            }
+            
+            atualizarTabela();
+        });
+        
+        // ✅ FUNÇÕES AUXILIARES DE UI
         function mostrarConfirmacao(titulo, mensagem, callback) {
             confirmacaoTitulo.textContent = titulo;
             confirmacaoMensagem.innerHTML = mensagem;
@@ -4298,390 +4500,13 @@
             historicoAvisos.style.display = 'block';
         }
         
-        function atualizarTabela() {
-            const checklists = checklistsCache.getAll();
-            console.log('📊 Atualizando tabela com', checklists.length, 'checklists');
-            atualizarTabelaComCache(checklists);
-        }
-        
-        function atualizarBadges() {
-            const checklists = checklistsCache.getAll();
-            
-            let vencidos = 0;
-            let proximos = 0;
-            let ok = 0;
-            let comDefeito = 0;
-            let comAviso = 0;
-            let semAviso = 0;
-            
-            checklists.forEach(checklist => {
-                const statusValidade = getStatusValidade(checklist.validade);
-                const temDefeitoChecklist = temDefeito(checklist.dispositivos);
-                const temAvisoChecklist = temAvisos(checklist);
-                
-                if (statusValidade === 'vencido') {
-                    vencidos++;
-                    if (temAvisoChecklist) {
-                        comAviso++;
-                    } else {
-                        semAviso++;
-                    }
-                }
-                if (statusValidade === 'proximo') proximos++;
-                if (statusValidade === 'ok' && !temDefeitoChecklist) ok++;
-                if (temDefeitoChecklist) comDefeito++;
-            });
-            
-            avisadosCount.textContent = comAviso;
-            
-            statusBadges.innerHTML = `
-                <div class="summary-card total">
-                    <div class="card-number">${checklists.length}</div>
-                    <div class="card-label">Total de Checklists</div>
-                    <div class="card-subtitle">Carregados no sistema</div>
-                </div>
-                <div class="summary-card valid">
-                    <div class="card-number">${ok}</div>
-                    <div class="card-label">Checklists OK</div>
-                    <div class="card-subtitle">Em conformidade</div>
-                </div>
-                <div class="summary-card warning">
-                    <div class="card-number">${proximos}</div>
-                    <div class="card-label">Próximos a Vencer</div>
-                    <div class="card-subtitle">Atenção necessária</div>
-                </div>
-                <div class="summary-card expired">
-                    <div class="card-number">${vencidos}</div>
-                    <div class="card-label">Checklists Vencidos</div>
-                    <div class="card-subtitle">Fora da validade</div>
-                </div>
-                <div class="summary-card avisados">
-                    <div class="card-number">${comAviso}</div>
-                    <div class="card-label">Vencidos Avisados</div>
-                    <div class="card-subtitle">Com notificação registrada</div>
-                </div>
-                <div class="summary-card sem-aviso">
-                    <div class="card-number">${semAviso}</div>
-                    <div class="card-label">Vencidos sem Aviso</div>
-                    <div class="card-subtitle">Necessitam notificação</div>
-                </div>
-            `;
-            
-            // Adicionar eventos de clique aos cards
-            document.querySelectorAll('.summary-card.avisados').forEach(card => {
-                card.addEventListener('click', () => {
-                    filterStatus.value = 'com_aviso';
-                    atualizarTabela();
-                });
-            });
-            
-            document.querySelectorAll('.summary-card.sem-aviso').forEach(card => {
-                card.addEventListener('click', () => {
-                    filterStatus.value = 'sem_aviso';
-                    atualizarTabela();
-                });
-            });
-        }
-        
-        function atualizarContadores(filtered = null) {
-            const checklists = checklistsCache.getAll();
-            totalCount.textContent = checklists.length;
-            filteredCount.textContent = filtered !== null ? filtered : checklists.length;
-        }
-        
-        // Eventos para relatórios
-        document.querySelectorAll('.report-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const relatorio = this.dataset.relatorio;
-                gerarRelatorio(relatorio);
-            });
-        });
-        
-        function gerarRelatorio(tipo) {
-            const checklists = checklistsCache.getAll();
-            
-            switch(tipo) {
-                case 'status':
-                    gerarRelatorioStatus(checklists);
-                    break;
-                case 'vencimentos':
-                    gerarRelatorioVencimentos(checklists);
-                    break;
-                case 'dispositivos':
-                    gerarRelatorioDispositivos(checklists);
-                    break;
-                case 'historico':
-                    gerarRelatorioHistorico(checklists);
-                    break;
-                case 'exportPDF':
-                    exportarParaPDF(checklists);
-                    break;
-                case 'exportExcel':
-                    exportarParaExcel(checklists);
-                    break;
-            }
-        }
-        
-        function gerarRelatorioStatus(checklists) {
-            const stats = {
-                total: checklists.length,
-                vencidos: checklists.filter(c => getStatusValidade(c.validade) === 'vencido').length,
-                proximos: checklists.filter(c => getStatusValidade(c.validade) === 'proximo').length,
-                ok: checklists.filter(c => getStatusValidade(c.validade) === 'ok').length,
-                comDefeito: checklists.filter(c => temDefeito(c.dispositivos)).length,
-                comAviso: checklists.filter(c => temAvisos(c)).length
-            };
-            
-            const relatorio = `
-                RELATÓRIO DE STATUS
-                ===================
-                
-                📊 ESTATÍSTICAS GERAIS:
-                • Total de Checklists: ${stats.total}
-                • Checklists OK: ${stats.ok}
-                • Próximos a Vencer: ${stats.proximos}
-                • Vencidos: ${stats.vencidos}
-                • Com Defeito: ${stats.comDefeito}
-                • Com Aviso Registrado: ${stats.comAviso}
-                
-                ⚠️ ATENÇÃO NECESSÁRIA:
-                • Vencidos sem Aviso: ${stats.vencidos - stats.comAviso}
-                
-                📈 PORCENTAGENS:
-                • OK: ${((stats.ok / stats.total) * 100).toFixed(1)}%
-                • Atenção: ${(((stats.proximos + stats.vencidos) / stats.total) * 100).toFixed(1)}%
-                
-                Gerado em: ${new Date().toLocaleString('pt-BR')}
-            `;
-            
-            mostrarRelatorioModal('Relatório de Status', relatorio);
-        }
-        
-        function gerarRelatorioVencimentos(checklists) {
-            const hoje = new Date();
-            const vencimentosPorMes = {};
-            
-            checklists.forEach(checklist => {
-                const dataValidade = parseDateBrasil(checklist.validade);
-                if (dataValidade) {
-                    const mesAno = `${dataValidade.getMonth() + 1}/${dataValidade.getFullYear()}`;
-                    vencimentosPorMes[mesAno] = (vencimentosPorMes[mesAno] || 0) + 1;
-                }
-            });
-            
-            let relatorio = `RELATÓRIO DE VENCIMENTOS\n=======================\n\n`;
-            
-            Object.keys(vencimentosPorMes).sort().forEach(mes => {
-                relatorio += `• ${mes}: ${vencimentosPorMes[mes]} checklist(s)\n`;
-            });
-            
-            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
-            
-            mostrarRelatorioModal('Relatório de Vencimentos', relatorio);
-        }
-        
-        function gerarRelatorioDispositivos(checklists) {
-            const dispositivosStatus = {};
-            
-            checklists.forEach(checklist => {
-                checklist.dispositivos?.forEach(disp => {
-                    if (!dispositivosStatus[disp.nome]) {
-                        dispositivosStatus[disp.nome] = { ok: 0, defeito: 0 };
-                    }
-                    
-                    if (disp.situacao?.toLowerCase() === 'defeito') {
-                        dispositivosStatus[disp.nome].defeito++;
-                    } else {
-                        dispositivosStatus[disp.nome].ok++;
-                    }
-                });
-            });
-            
-            let relatorio = `RELATÓRIO DE DISPOSITIVOS\n========================\n\n`;
-            
-            Object.keys(dispositivosStatus).sort().forEach(disp => {
-                const total = dispositivosStatus[disp].ok + dispositivosStatus[disp].defeito;
-                const percentualDefeito = total > 0 ? (dispositivosStatus[disp].defeito / total * 100).toFixed(1) : 0;
-                relatorio += `• ${disp}: ${dispositivosStatus[disp].ok} OK / ${dispositivosStatus[disp].defeito} Defeito (${percentualDefeito}%)\n`;
-            });
-            
-            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
-            
-            mostrarRelatorioModal('Relatório de Dispositivos', relatorio);
-        }
-        
-        function gerarRelatorioHistorico(checklists) {
-            let relatorio = `RELATÓRIO HISTÓRICO\n==================\n\n`;
-            
-            checklists.sort((a, b) => {
-                const dataA = parseDateBrasil(a.dataRealizacao) || new Date(0);
-                const dataB = parseDateBrasil(b.dataRealizacao) || new Date(0);
-                return dataB - dataA;
-            }).slice(0, 20).forEach(checklist => {
-                relatorio += `• ${checklist.placa} (${checklist.tipo}): ${checklist.dataRealizacao}\n`;
-            });
-            
-            relatorio += `\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
-            
-            mostrarRelatorioModal('Relatório Histórico', relatorio);
-        }
-        
-        function exportarParaPDF(checklists) {
-            showNotification('Exportação para PDF em desenvolvimento...', 'info');
-        }
-        
-        function exportarParaExcel(checklists) {
-            if (checklists.length === 0) {
-                showNotification('Não há dados para exportar!', 'warning');
-                return;
-            }
-            
-            const exportData = [];
-            exportData.push(['Relatório de Checklists - ' + new Date().toLocaleDateString('pt-BR')]);
-            exportData.push([]);
-            exportData.push(['Placa', 'Tipo', 'Data Realização', 'Validade', 'Responsável', 'Operador', 'Dispositivos OK', 'Dispositivos com Defeito']);
-            
-            checklists.forEach(checklist => {
-                const dispositivosOk = checklist.dispositivos?.filter(d => d.situacao?.toLowerCase() !== 'defeito').length || 0;
-                const dispositivosDefeito = checklist.dispositivos?.filter(d => d.situacao?.toLowerCase() === 'defeito').length || 0;
-                
-                exportData.push([
-                    checklist.placa,
-                    checklist.tipo,
-                    checklist.dataRealizacao,
-                    checklist.validade,
-                    checklist.responsavel,
-                    checklist.operador,
-                    dispositivosOk,
-                    dispositivosDefeito
-                ]);
-            });
-            
-            const ws = XLSX.utils.aoa_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Relatorio');
-            
-            XLSX.writeFile(wb, `relatorio_checklists_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showNotification('Relatório exportado para Excel com sucesso!', 'success');
-        }
-        
-        function mostrarRelatorioModal(titulo, conteudo) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>${titulo}</h3>
-                        <button class="btn-fechar">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <pre style="white-space: pre-wrap; font-family: monospace; padding: 15px; background: var(--bg-secondary); border-radius: 8px; font-size: 12px; max-height: 400px; overflow-y: auto;">${conteudo}</pre>
-                    </div>
-                    <div class="modal-actions">
-                        <button class="btn-cancel">Fechar</button>
-                        <button class="btn-icon" style="background: var(--green); color: white;">
-                            <i class="fas fa-download"></i> Exportar TXT
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            modal.style.display = 'flex';
-            
-            const btnFechar = modal.querySelector('.btn-fechar');
-            const btnCancel = modal.querySelector('.btn-cancel');
-            const btnExport = modal.querySelector('.btn-icon');
-            
-            btnFechar.addEventListener('click', () => modal.remove());
-            btnCancel.addEventListener('click', () => modal.remove());
-            btnExport.addEventListener('click', () => {
-                const blob = new Blob([conteudo], { type: 'text/plain' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `relatorio_${new Date().toISOString().slice(0,10)}.txt`;
-                a.click();
-                showNotification('Relatório exportado com sucesso!', 'success');
-            });
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.remove();
-            });
-        }
-        
-        // ✅ EVENTOS DE FILTRO RÁPIDO
-        document.querySelectorAll('[data-filter]').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const filter = this.dataset.filter;
-                aplicarFiltroRapido(filter);
-            });
-        });
-        
-        function aplicarFiltroRapido(filter) {
-            switch(filter) {
-                case 'vencidos':
-                    filterStatus.value = 'vencido';
-                    break;
-                case 'proximos':
-                    filterStatus.value = 'proximo';
-                    break;
-                case 'sem-aviso':
-                    filterStatus.value = 'sem_aviso';
-                    break;
-                case 'todos':
-                    filterStatus.value = '';
-                    break;
-            }
-            atualizarTabela();
-        }
-        
-        // ✅ EVENTOS GLOBAIS
-        
-        // Fechar modais
-        fecharModal.addEventListener('click', () => { editModal.style.display = 'none'; editingIndex = -1; });
-        cancelarBtn.addEventListener('click', () => { editModal.style.display = 'none'; editingIndex = -1; });
-        fecharAvisoModal.addEventListener('click', () => { avisoModal.style.display = 'none'; avisoForm.reset(); avisoIndex = -1; });
-        cancelarAvisoBtn.addEventListener('click', () => { avisoModal.style.display = 'none'; avisoForm.reset(); avisoIndex = -1; });
-        fecharConfirmacaoModal.addEventListener('click', () => { confirmacaoModal.style.display = 'none'; acaoConfirmadaCallback = null; });
-        cancelarConfirmacaoBtn.addEventListener('click', () => { confirmacaoModal.style.display = 'none'; acaoConfirmadaCallback = null; });
-        
-        confirmarAcaoBtn.addEventListener('click', async function() {
-            if (acaoConfirmadaCallback) {
-                confirmacaoModal.style.display = 'none';
-                await acaoConfirmadaCallback();
-                acaoConfirmadaCallback = null;
-            }
-        });
-        
-        // Fechar modais ao clicar fora
-        window.addEventListener('click', function(e) {
-            if (e.target === editModal) {
-                editModal.style.display = 'none';
-                editingIndex = -1;
-            }
-            if (e.target === avisoModal) {
-                avisoModal.style.display = 'none';
-                avisoForm.reset();
-                avisoIndex = -1;
-            }
-            if (e.target === confirmacaoModal) {
-                confirmacaoModal.style.display = 'none';
-                acaoConfirmadaCallback = null;
-            }
-        });
-        
-        // Adicionar dispositivo
-        addDispositivoBtn.addEventListener('click', function() {
-            adicionarDispositivoInput();
-        });
-        
-        // Novo checklist
+        // ✅ NOVO CHECKLIST
         novoChecklistBtn.addEventListener('click', function() {
             editingIndex = -1;
+            editingOperacao = sistemaAbas.getOperacaoAtual();
             modalTitle.textContent = 'Novo Checklist';
             excluirChecklistBtn.style.display = 'none';
+            editOperacao.value = editingOperacao;
             
             checklistForm.reset();
             dispositivosContainer.innerHTML = '';
@@ -4702,92 +4527,185 @@
             editModal.style.display = 'flex';
         });
         
-        // Filtros
-        searchInput.addEventListener('input', atualizarTabela);
-        filterTipo.addEventListener('change', atualizarTabela);
-        filterStatus.addEventListener('change', atualizarTabela);
-        limparFiltrosBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            filterTipo.value = '';
-            filterStatus.value = '';
-            atualizarTabela();
-        });
-        
-        // Debug
-        debugBtn.addEventListener('click', function() {
-            const checklists = checklistsCache.getAll();
-            console.log("=== DEBUG ===");
-            console.log(`Total checklists: ${checklists.length}`);
-            console.log(`Cache size: ${checklistsCache.cache.size}`);
-            console.log(`Pending sync: ${checklistsCache.getPendingSync().length}`);
+        // ✅ SIDEBAR DE RELATÓRIOS
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebarReports.classList.toggle('expanded');
             
-            checklists.slice(0, 3).forEach((checklist, i) => {
-                console.log(`${i + 1}. ${checklist.placa} (${checklist.tipo}) - Synced: ${checklist.synced}`);
-            });
-            
-            showNotification('Debug executado! Verifique o console (F12).', 'info');
-        });
-        
-        // ✅ OUTROS EVENTOS
-        validarChecklistsBtn.addEventListener('click', function() {
-            const checklists = checklistsCache.getAll();
-            
-            if (checklists.length === 0) {
-                showNotification('Não há checklists para validar!', 'warning');
-                return;
+            if (sidebarReports.classList.contains('expanded')) {
+                this.innerHTML = '<i class="fas fa-times"></i>';
+                this.title = 'Fechar Relatórios';
+            } else {
+                this.innerHTML = '<i class="fas fa-chart-pie"></i>';
+                this.title = 'Relatórios Rápidos';
             }
-            
-            mostrarConfirmacao(
-                'Validar Todos',
-                `Deseja validar todos os ${checklists.length} checklists?`,
-                function() {
-                    showNotification(`${checklists.length} checklists validados!`, 'success');
-                }
-            );
         });
         
-        avisarTodosBtn.addEventListener('click', function() {
-            const checklists = checklistsCache.getAll();
+        // Fechar sidebar ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!sidebarReports.contains(e.target) && 
+                !sidebarToggle.contains(e.target) &&
+                sidebarReports.classList.contains('expanded')) {
+                sidebarReports.classList.remove('expanded');
+                sidebarToggle.innerHTML = '<i class="fas fa-chart-pie"></i>';
+                sidebarToggle.title = 'Relatórios Rápidos';
+            }
+        });
+        
+        // Prevenir que eventos do conteúdo fechem a sidebar
+        if (sidebarContent) {
+            sidebarContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // ✅ ATUALIZAR BADGE DA SIDEBAR
+        function atualizarBadgeSidebar() {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            const checklists = sistemaAbas.getCacheAtual().getAll();
             const vencidosSemAviso = checklists.filter(c => 
                 getStatusValidade(c.validade) === 'vencido' && 
                 (!c.avisos || c.avisos.length === 0)
-            );
+            ).length;
             
-            if (vencidosSemAviso.length === 0) {
-                showNotification('Nenhum checklist vencido sem aviso encontrado.', 'info');
-                return;
+            if (vencidosSemAviso > 0) {
+                sidebarBadge.textContent = vencidosSemAviso;
+                sidebarBadge.style.display = 'flex';
+            } else {
+                sidebarBadge.style.display = 'none';
             }
-            
-            mostrarConfirmacao(
-                'Avisar Todos',
-                `Deseja registrar aviso para ${vencidosSemAviso.length} checklist(s) vencido(s) sem aviso?`,
-                function() {
-                    showNotification(`Avisos registrados para ${vencidosSemAviso.length} checklists!`, 'success');
-                }
-            );
+        }
+        
+        // ✅ EVENTOS DE FILTRO RÁPIDO
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = this.dataset.filter;
+                aplicarFiltroRapido(filter);
+            });
         });
         
-        importModeloBtn.addEventListener('click', function() {
-            const templateData = [
-                ['Veículo: ABC-1234', 'PROPRIO'],
-                ['Data da Realização: 01/01/2024 08:00', 'Validade: 31/12/2024 23:59'],
-                ['Responsavel: João Silva', '(11) 99999-9999'],
-                ['Operador: Sistema'],
-                ['Dispositivos Avaliados', 'Situação'],
-                ['SETAS', 'Ok'],
-                ['GPS', 'Ok'],
-                ['SENSOR DE PORTA', 'Defeito']
-            ];
+        function aplicarFiltroRapido(filter) {
+            const operacao = sistemaAbas.getOperacaoAtual();
+            let filterStatusElement;
             
-            const ws = XLSX.utils.aoa_to_sheet(templateData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Modelo');
+            if (operacao === 'rondolog') {
+                filterStatusElement = filterStatusRondolog;
+            } else {
+                filterStatusElement = filterStatusSaster;
+            }
             
-            const wscols = [{wch: 30}, {wch: 20}];
-            ws['!cols'] = wscols;
+            switch(filter) {
+                case 'vencidos':
+                    filterStatusElement.value = 'vencido';
+                    break;
+                case 'proximos':
+                    filterStatusElement.value = 'proximo';
+                    break;
+                case 'sem-aviso':
+                    filterStatusElement.value = 'sem_aviso';
+                    break;
+                case 'todos':
+                    filterStatusElement.value = '';
+                    break;
+            }
+            atualizarTabela();
+        }
+        
+        // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
+        function inicializarMelhoriasUsabilidade() {
+            // Verificar notificações periodicamente
+            setInterval(atualizarBadgeSidebar, 60000);
             
-            XLSX.writeFile(wb, 'modelo_checklist.xlsx');
-            showNotification('Modelo baixado com sucesso!', 'success');
+            // Atualizar filtros ativos quando os filtros mudarem
+            searchInput.addEventListener('input', atualizarFiltrosAtivos);
+            
+            if (filterTipoRondolog) {
+                filterTipoRondolog.addEventListener('change', atualizarFiltrosAtivos);
+            }
+            
+            if (filterStatusRondolog) {
+                filterStatusRondolog.addEventListener('change', atualizarFiltrosAtivos);
+            }
+            
+            if (filterTipoSaster) {
+                filterTipoSaster.addEventListener('change', atualizarFiltrosAtivos);
+            }
+            
+            if (filterStatusSaster) {
+                filterStatusSaster.addEventListener('change', atualizarFiltrosAtivos);
+            }
+        }
+        
+        // ✅ EVENTOS GLOBAIS
+        
+        // Fechar modais
+        fecharModal.addEventListener('click', () => { 
+            editModal.style.display = 'none'; 
+            editingIndex = -1; 
+            editingOperacao = 'rondolog'; 
+        });
+        
+        cancelarBtn.addEventListener('click', () => { 
+            editModal.style.display = 'none'; 
+            editingIndex = -1; 
+            editingOperacao = 'rondolog'; 
+        });
+        
+        fecharAvisoModal.addEventListener('click', () => { 
+            avisoModal.style.display = 'none'; 
+            avisoForm.reset(); 
+            avisoIndex = -1; 
+            avisoOperacao = 'rondolog'; 
+        });
+        
+        cancelarAvisoBtn.addEventListener('click', () => { 
+            avisoModal.style.display = 'none'; 
+            avisoForm.reset(); 
+            avisoIndex = -1; 
+            avisoOperacao = 'rondolog'; 
+        });
+        
+        fecharConfirmacaoModal.addEventListener('click', () => { 
+            confirmacaoModal.style.display = 'none'; 
+            acaoConfirmadaCallback = null; 
+        });
+        
+        cancelarConfirmacaoBtn.addEventListener('click', () => { 
+            confirmacaoModal.style.display = 'none'; 
+            acaoConfirmadaCallback = null; 
+        });
+        
+        confirmarAcaoBtn.addEventListener('click', async function() {
+            if (acaoConfirmadaCallback) {
+                confirmacaoModal.style.display = 'none';
+                await acaoConfirmadaCallback();
+                acaoConfirmadaCallback = null;
+            }
+        });
+        
+        // Fechar modais ao clicar fora
+        window.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+                editingIndex = -1;
+                editingOperacao = 'rondolog';
+            }
+            if (e.target === avisoModal) {
+                avisoModal.style.display = 'none';
+                avisoForm.reset();
+                avisoIndex = -1;
+                avisoOperacao = 'rondolog';
+            }
+            if (e.target === confirmacaoModal) {
+                confirmacaoModal.style.display = 'none';
+                acaoConfirmadaCallback = null;
+            }
+        });
+        
+        // Adicionar dispositivo
+        addDispositivoBtn.addEventListener('click', function() {
+            adicionarDispositivoInput();
         });
         
         // ✅ INICIALIZAR
@@ -4816,6 +4734,22 @@
             
             // Iniciar app
             initApp();
+            
+            // Atualizar indicador de abas após carregamento
+            setTimeout(() => {
+                const activeTab = document.querySelector('.operacao-tab.active');
+                if (activeTab) {
+                    updateTabIndicator(activeTab);
+                }
+            }, 100);
+        });
+        
+        // ✅ AJUSTAR INDICADOR DE ABAS AO REDIMENSIONAR
+        window.addEventListener('resize', function() {
+            const activeTab = document.querySelector('.operacao-tab.active');
+            if (activeTab) {
+                updateTabIndicator(activeTab);
+            }
         });
     </script>
 </body>
