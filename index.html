@@ -4957,6 +4957,152 @@
             atualizarTabela();
         }
         
+        // ✅ LIMPAR TUDO - FUNÇÃO CORRIGIDA
+        limparTudoBtn.addEventListener('click', function() {
+            mostrarConfirmacao(
+                '⚠️ LIMPAR TODOS OS DADOS',
+                `
+                <div style="background: #fee2e2; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="color: #991b1b; margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> ATENÇÃO: AÇÃO IRREVERSÍVEL</h4>
+                    <p style="color: #7f1d1d; margin-bottom: 5px;">Esta ação irá:</p>
+                    <ul style="color: #7f1d1d; padding-left: 20px; margin-bottom: 15px;">
+                        <li>Apagar TODOS os checklists de AMBAS as operações (RONDOLOG e SASTER)</li>
+                        <li>Remover dados do cache local e do servidor</li>
+                        <li>Esta ação não pode ser desfeita</li>
+                    </ul>
+                    <p style="color: #7f1d1d; font-weight: bold;">Para confirmar, digite <span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px;">APAGAR TUDO</span> no campo abaixo:</p>
+                    <input type="text" id="confirmacaoInput" placeholder="Digite APAGAR TUDO" style="width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #dc2626; border-radius: 6px; font-size: 14px;">
+                </div>
+                <div id="confirmacaoErro" style="color: #dc2626; font-size: 12px; display: none; margin-bottom: 10px;">
+                    <i class="fas fa-exclamation-circle"></i> O texto digitado não corresponde
+                </div>
+                `,
+                async () => {
+                    // Verificar se o texto de confirmação está correto
+                    const confirmacaoInput = document.getElementById('confirmacaoInput');
+                    const confirmacaoErro = document.getElementById('confirmacaoErro');
+                    
+                    if (!confirmacaoInput || confirmacaoInput.value !== 'APAGAR TUDO') {
+                        confirmacaoErro.style.display = 'block';
+                        confirmacaoInput.style.borderColor = '#dc2626';
+                        confirmacaoInput.focus();
+                        return false; // Impedir que a ação continue
+                    }
+                    
+                    // Proceder com a limpeza
+                    return await limparTodosOsDados();
+                }
+            );
+        });
+        
+        // ✅ FUNÇÃO PARA LIMPAR TODOS OS DADOS
+        async function limparTodosOsDados() {
+            showProgressBar('Limpando todos os dados...');
+            
+            try {
+                // 1. Limpar cache local de ambas as operações
+                const rondologCache = sistemaAbas.getCacheManager('rondolog');
+                const sasterCache = sistemaAbas.getCacheManager('saster');
+                
+                const totalRondolog = rondologCache.getAll().length;
+                const totalSaster = sasterCache.getAll().length;
+                const totalGeral = totalRondolog + totalSaster;
+                
+                console.log(`🗑️ Iniciando limpeza total: RONDOLOG(${totalRondolog}), SASTER(${totalSaster})`);
+                
+                // Atualizar progresso
+                updateProgress(0, 3, 'Limpando cache RONDOLOG...');
+                
+                // 2. Limpar cache RONDOLOG
+                rondologCache.clear();
+                updateProgress(1, 3, 'Limpando cache SASTER...');
+                
+                // 3. Limpar cache SASTER
+                sasterCache.clear();
+                updateProgress(2, 3, 'Limpando Firestore...');
+                
+                // 4. Limpar dados do Firestore (se online)
+                let firestoreApagados = 0;
+                if (!performanceManager.offlineMode) {
+                    try {
+                        // Apagar coleção RONDOLOG
+                        const rondologCollection = db.collection('checklists_rondolog');
+                        const rondologSnapshot = await rondologCollection.get();
+                        
+                        const rondologBatch = db.batch();
+                        rondologSnapshot.docs.forEach(doc => {
+                            rondologBatch.delete(doc.ref);
+                        });
+                        await rondologBatch.commit();
+                        firestoreApagados += rondologSnapshot.size;
+                        
+                        console.log(`🗑️ Firestore RONDORG: ${rondologSnapshot.size} documentos apagados`);
+                        
+                        // Apagar coleção SASTER
+                        const sasterCollection = db.collection('checklists_saster');
+                        const sasterSnapshot = await sasterCollection.get();
+                        
+                        const sasterBatch = db.batch();
+                        sasterSnapshot.docs.forEach(doc => {
+                            sasterBatch.delete(doc.ref);
+                        });
+                        await sasterBatch.commit();
+                        firestoreApagados += sasterSnapshot.size;
+                        
+                        console.log(`🗑️ Firestore SASTER: ${sasterSnapshot.size} documentos apagados`);
+                        
+                    } catch (firestoreError) {
+                        console.error('Erro ao limpar Firestore:', firestoreError);
+                    }
+                }
+                
+                updateProgress(3, 3, 'Atualizando interface...');
+                
+                // 5. Limpar outros dados locais
+                localStorage.removeItem('ultima_operacao');
+                localStorage.removeItem('last_update_rondolog');
+                localStorage.removeItem('last_update_saster');
+                localStorage.removeItem('last_check_rondolog');
+                localStorage.removeItem('last_check_saster');
+                
+                // 6. Limpar operações pendentes
+                performanceManager.pendingOperations = [];
+                
+                // 7. Notificar outras abas
+                performanceManager.notifyOtherTabs('rondolog');
+                performanceManager.notifyOtherTabs('saster');
+                
+                // 8. Atualizar interface
+                setTimeout(() => {
+                    atualizarTabela();
+                    atualizarBadges();
+                    hideProgressBar();
+                    
+                    // Mostrar notificação de sucesso
+                    showNotification(
+                        `✅ Limpeza completa realizada!<br>` +
+                        `• Checklists removidos: ${totalGeral}<br>` +
+                        `• RONDOLOG: ${totalRondolog}<br>` +
+                        `• SASTER: ${totalSaster}<br>` +
+                        `${firestoreApagados > 0 ? `• Firestore: ${firestoreApagados} documentos` : '• Modo offline: apenas cache local'}`,
+                        'success'
+                    );
+                    
+                    // Fechar modal de confirmação
+                    confirmacaoModal.style.display = 'none';
+                    
+                }, 500);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Erro na limpeza total:', error);
+                hideProgressBar();
+                showNotification('Erro ao limpar dados. Tente novamente.', 'error');
+                return false;
+            }
+        }
+        
         // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
         function inicializarMelhoriasUsabilidade() {
             // Verificar notificações periodicamente
@@ -5053,9 +5199,11 @@
         
         confirmarAcaoBtn.addEventListener('click', async function() {
             if (acaoConfirmadaCallback) {
-                confirmacaoModal.style.display = 'none';
-                await acaoConfirmadaCallback();
-                acaoConfirmadaCallback = null;
+                const result = await acaoConfirmadaCallback();
+                if (result !== false) {
+                    confirmacaoModal.style.display = 'none';
+                    acaoConfirmadaCallback = null;
+                }
             }
         });
         
