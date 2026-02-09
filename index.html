@@ -2433,6 +2433,86 @@
         </div>
     </div>
 
+    <!-- 🎭 MODAL DE LIMPAR DADOS COM OPÇÕES -->
+    <div class="modal" id="limparDadosModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Limpar Dados</h3>
+                <button class="btn-fechar" id="fecharLimparDadosModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ff0000; margin-bottom: 15px;"></i>
+                    <h4 style="color: #991b1b; margin-bottom: 15px;">Selecione quais dados deseja limpar</h4>
+                    <p style="color: #7f1d1d; margin-bottom: 5px;">Esta ação é irreversível. Escolha uma opção:</p>
+                </div>
+                
+                <div id="opcoesLimpar" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+                    <div class="opcao-limpar" data-opcao="rondolog" style="padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-truck" style="color: #ff0000; font-size: 20px;"></i>
+                                <div>
+                                    <h5 style="margin: 0; font-size: 16px;">Apenas RONDOLOG</h5>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-secondary);">Limpar apenas os dados da operação RONDOLOG</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="opcao-limpar" data-opcao="saster" style="padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-ship" style="color: #1e3a8a; font-size: 20px;"></i>
+                                <div>
+                                    <h5 style="margin: 0; font-size: 16px;">Apenas SASTER</h5>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-secondary);">Limpar apenas os dados da operação SASTER</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="opcao-limpar" data-opcao="todos" style="padding: 15px; border: 2px solid #dc2626; border-radius: 10px; cursor: pointer; transition: all 0.2s; background: #fef2f2;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-fire" style="color: #dc2626; font-size: 20px;"></i>
+                                <div>
+                                    <h5 style="margin: 0; font-size: 16px; color: #991b1b;">TODOS OS DADOS</h5>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #991b1b;">Limpar todas as operações (RONDOLOG e SASTER)</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="confirmacaoOpcao" style="display: none; padding: 20px; background: #fef2f2; border-radius: 10px; border: 1px solid #fecaca;">
+                    <h5 id="tituloConfirmacao" style="color: #991b1b; margin-bottom: 10px;"></h5>
+                    <p id="descricaoConfirmacao" style="color: #7f1d1d; margin-bottom: 15px;"></p>
+                    <div style="margin-bottom: 15px;">
+                        <p style="color: #7f1d1d; font-weight: bold;">Para confirmar, digite <span style="background: #dc2626; color: white; padding: 2px 8px; border-radius: 4px;">APAGAR</span> no campo abaixo:</p>
+                        <input type="text" id="confirmacaoInputOpcao" placeholder="Digite APAGAR" style="width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #dc2626; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div id="confirmacaoErroOpcao" style="color: #dc2626; font-size: 12px; display: none; margin-bottom: 10px;">
+                        <i class="fas fa-exclamation-circle"></i> O texto digitado não corresponde
+                    </div>
+                </div>
+                
+                <div class="modal-actions" style="justify-content: space-between;">
+                    <button class="btn-cancel" id="cancelarLimparBtn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn-icon danger" id="confirmarLimparBtn" style="display: none;">
+                        <i class="fas fa-check"></i> Confirmar Limpeza
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- BARRA DE PROGRESSO -->
     <div class="progress-bar-container" id="progressBar">
         <h4 style="margin-bottom: 12px; color: var(--text-primary); font-size: 16px;">
@@ -3278,6 +3358,34 @@
                 // Fallback para localStorage
                 localStorage.setItem('last_update_' + operacao, Date.now().toString());
             }
+            
+            // ✅ REMOVER DO FIRESTORE QUANDO REMOVIDO LOCALMENTE
+            async syncRemovalsToFirestore(checklistsParaRemover, operacao) {
+                try {
+                    if (this.offlineMode || checklistsParaRemover.length === 0) return 0;
+                    
+                    const colecao = `checklists_${operacao}`;
+                    let removidosFirestore = 0;
+                    
+                    for (const checklist of checklistsParaRemover) {
+                        if (checklist.id && !checklist.id.startsWith('temp_')) {
+                            try {
+                                console.log(`🗑️ Removendo do Firestore: ${checklist.placa} (ID: ${checklist.id})`);
+                                await db.collection(colecao).doc(checklist.id).delete();
+                                removidosFirestore++;
+                            } catch (error) {
+                                console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
+                            }
+                        }
+                    }
+                    
+                    return removidosFirestore;
+                    
+                } catch (error) {
+                    console.error('Erro na sincronização de remoções:', error);
+                    return 0;
+                }
+            }
         }
 
         let sistemaAbas = new SistemaAbas();
@@ -3401,7 +3509,18 @@
         const sidebarBadge = document.getElementById('sidebarBadge');
         const editOperacao = document.getElementById('editOperacao');
         
+        // Novos elementos para modal de limpar dados
+        const limparDadosModal = document.getElementById('limparDadosModal');
+        const fecharLimparDadosModal = document.getElementById('fecharLimparDadosModal');
+        const cancelarLimparBtn = document.getElementById('cancelarLimparBtn');
+        const confirmarLimparBtn = document.getElementById('confirmarLimparBtn');
+        const confirmacaoInputOpcao = document.getElementById('confirmacaoInputOpcao');
+        const confirmacaoErroOpcao = document.getElementById('confirmacaoErroOpcao');
+        const tituloConfirmacao = document.getElementById('tituloConfirmacao');
+        const descricaoConfirmacao = document.getElementById('descricaoConfirmacao');
+        
         let acaoConfirmadaCallback = null;
+        let opcaoSelecionada = null;
         
         // ✅ INICIALIZAR APLICAÇÃO COM NOVO SISTEMA
         async function initApp() {
@@ -3697,9 +3816,11 @@
             
             dateStr = dateStr.trim();
             
+            // CORREÇÃO 1: Tratar casos especiais de status
             if (dateStr.includes('Não OK') || dateStr.includes('Checklist Não OK') || 
-                dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido')) {
-                return null;
+                dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido') ||
+                dateStr.includes('OK até EMBARQUE')) {
+                return null; // Não é uma data válida para cálculo
             }
             
             try {
@@ -3727,8 +3848,11 @@
         }
         
         function getStatusValidade(validadeStr) {
-            if (!validadeStr) return 'vencido';
+            if (!validadeStr || typeof validadeStr !== 'string') return 'ok';
             
+            validadeStr = validadeStr.trim();
+            
+            // CORREÇÃO 1: Tratar casos de status textual primeiro
             if (validadeStr.includes('Não OK') || validadeStr.includes('Checklist Não OK') || 
                 validadeStr.includes('Vencido') || validadeStr.includes('Checklist Vencido')) {
                 return 'vencido';
@@ -3738,32 +3862,29 @@
                 return 'proximo';
             }
             
+            if (validadeStr.includes('OK') || validadeStr.includes('Ok')) {
+                return 'ok';
+            }
+            
+            // Tentar analisar como data
             const dataValidade = parseDateBrasil(validadeStr);
             if (!dataValidade) {
+                // Tentar extrair data simples
                 const matchSimple = validadeStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
                 if (matchSimple) {
                     const [, day, month, year] = matchSimple;
                     const data = new Date(year, month - 1, day);
                     if (data instanceof Date && !isNaN(data)) {
-                        const hoje = new Date();
-                        hoje.setHours(0, 0, 0, 0);
-                        
-                        const diferencaMs = data.getTime() - hoje.getTime();
-                        const diferencaDias = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24));
-                        
-                        if (diferencaDias < 0) return 'vencido';
-                        if (diferencaDias <= 7) return 'proximo';
-                        return 'ok';
+                        return calcularStatusData(data);
                     }
                 }
-                
-                if (validadeStr.includes('OK') || validadeStr.includes('Ok')) {
-                    return 'ok';
-                }
-                
-                return 'vencido';
+                return 'ok'; // Se não conseguir analisar, considerar OK
             }
             
+            return calcularStatusData(dataValidade);
+        }
+        
+        function calcularStatusData(dataValidade) {
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
             dataValidade.setHours(0, 0, 0, 0);
@@ -4000,7 +4121,7 @@
             atualizarTabelaComCache(checklists);
         }
         
-        // ✅ ATUALIZAR BADGES
+        // ✅ ATUALIZAR BADGES - FUNÇÃO CORRIGIDA
         function atualizarBadges() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4153,7 +4274,7 @@
                     // Remover do cache
                     cacheManager.delete(checklist.id);
                     
-                    // Se online, remover do Firestore também
+                    // CORREÇÃO 2: Remover também do Firestore
                     if (!performanceManager.offlineMode && checklist.id && !checklist.id.startsWith('temp_')) {
                         try {
                             const colecao = `checklists_${operacao}`;
@@ -4371,7 +4492,7 @@
             }
         });
         
-        // ✅ REMOVER DUPLICADOS (por operação)
+        // ✅ REMOVER DUPLICADOS (por operação) - FUNÇÃO CORRIGIDA
         removerDuplicadosBtn.addEventListener('click', async function() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4450,30 +4571,11 @@
                         }
                     });
                     
-                    // 2. Remover duplicados do Firestore (se online)
+                    // 2. Remover duplicados do Firestore (se online) - CORREÇÃO 2
                     let removidosFirestore = 0;
                     
                     if (!performanceManager.offlineMode) {
-                        for (const checklist of checklistsParaRemover) {
-                            if (checklist.id && !checklist.id.startsWith('temp_')) {
-                                try {
-                                    const colecao = `checklists_${operacao}`;
-                                    console.log(`Removendo do Firestore: ${checklist.placa} (ID: ${checklist.id})`);
-                                    await db.collection(colecao).doc(checklist.id).delete();
-                                    removidosFirestore++;
-                                    
-                                    // Atualizar progresso
-                                    updateProgress(
-                                        removidosFirestore, 
-                                        checklistsParaRemover.length, 
-                                        `Removendo ${removidosFirestore}/${checklistsParaRemover.length}`
-                                    );
-                                    
-                                } catch (error) {
-                                    console.error(`Erro ao remover ${checklist.placa} do Firestore:`, error);
-                                }
-                            }
-                        }
+                        removidosFirestore = await performanceManager.syncRemovalsToFirestore(checklistsParaRemover, operacao);
                     }
                     
                     // 3. Atualizar UI
@@ -4489,7 +4591,7 @@
                         `• Total original: ${checklists.length}<br>` +
                         `• Duplicados removidos: ${checklistsParaRemover.length}<br>` +
                         `• Únicos mantidos: ${checklistsParaManter.length}` +
-                        (performanceManager.offlineMode ? '<br>• Modo offline: Remoções locais apenas' : ''),
+                        (performanceManager.offlineMode ? '<br>• Modo offline: Remoções locais apenas' : `<br>• Firestore: ${removidosFirestore} removidos`),
                         'success'
                     );
                     
@@ -4957,151 +5059,216 @@
             atualizarTabela();
         }
         
-        // ✅ LIMPAR TUDO - FUNÇÃO CORRIGIDA
+        // ✅ CORREÇÃO 3: NOVO SISTEMA DE LIMPAR DADOS COM OPÇÕES
         limparTudoBtn.addEventListener('click', function() {
-            mostrarConfirmacao(
-                '⚠️ LIMPAR TODOS OS DADOS',
-                `
-                <div style="background: #fee2e2; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <h4 style="color: #991b1b; margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> ATENÇÃO: AÇÃO IRREVERSÍVEL</h4>
-                    <p style="color: #7f1d1d; margin-bottom: 5px;">Esta ação irá:</p>
-                    <ul style="color: #7f1d1d; padding-left: 20px; margin-bottom: 15px;">
-                        <li>Apagar TODOS os checklists de AMBAS as operações (RONDOLOG e SASTER)</li>
-                        <li>Remover dados do cache local e do servidor</li>
-                        <li>Esta ação não pode ser desfeita</li>
-                    </ul>
-                    <p style="color: #7f1d1d; font-weight: bold;">Para confirmar, digite <span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px;">APAGAR TUDO</span> no campo abaixo:</p>
-                    <input type="text" id="confirmacaoInput" placeholder="Digite APAGAR TUDO" style="width: 100%; padding: 10px; margin-top: 10px; border: 2px solid #dc2626; border-radius: 6px; font-size: 14px;">
-                </div>
-                <div id="confirmacaoErro" style="color: #dc2626; font-size: 12px; display: none; margin-bottom: 10px;">
-                    <i class="fas fa-exclamation-circle"></i> O texto digitado não corresponde
-                </div>
-                `,
-                async () => {
-                    // Verificar se o texto de confirmação está correto
-                    const confirmacaoInput = document.getElementById('confirmacaoInput');
-                    const confirmacaoErro = document.getElementById('confirmacaoErro');
-                    
-                    if (!confirmacaoInput || confirmacaoInput.value !== 'APAGAR TUDO') {
-                        confirmacaoErro.style.display = 'block';
-                        confirmacaoInput.style.borderColor = '#dc2626';
-                        confirmacaoInput.focus();
-                        return false; // Impedir que a ação continue
-                    }
-                    
-                    // Proceder com a limpeza
-                    return await limparTodosOsDados();
-                }
-            );
+            abrirModalLimparDados();
         });
         
-        // ✅ FUNÇÃO PARA LIMPAR TODOS OS DADOS
-        async function limparTodosOsDados() {
-            showProgressBar('Limpando todos os dados...');
+        function abrirModalLimparDados() {
+            // Resetar seleção
+            document.querySelectorAll('.opcao-limpar').forEach(opcao => {
+                opcao.style.border = '2px solid var(--border-color)';
+                opcao.style.background = '';
+            });
+            
+            // Resetar confirmação
+            document.getElementById('confirmacaoOpcao').style.display = 'none';
+            confirmarLimparBtn.style.display = 'none';
+            confirmacaoInputOpcao.value = '';
+            confirmacaoErroOpcao.style.display = 'none';
+            
+            opcaoSelecionada = null;
+            limparDadosModal.style.display = 'flex';
+        }
+        
+        // Eventos das opções de limpar
+        document.querySelectorAll('.opcao-limpar').forEach(opcao => {
+            opcao.addEventListener('click', function() {
+                // Remover seleção anterior
+                document.querySelectorAll('.opcao-limpar').forEach(o => {
+                    o.style.border = '2px solid var(--border-color)';
+                    o.style.background = '';
+                });
+                
+                // Selecionar nova opção
+                this.style.border = '2px solid #dc2626';
+                this.style.background = '#fef2f2';
+                
+                opcaoSelecionada = this.dataset.opcao;
+                
+                // Mostrar confirmação
+                mostrarConfirmacaoOpcao(opcaoSelecionada);
+            });
+        });
+        
+        function mostrarConfirmacaoOpcao(opcao) {
+            let titulo, descricao;
+            
+            switch(opcao) {
+                case 'rondolog':
+                    titulo = 'Limpar Apenas RONDOLOG';
+                    descricao = 'Esta ação irá apagar TODOS os checklists da operação RONDOLOG. Esta ação não pode ser desfeita.';
+                    break;
+                case 'saster':
+                    titulo = 'Limpar Apenas SASTER';
+                    descricao = 'Esta ação irá apagar TODOS os checklists da operação SASTER. Esta ação não pode ser desfeita.';
+                    break;
+                case 'todos':
+                    titulo = 'Limpar TODOS os Dados';
+                    descricao = 'Esta ação irá apagar TODOS os checklists de AMBAS as operações (RONDOLOG e SASTER). Esta ação não pode ser desfeita.';
+                    break;
+            }
+            
+            tituloConfirmacao.textContent = titulo;
+            descricaoConfirmacao.textContent = descricao;
+            
+            document.getElementById('confirmacaoOpcao').style.display = 'block';
+            confirmarLimparBtn.style.display = 'block';
+            confirmacaoInputOpcao.focus();
+        }
+        
+        // Confirmar limpeza
+        confirmarLimparBtn.addEventListener('click', async function() {
+            if (!opcaoSelecionada) {
+                showNotification('Selecione uma opção primeiro', 'error');
+                return;
+            }
+            
+            if (confirmacaoInputOpcao.value !== 'APAGAR') {
+                confirmacaoErroOpcao.style.display = 'block';
+                confirmacaoInputOpcao.style.borderColor = '#dc2626';
+                confirmacaoInputOpcao.focus();
+                return;
+            }
+            
+            // Executar limpeza conforme opção
+            await executarLimpezaOpcao(opcaoSelecionada);
+            
+            // Fechar modal
+            limparDadosModal.style.display = 'none';
+        });
+        
+        // Cancelar limpeza
+        cancelarLimparBtn.addEventListener('click', function() {
+            limparDadosModal.style.display = 'none';
+        });
+        
+        // Fechar modal
+        fecharLimparDadosModal.addEventListener('click', function() {
+            limparDadosModal.style.display = 'none';
+        });
+        
+        // ✅ FUNÇÃO PARA EXECUTAR LIMPEZA POR OPÇÃO
+        async function executarLimpezaOpcao(opcao) {
+            showProgressBar('Limpando dados...');
             
             try {
-                // 1. Limpar cache local de ambas as operações
-                const rondologCache = sistemaAbas.getCacheManager('rondolog');
-                const sasterCache = sistemaAbas.getCacheManager('saster');
+                let operacoesParaLimpar = [];
                 
-                const totalRondolog = rondologCache.getAll().length;
-                const totalSaster = sasterCache.getAll().length;
-                const totalGeral = totalRondolog + totalSaster;
-                
-                console.log(`🗑️ Iniciando limpeza total: RONDOLOG(${totalRondolog}), SASTER(${totalSaster})`);
-                
-                // Atualizar progresso
-                updateProgress(0, 3, 'Limpando cache RONDOLOG...');
-                
-                // 2. Limpar cache RONDOLOG
-                rondologCache.clear();
-                updateProgress(1, 3, 'Limpando cache SASTER...');
-                
-                // 3. Limpar cache SASTER
-                sasterCache.clear();
-                updateProgress(2, 3, 'Limpando Firestore...');
-                
-                // 4. Limpar dados do Firestore (se online)
-                let firestoreApagados = 0;
-                if (!performanceManager.offlineMode) {
-                    try {
-                        // Apagar coleção RONDOLOG
-                        const rondologCollection = db.collection('checklists_rondolog');
-                        const rondologSnapshot = await rondologCollection.get();
-                        
-                        const rondologBatch = db.batch();
-                        rondologSnapshot.docs.forEach(doc => {
-                            rondologBatch.delete(doc.ref);
-                        });
-                        await rondologBatch.commit();
-                        firestoreApagados += rondologSnapshot.size;
-                        
-                        console.log(`🗑️ Firestore RONDORG: ${rondologSnapshot.size} documentos apagados`);
-                        
-                        // Apagar coleção SASTER
-                        const sasterCollection = db.collection('checklists_saster');
-                        const sasterSnapshot = await sasterCollection.get();
-                        
-                        const sasterBatch = db.batch();
-                        sasterSnapshot.docs.forEach(doc => {
-                            sasterBatch.delete(doc.ref);
-                        });
-                        await sasterBatch.commit();
-                        firestoreApagados += sasterSnapshot.size;
-                        
-                        console.log(`🗑️ Firestore SASTER: ${sasterSnapshot.size} documentos apagados`);
-                        
-                    } catch (firestoreError) {
-                        console.error('Erro ao limpar Firestore:', firestoreError);
-                    }
+                // Definir quais operações serão limpas
+                switch(opcao) {
+                    case 'rondolog':
+                        operacoesParaLimpar = ['rondolog'];
+                        break;
+                    case 'saster':
+                        operacoesParaLimpar = ['saster'];
+                        break;
+                    case 'todos':
+                        operacoesParaLimpar = ['rondolog', 'saster'];
+                        break;
                 }
                 
-                updateProgress(3, 3, 'Atualizando interface...');
+                let totalRemovido = 0;
+                let totalFirestore = 0;
                 
-                // 5. Limpar outros dados locais
-                localStorage.removeItem('ultima_operacao');
-                localStorage.removeItem('last_update_rondolog');
-                localStorage.removeItem('last_update_saster');
-                localStorage.removeItem('last_check_rondolog');
-                localStorage.removeItem('last_check_saster');
+                // Processar cada operação
+                for (const operacao of operacoesParaLimpar) {
+                    const cacheManager = sistemaAbas.getCacheManager(operacao);
+                    const checklists = cacheManager.getAll();
+                    
+                    console.log(`🗑️ Iniciando limpeza: ${operacao.toUpperCase()} (${checklists.length} checklists)`);
+                    
+                    // 1. Remover do cache local
+                    const removidosLocal = checklists.length;
+                    cacheManager.clear();
+                    totalRemovido += removidosLocal;
+                    
+                    // 2. Remover do Firestore (se online)
+                    if (!performanceManager.offlineMode) {
+                        const removidosFirestore = await performanceManager.syncRemovalsToFirestore(checklists, operacao);
+                        totalFirestore += removidosFirestore;
+                    }
+                    
+                    // 3. Notificar outras abas
+                    performanceManager.notifyOtherTabs(operacao);
+                    
+                    updateProgress(
+                        operacoesParaLimpar.indexOf(operacao) + 1,
+                        operacoesParaLimpar.length,
+                        `Limpando ${operacao.toUpperCase()}...`
+                    );
+                }
                 
-                // 6. Limpar operações pendentes
-                performanceManager.pendingOperations = [];
+                // Limpar dados adicionais se for "todos"
+                if (opcao === 'todos') {
+                    localStorage.removeItem('ultima_operacao');
+                    localStorage.removeItem('last_update_rondolog');
+                    localStorage.removeItem('last_update_saster');
+                    localStorage.removeItem('last_check_rondolog');
+                    localStorage.removeItem('last_check_saster');
+                    performanceManager.pendingOperations = [];
+                }
                 
-                // 7. Notificar outras abas
-                performanceManager.notifyOtherTabs('rondolog');
-                performanceManager.notifyOtherTabs('saster');
-                
-                // 8. Atualizar interface
+                // Atualizar interface
                 setTimeout(() => {
                     atualizarTabela();
                     atualizarBadges();
                     hideProgressBar();
                     
                     // Mostrar notificação de sucesso
-                    showNotification(
-                        `✅ Limpeza completa realizada!<br>` +
-                        `• Checklists removidos: ${totalGeral}<br>` +
-                        `• RONDOLOG: ${totalRondolog}<br>` +
-                        `• SASTER: ${totalSaster}<br>` +
-                        `${firestoreApagados > 0 ? `• Firestore: ${firestoreApagados} documentos` : '• Modo offline: apenas cache local'}`,
-                        'success'
-                    );
+                    let mensagem = `✅ Limpeza concluída!<br>`;
                     
-                    // Fechar modal de confirmação
-                    confirmacaoModal.style.display = 'none';
+                    if (opcao === 'todos') {
+                        mensagem += `• Todas as operações limpas<br>`;
+                    } else {
+                        mensagem += `• Operação: ${opcao.toUpperCase()}<br>`;
+                    }
+                    
+                    mensagem += `• Checklists removidos: ${totalRemovido}<br>`;
+                    
+                    if (performanceManager.offlineMode) {
+                        mensagem += '• Modo offline: apenas cache local';
+                    } else if (totalFirestore > 0) {
+                        mensagem += `• Firestore: ${totalFirestore} documentos`;
+                    }
+                    
+                    showNotification(mensagem, 'success');
                     
                 }, 500);
                 
                 return true;
                 
             } catch (error) {
-                console.error('Erro na limpeza total:', error);
+                console.error('Erro na limpeza:', error);
                 hideProgressBar();
                 showNotification('Erro ao limpar dados. Tente novamente.', 'error');
                 return false;
             }
         }
+        
+        // ✅ LIMPAR CACHE
+        limparCacheBtn.addEventListener('click', function() {
+            mostrarConfirmacao(
+                'Limpar Cache',
+                'Deseja limpar todo o cache local? Isso removerá todos os dados salvos offline.',
+                () => {
+                    sistemaAbas.cacheManagers.rondolog.clear();
+                    sistemaAbas.cacheManagers.saster.clear();
+                    showNotification('Cache local limpo com sucesso!', 'success');
+                    atualizarTabela();
+                }
+            );
+        });
         
         // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
         function inicializarMelhoriasUsabilidade() {
@@ -5126,20 +5293,6 @@
             if (filterStatusSaster) {
                 filterStatusSaster.addEventListener('change', atualizarFiltrosAtivos);
             }
-            
-            // Limpar cache quando solicitado
-            limparCacheBtn.addEventListener('click', function() {
-                mostrarConfirmacao(
-                    'Limpar Cache',
-                    'Deseja limpar todo o cache local? Isso removerá todos os dados salvos offline.',
-                    () => {
-                        sistemaAbas.cacheManagers.rondolog.clear();
-                        sistemaAbas.cacheManagers.saster.clear();
-                        showNotification('Cache local limpo com sucesso!', 'success');
-                        atualizarTabela();
-                    }
-                );
-            });
             
             // Botão de debug para testar funcionalidades
             debugBtn.addEventListener('click', function() {
@@ -5223,6 +5376,10 @@
             if (e.target === confirmacaoModal) {
                 confirmacaoModal.style.display = 'none';
                 acaoConfirmadaCallback = null;
+            }
+            if (e.target === limparDadosModal) {
+                limparDadosModal.style.display = 'none';
+                opcaoSelecionada = null;
             }
         });
         
