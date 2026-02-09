@@ -2541,6 +2541,14 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        // Debug do estado de autenticação
+console.log('Firebase config:', firebaseConfig);
+console.log('Firebase app inicializado:', firebase.app().name);
+
+// Verificar se há usuário logado em cache
+auth.onAuthStateChanged((user) => {
+  console.log('Estado de autenticação mudou:', user ? `Usuário: ${user.email}` : 'Nenhum usuário');
+});
 
         // Sistema de cache híbrido otimizado para multi-tab
         let persistenceEnabled = false;
