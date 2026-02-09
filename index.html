@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -2552,15 +2551,13 @@
             try {
                 console.log('🔄 Inicializando persistência Firestore...');
                 
-                // Para Firebase 9.22.0
                 await db.enablePersistence({
-                    synchronizeTabs: true  // Tentar sincronizar entre abas
+                    synchronizeTabs: true
                 });
                 
                 persistenceEnabled = true;
                 console.log('✅ Persistência habilitada com sucesso');
                 
-                // Monitorar status de conexão
                 monitorConnectionStatus();
                 
             } catch (error) {
@@ -2574,7 +2571,6 @@
         function enableLocalStorageFallback() {
             console.log('📦 Usando fallback localStorage para cache offline');
             
-            // Usar BroadcastChannel para comunicação entre abas
             if (typeof BroadcastChannel !== 'undefined') {
                 window.broadcastChannel = new BroadcastChannel('checklist_sync');
                 console.log('📡 BroadcastChannel inicializado para multi-tab');
@@ -2595,7 +2591,6 @@
                 showNotification('Modo offline ativado. Trabalhando com cache local.', 'warning');
             });
             
-            // Verificar status inicial
             isOfflineMode = !navigator.onLine;
         }
 
@@ -2612,10 +2607,8 @@
                 this.isInitialized = false;
             }
             
-            // Inicializar cache (localStorage + memory)
             async initialize() {
                 try {
-                    // 1. Tentar carregar do localStorage
                     const cachedData = localStorage.getItem(this.cacheKey);
                     if (cachedData) {
                         const parsed = JSON.parse(cachedData);
@@ -2625,12 +2618,10 @@
                         console.log(`📦 Cache carregado do localStorage (${this.operacao}):`, this.memoryCache.size, 'itens');
                     }
                     
-                    // 2. Verificar última sincronização
                     const lastSync = localStorage.getItem(this.lastSyncKey);
                     const cacheAge = lastSync ? Date.now() - parseInt(lastSync) : Infinity;
                     
-                    // 3. Se cache antigo (> 1 hora), forçar recarregamento
-                    if (cacheAge > 3600000) { // 1 hora
+                    if (cacheAge > 3600000) {
                         console.log(`🔄 Cache antigo (${Math.round(cacheAge/1000/60)}min), forçando recarregamento`);
                         await this.syncWithFirestore();
                     }
@@ -2640,29 +2631,24 @@
                     
                 } catch (error) {
                     console.error(`Erro ao inicializar cache (${this.operacao}):`, error);
-                    // Retornar cache em memória mesmo se falhar
                     return this.getAll();
                 }
             }
             
-            // Obter todos os itens
             getAll() {
                 return Array.from(this.memoryCache.values());
             }
             
-            // Obter item por ID
             get(id) {
                 return this.memoryCache.get(id);
             }
             
-            // Adicionar/Atualizar item
             set(id, value) {
                 this.memoryCache.set(id, value);
                 this.saveToLocalStorage();
                 return value;
             }
             
-            // Remover item
             delete(id) {
                 const deleted = this.memoryCache.delete(id);
                 if (deleted) {
@@ -2671,14 +2657,12 @@
                 return deleted;
             }
             
-            // Limpar cache
             clear() {
                 this.memoryCache.clear();
                 localStorage.removeItem(this.cacheKey);
                 localStorage.removeItem(this.lastSyncKey);
             }
             
-            // Salvar no localStorage
             saveToLocalStorage() {
                 try {
                     const data = this.getAll();
@@ -2689,7 +2673,6 @@
                 }
             }
             
-            // Sincronizar com Firestore
             async syncWithFirestore() {
                 try {
                     console.log(`🔄 Sincronizando cache ${this.operacao} com Firestore...`);
@@ -2708,12 +2691,10 @@
                         });
                     });
                     
-                    // Atualizar cache com dados do Firestore
                     firestoreData.forEach(item => {
                         this.memoryCache.set(item.id, item);
                     });
                     
-                    // Salvar no localStorage
                     this.saveToLocalStorage();
                     
                     console.log(`✅ Sincronização completa (${this.operacao}):`, firestoreData.length, 'itens');
@@ -2721,19 +2702,16 @@
                     
                 } catch (error) {
                     console.error(`Erro na sincronização (${this.operacao}):`, error);
-                    // Manter cache local em caso de erro
                     return this.getAll();
                 }
             }
             
-            // Sincronizar em background (não bloqueante)
             syncInBackground() {
                 setTimeout(() => {
                     this.syncWithFirestore().catch(console.error);
-                }, 2000); // Delay para não bloquear UI inicial
+                }, 2000);
             }
             
-            // Verificar se há dados offline
             hasOfflineData() {
                 return this.memoryCache.size > 0;
             }
@@ -2772,7 +2750,6 @@
                 return this.cacheManagers[operacao] || this.cacheManagers.rondolog;
             }
             
-            // Inicializar todos os caches
             async initializeAll() {
                 if (this.isInitializing) return;
                 
@@ -2780,7 +2757,6 @@
                 console.log('🚀 Inicializando sistema de cache...');
                 
                 try {
-                    // Inicializar ambos os caches em paralelo
                     const [rondologData, sasterData] = await Promise.all([
                         this.cacheManagers.rondolog.initialize(),
                         this.cacheManagers.saster.initialize()
@@ -2788,7 +2764,6 @@
                     
                     console.log(`✅ Caches inicializados: RONDOLOG(${rondologData.length}), SASTER(${sasterData.length})`);
                     
-                    // Iniciar sincronização em background
                     this.cacheManagers.rondolog.syncInBackground();
                     this.cacheManagers.saster.syncInBackground();
                     
@@ -2828,10 +2803,8 @@
             }
             
             detectConnectionStatus() {
-                // Verificar se estamos online
                 this.offlineMode = !navigator.onLine;
                 
-                // Monitorar mudanças na conexão
                 window.addEventListener('online', () => {
                     console.log('🌐 Conexão restaurada');
                     this.offlineMode = false;
@@ -2844,10 +2817,8 @@
                 });
             }
             
-            // ✅ NOVO MÉTODO COMPATÍVEL:
             checkMultiTabConflicts() {
                 try {
-                    // Usar BroadcastChannel se disponível
                     if (!this.broadcastChannel && typeof BroadcastChannel !== 'undefined') {
                         this.broadcastChannel = new BroadcastChannel('checklist_sync');
                         
@@ -2855,7 +2826,6 @@
                             if (event.data.type === 'data_updated') {
                                 console.log('📡 Dados atualizados em outra aba, recarregando...');
                                 
-                                // Recarregar dados da operação afetada
                                 const cacheManager = sistemaAbas.getCacheManager(event.data.operacao);
                                 cacheManager.syncWithFirestore().then(() => {
                                     if (event.data.operacao === sistemaAbas.getOperacaoAtual()) {
@@ -2869,7 +2839,6 @@
                         return true;
                     }
                     
-                    // Fallback para localStorage events
                     window.addEventListener('storage', (event) => {
                         if (event.key && event.key.startsWith('last_update_')) {
                             const operacao = event.key.replace('last_update_', '');
@@ -2892,7 +2861,70 @@
                 }
             }
             
-            // ✅ IMPORT ULTRA RÁPIDO COM CACHE LOCAL
+            // ✅ CORREÇÃO PRINCIPAL: FUNÇÃO DE SALVAMENTO NO FIRESTORE
+            async saveToFirestore(checklist, operacao, isEditing) {
+                try {
+                    const colecao = `checklists_${operacao}`;
+                    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    let docRef;
+                    
+                    // Determinar se é um documento novo ou existente
+                    if (isEditing && checklist.id) {
+                        // Se já tem ID, usar ele
+                        docRef = db.collection(colecao).doc(checklist.id);
+                    } else {
+                        // Criar novo documento
+                        docRef = db.collection(colecao).doc();
+                        checklist.id = docRef.id; // Atualizar ID no objeto
+                    }
+                    
+                    // Preparar dados para Firestore
+                    const firestoreData = {
+                        placa: checklist.placa || '',
+                        tipo: checklist.tipo || 'PROPRIO',
+                        dataRealizacao: checklist.dataRealizacao || '',
+                        validade: checklist.validade || '',
+                        responsavel: checklist.responsavel || '',
+                        telefone: checklist.telefone || '',
+                        operador: checklist.operador || '',
+                        dispositivos: checklist.dispositivos || [],
+                        avisos: checklist.avisos || [],
+                        operacao: operacao,
+                        updatedAt: timestamp,
+                        version: (checklist.version || 0) + 1
+                    };
+                    
+                    // Adicionar campos de criação apenas se for novo
+                    if (!isEditing) {
+                        firestoreData.createdAt = timestamp;
+                        firestoreData.createdBy = currentUser.uid;
+                        firestoreData.createdByEmail = currentUser.email;
+                    }
+                    
+                    // Remover campos que não devem estar no Firestore
+                    delete firestoreData.synced;
+                    delete firestoreData.localOnly;
+                    delete firestoreData.operacao;
+                    
+                    // Salvar no Firestore
+                    await docRef.set(firestoreData, { merge: true });
+                    
+                    console.log(`✅ Checklist salvo no Firestore: ${checklist.placa} (ID: ${docRef.id})`);
+                    
+                    // Retornar o ID do documento
+                    return {
+                        success: true,
+                        firestoreId: docRef.id,
+                        checklist: { ...checklist, id: docRef.id }
+                    };
+                    
+                } catch (error) {
+                    console.error('Erro ao salvar no Firestore:', error);
+                    throw error;
+                }
+            }
+            
             async importExcelUltraFast(jsonData, operacao, cacheManager) {
                 showProgressBar('Extraindo dados do Excel...');
                 
@@ -2900,7 +2932,6 @@
                 const newChecklists = [];
                 const skipLines = new Set();
                 
-                // Extração rápida (síncrona)
                 for (let i = 0; i < jsonData.length; i++) {
                     if (skipLines.has(i)) continue;
                     
@@ -2912,7 +2943,6 @@
                             checklist.operacao = operacao;
                             newChecklists.push(checklist);
                             
-                            // Marcar linhas para pular (otimização)
                             for (let j = i + 1; j < Math.min(i + 15, jsonData.length); j++) {
                                 skipLines.add(j);
                             }
@@ -2931,7 +2961,8 @@
                 
                 // 1. Adicionar ao cache local IMEDIATAMENTE
                 const localIds = [];
-                newChecklists.forEach((checklist, index) => {
+                for (let i = 0; i < newChecklists.length; i++) {
+                    const checklist = newChecklists[i];
                     const id = this.generateId();
                     const checklistCompleto = {
                         id,
@@ -2945,37 +2976,34 @@
                         localOnly: this.offlineMode
                     };
                     
-                    // Salvar no cache híbrido
                     cacheManager.set(id, checklistCompleto);
                     localIds.push(id);
                     
-                    // Atualizar progresso
-                    updateProgress(index + 1, newChecklists.length, `Processando ${index + 1}/${newChecklists.length}`);
-                });
+                    updateProgress(i + 1, newChecklists.length, `Processando ${i + 1}/${newChecklists.length}`);
+                    
+                    // 2. Tentar salvar no Firestore se online
+                    if (!this.offlineMode) {
+                        try {
+                            await this.saveToFirestore(checklistCompleto, operacao, false);
+                            // Atualizar cache com ID do Firestore
+                            checklistCompleto.synced = true;
+                            checklistCompleto.localOnly = false;
+                            cacheManager.set(id, checklistCompleto);
+                        } catch (error) {
+                            console.error('Erro ao salvar no Firestore durante importação:', error);
+                            checklistCompleto.synced = false;
+                            checklistCompleto.localOnly = true;
+                            cacheManager.set(id, checklistCompleto);
+                        }
+                    }
+                }
                 
-                // 2. Atualizar UI (instantâneo)
+                // 3. Atualizar UI (instantâneo)
                 atualizarTabela();
                 atualizarBadges();
                 
                 const uiTime = performance.now() - startTime;
                 console.log(`🎯 UI atualizada em ${uiTime.toFixed(0)}ms`);
-                
-                // 3. Sincronizar com Firestore se online
-                if (!this.offlineMode) {
-                    this.syncToFirestoreInBackground(newChecklists, operacao, false, cacheManager);
-                } else {
-                    // Marcar operações pendentes
-                    newChecklists.forEach(checklist => {
-                        this.pendingOperations.push({
-                            type: 'create',
-                            data: checklist,
-                            operacao: operacao,
-                            timestamp: Date.now()
-                        });
-                    });
-                    
-                    showNotification(`${newChecklists.length} checklists salvos localmente (modo offline)`, 'info');
-                }
                 
                 hideProgressBar();
                 
@@ -3006,7 +3034,6 @@
                 const cellA = data[startIndex][0]?.toString().trim() || '';
                 const cellB = data[startIndex][1]?.toString().trim() || '';
                 
-                // Extrair placa
                 if (cellA.includes(';')) {
                     const parts = cellA.split(';');
                     checklist.placa = parts[0].split(':')[1]?.trim() || '';
@@ -3015,12 +3042,10 @@
                     checklist.placa = cellA.split(':')[1]?.trim() || '';
                 }
                 
-                // Extrair tipo da coluna B se disponível
                 if (cellB && ['PROPRIO', 'AGREGADO', 'TERCEIRO'].includes(cellB.toUpperCase())) {
                     checklist.tipo = cellB.toUpperCase();
                 }
                 
-                // Buscar dados nas próximas linhas
                 for (let i = startIndex + 1; i < Math.min(startIndex + 20, data.length); i++) {
                     const row = data[i];
                     if (!row || row.length === 0) continue;
@@ -3075,7 +3100,7 @@
                 return checklist;
             }
             
-            // ✅ SINCORNIZAÇÃO EM BACKGROUND COM FALLBACK
+            // ✅ SINCORNIZAÇÃO EM BACKGROUND MELHORADA
             async syncToFirestoreInBackground(checklists, operacao, isEditing, cacheManager) {
                 setTimeout(async () => {
                     try {
@@ -3092,109 +3117,82 @@
                             return;
                         }
                         
-                        // Dividir em batches
-                        const batches = [];
-                        for (let i = 0; i < checklists.length; i += this.batchSize) {
-                            batches.push(checklists.slice(i, i + this.batchSize));
-                        }
+                        // Usar batch para múltiplas operações
+                        const batch = db.batch();
+                        const colecao = `checklists_${operacao}`;
+                        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
                         
-                        // Executar batches com limite de concorrência
-                        let savedCount = 0;
-                        
-                        for (let i = 0; i < batches.length; i += this.maxConcurrent) {
-                            const currentBatches = batches.slice(i, i + this.maxConcurrent);
+                        for (const checklist of checklists) {
+                            let docRef;
                             
-                            const batchPromises = currentBatches.map(async (batch) => {
-                                const result = await this.saveBatchToFirestore(batch, operacao, isEditing);
-                                savedCount += result;
-                                return result;
-                            });
-                            
-                            await Promise.all(batchPromises);
-                        }
-                        
-                        console.log(`✅ ${savedCount} checklists sincronizados em background (${operacao})`);
-                        
-                        // Atualizar status de sincronização no cache
-                        checklists.forEach(checklist => {
-                            const cached = cacheManager.get(checklist.id);
-                            if (cached) {
-                                cached.synced = true;
-                                cached.localOnly = false;
-                                cached.updatedAt = new Date().toISOString();
-                                cacheManager.set(checklist.id, cached);
+                            if (checklist.id && checklist.id.startsWith('temp_')) {
+                                // Novo documento - criar ID definitivo
+                                docRef = db.collection(colecao).doc();
+                            } else if (checklist.id) {
+                                // Documento existente
+                                docRef = db.collection(colecao).doc(checklist.id);
+                            } else {
+                                // Sem ID - criar novo
+                                docRef = db.collection(colecao).doc();
                             }
-                        });
+                            
+                            const firestoreData = {
+                                placa: checklist.placa || '',
+                                tipo: checklist.tipo || 'PROPRIO',
+                                dataRealizacao: checklist.dataRealizacao || '',
+                                validade: checklist.validade || '',
+                                responsavel: checklist.responsavel || '',
+                                telefone: checklist.telefone || '',
+                                operador: checklist.operador || '',
+                                dispositivos: checklist.dispositivos || [],
+                                avisos: checklist.avisos || [],
+                                updatedAt: timestamp,
+                                version: (checklist.version || 0) + 1
+                            };
+                            
+                            if (!isEditing) {
+                                firestoreData.createdAt = timestamp;
+                                firestoreData.createdBy = currentUser.uid;
+                                firestoreData.createdByEmail = currentUser.email;
+                            }
+                            
+                            batch.set(docRef, firestoreData, { merge: true });
+                            
+                            // Atualizar ID no cache se necessário
+                            if (checklist.id && checklist.id.startsWith('temp_')) {
+                                const newId = docRef.id;
+                                const oldId = checklist.id;
+                                
+                                // Atualizar cache com novo ID
+                                cacheManager.delete(oldId);
+                                checklist.id = newId;
+                                cacheManager.set(newId, checklist);
+                            }
+                        }
+                        
+                        await batch.commit();
+                        console.log(`✅ ${checklists.length} checklists sincronizados em background (${operacao})`);
+                        
+                        // Notificar outras abas
+                        this.notifyOtherTabs(operacao);
                         
                     } catch (error) {
                         console.error('Erro na sincronização background:', error);
                         
-                        // Se erro de rede, marcar como offline
                         if (error.code === 'unavailable' || error.message.includes('network')) {
                             this.offlineMode = true;
                             showNotification('Modo offline ativado. Dados serão salvos localmente.', 'warning');
                         }
                     }
-                }, 100); // Delay para não bloquear UI
+                }, 100);
             }
             
-            // ✅ SALVAMENTO EM BATCH NO FIRESTORE
-            async saveBatchToFirestore(checklistsBatch, operacao, isEditing) {
-                const batch = db.batch();
-                const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-                const colecao = `checklists_${operacao}`;
-                
-                checklistsBatch.forEach(checklist => {
-                    let docRef;
-                    
-                    if (isEditing && checklist.id && checklist.id.startsWith('local_')) {
-                        // Documento já existe no Firestore
-                        const firestoreId = checklist.id.replace('local_', '');
-                        docRef = db.collection(colecao).doc(firestoreId);
-                    } else if (checklist.id && checklist.id.startsWith('temp_')) {
-                        // Novo documento local - criar no Firestore
-                        docRef = db.collection(colecao).doc();
-                    } else {
-                        // ID do Firestore (já salvo)
-                        docRef = db.collection(colecao).doc(checklist.id);
-                    }
-                    
-                    const data = {
-                        ...checklist,
-                        operacao: operacao,
-                        updatedAt: timestamp,
-                        synced: true,
-                        version: (checklist.version || 0) + 1
-                    };
-                    
-                    // Remover campos internos
-                    delete data.id;
-                    delete data.synced;
-                    delete data.operacao;
-                    delete data.localOnly;
-                    
-                    if (!isEditing) {
-                        data.createdAt = timestamp;
-                        data.createdBy = currentUser.uid;
-                        data.createdByEmail = currentUser.email;
-                    }
-                    
-                    batch.set(docRef, data, { merge: true });
-                });
-                
-                await batch.commit();
-                return checklistsBatch.length;
-            }
-            
-            // ✅ CARREGAMENTO COM CACHE HÍBRIDO
             async loadChecklistsWithProgressiveUI() {
                 const operacaoAtual = sistemaAbas.getOperacaoAtual();
                 const cacheManager = sistemaAbas.getCacheManagerAtual();
                 
-                // FASE 1: Mostrar loading inicial
                 showLoadingMessage(operacaoAtual);
                 
-                // FASE 2: Carregar do cache local IMEDIATAMENTE (< 50ms)
                 setTimeout(() => {
                     const cachedData = cacheManager.getAll();
                     
@@ -3205,18 +3203,15 @@
                         atualizarContadores();
                         hideLoadingMessage(operacaoAtual);
                         
-                        // Mostrar notificação se dados são locais
                         const localOnlyCount = cachedData.filter(c => c.localOnly).length;
                         if (localOnlyCount > 0) {
                             showNotification(`${localOnlyCount} checklists em modo offline. Sincronizará quando conexão voltar.`, 'info');
                         }
                     } else {
-                        // Se cache vazio, mostrar mensagem específica
                         updateNoDataMessage(operacaoAtual, 'empty');
                     }
-                }, 10); // Delay mínimo para garantir que DOM está pronto
+                }, 10);
                 
-                // FASE 3: Sincronizar com Firestore em background
                 setTimeout(async () => {
                     try {
                         const firestoreData = await cacheManager.syncWithFirestore();
@@ -3224,7 +3219,6 @@
                         if (firestoreData.length > 0) {
                             console.log(`🌐 Dados atualizados do Firestore (${operacaoAtual}):`, firestoreData.length, 'itens');
                             
-                            // Atualizar UI se necessário
                             if (operacaoAtual === sistemaAbas.getOperacaoAtual()) {
                                 atualizarTabela();
                                 atualizarBadges();
@@ -3234,7 +3228,6 @@
                     } catch (error) {
                         console.error(`Erro ao sincronizar (${operacaoAtual}):`, error);
                         
-                        // Se offline, manter cache local
                         if (error.code === 'unavailable') {
                             this.offlineMode = true;
                             const cachedData = cacheManager.getAll();
@@ -3244,15 +3237,13 @@
                             }
                         }
                     }
-                }, 1000); // Delay para priorizar cache local
+                }, 1000);
             }
             
-            // ✅ EDIÇÃO INSTANTÂNEA COM FALLBACK
             async editChecklistInstant(id, operacao, updates, cacheManager) {
                 const current = cacheManager.get(id);
                 if (!current) return { success: false };
                 
-                // Atualizar cache
                 const updated = { 
                     ...current, 
                     ...updates, 
@@ -3262,19 +3253,25 @@
                     updatedAt: new Date().toISOString()
                 };
                 
-                // Salvar no cache híbrido
                 cacheManager.set(id, updated);
                 
-                // Atualizar UI se for a operação atual
                 if (operacao === sistemaAbas.getOperacaoAtual()) {
                     atualizarTabela();
                 }
                 
-                // Sincronizar background se online
                 if (!this.offlineMode) {
-                    this.syncToFirestoreInBackground([updated], operacao, true, cacheManager);
+                    try {
+                        await this.saveToFirestore(updated, operacao, true);
+                        updated.synced = true;
+                        updated.localOnly = false;
+                        cacheManager.set(id, updated);
+                    } catch (error) {
+                        console.error('Erro ao salvar no Firestore:', error);
+                        updated.synced = false;
+                        updated.localOnly = true;
+                        cacheManager.set(id, updated);
+                    }
                 } else {
-                    // Marcar como pendente
                     this.pendingOperations.push({
                         type: 'update',
                         data: updated,
@@ -3288,12 +3285,10 @@
                 return { success: true, immediate: true, offline: this.offlineMode };
             }
             
-            // ✅ GERAR ID LOCAL TEMPORÁRIO
             generateId() {
                 return 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             }
             
-            // ✅ PROCESSAR OPERAÇÕES PENDENTES (quando voltar online)
             async processPendingOperations() {
                 if (this.pendingOperations.length === 0 || this.isSyncing) return;
                 
@@ -3301,7 +3296,6 @@
                 console.log(`🔄 Processando ${this.pendingOperations.length} operações pendentes...`);
                 
                 try {
-                    // Agrupar operações por tipo e operação
                     const operationsByType = {};
                     
                     this.pendingOperations.forEach(op => {
@@ -3312,7 +3306,6 @@
                         operationsByType[key].push(op);
                     });
                     
-                    // Processar cada grupo
                     for (const [key, ops] of Object.entries(operationsByType)) {
                         const [type, operacao] = key.split('_');
                         const cacheManager = sistemaAbas.getCacheManager(operacao);
@@ -3334,7 +3327,6 @@
                         }
                     }
                     
-                    // Limpar operações processadas
                     this.pendingOperations = [];
                     console.log('✅ Operações pendentes processadas com sucesso');
                     showNotification('Dados sincronizados com o servidor', 'success');
@@ -3346,7 +3338,6 @@
                 }
             }
             
-            // ✅ NOTIFICAR OUTRAS ABAS SOBRE ATUALIZAÇÃO
             notifyOtherTabs(operacao) {
                 if (this.broadcastChannel) {
                     this.broadcastChannel.postMessage({
@@ -3356,11 +3347,9 @@
                     });
                 }
                 
-                // Fallback para localStorage
                 localStorage.setItem('last_update_' + operacao, Date.now().toString());
             }
             
-            // ✅ REMOVER DO FIRESTORE QUANDO REMOVIDO LOCALMENTE
             async syncRemovalsToFirestore(checklistsParaRemover, operacao) {
                 try {
                     if (this.offlineMode || checklistsParaRemover.length === 0) return 0;
@@ -3392,8 +3381,6 @@
         let sistemaAbas = new SistemaAbas();
         let performanceManager = new PerformanceManager();
 
-        // ✅ ADICIONAR ESTAS LINHAS:
-        // Aguardar inicialização da persistência
         setTimeout(() => {
             performanceManager.checkMultiTabConflicts();
             performanceManager.detectConnectionStatus();
@@ -3406,7 +3393,6 @@
         let avisoOperacao = 'rondolog';
         let currentUser = null;
         
-        // Dispositivos comuns para referência
         const dispositivosComuns = [
             "SETAS", "SENSOR DE PORTA DE MOTORISTA", "SENSOR DE PORTA DE CARONA",
             "BLOQUEIO", "SIRENE", "GPS", "SENSOR DE PAINEL", "ANTENA SATELITAL",
@@ -3418,7 +3404,6 @@
             "TRAVA DE QUINTA RODA"
         ];
         
-        // Elementos DOM
         const loginContainer = document.getElementById('loginContainer');
         const mainContainer = document.getElementById('mainContainer');
         const loginForm = document.getElementById('loginForm');
@@ -3443,7 +3428,6 @@
         const limparFiltrosBtn = document.getElementById('limparFiltrosBtn');
         const operacaoAtualElement = document.getElementById('operacaoAtual');
         
-        // Elementos específicos por operação
         const filtrosAtivosRondolog = document.getElementById('filtrosAtivosRondolog');
         const filtrosAtivosSaster = document.getElementById('filtrosAtivosSaster');
         const statusBadgesRondolog = document.getElementById('statusBadgesRondolog');
@@ -3460,7 +3444,6 @@
         const filteredCount = document.getElementById('filteredCount');
         const avisadosCount = document.getElementById('avisadosCount');
         
-        // Modais e outros elementos
         const editModal = document.getElementById('editModal');
         const avisoModal = document.getElementById('avisoModal');
         const btnDarkMode = document.getElementById('btnDarkMode');
@@ -3510,7 +3493,6 @@
         const sidebarBadge = document.getElementById('sidebarBadge');
         const editOperacao = document.getElementById('editOperacao');
         
-        // Novos elementos para modal de limpar dados
         const limparDadosModal = document.getElementById('limparDadosModal');
         const fecharLimparDadosModal = document.getElementById('fecharLimparDadosModal');
         const cancelarLimparBtn = document.getElementById('cancelarLimparBtn');
@@ -3523,7 +3505,6 @@
         let acaoConfirmadaCallback = null;
         let opcaoSelecionada = null;
         
-        // ✅ INICIALIZAR APLICAÇÃO COM NOVO SISTEMA
         async function initApp() {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
@@ -3531,36 +3512,24 @@
                     showMainApp();
                     updateUserInfo(user);
                     
-                    // Inicializar sistema de abas
                     sistemaAbas = new SistemaAbas();
-                    
-                    // Inicializar performance manager
                     performanceManager = new PerformanceManager();
                     
-                    // Restaurar última operação
                     const ultimaOperacao = localStorage.getItem('ultima_operacao') || 'rondolog';
                     sistemaAbas.setOperacaoAtual(ultimaOperacao);
                     ativarAba(ultimaOperacao);
                     
-                    // Inicializar todos os caches
                     await sistemaAbas.initializeAll();
                     
-                    // Carregar dados com UI progressiva
                     performanceManager.loadChecklistsWithProgressiveUI();
                     
-                    // Restaurar modo escuro
                     const darkModeSaved = localStorage.getItem('dark_mode_sistema');
                     if (darkModeSaved === 'true') {
                         toggleDarkMode();
                     }
                     
-                    // Inicializar melhorias de usabilidade
                     inicializarMelhoriasUsabilidade();
-                    
-                    // Atualizar badge da sidebar
                     atualizarBadgeSidebar();
-                    
-                    // Monitorar atualizações de outras abas
                     monitorarAtualizacoesMultiTab();
                     
                 } else {
@@ -3569,9 +3538,7 @@
             });
         }
         
-        // ✅ MONITORAR ATUALIZAÇÕES DE MULTI-TAB
         function monitorarAtualizacoesMultiTab() {
-            // Verificar localStorage periodicamente para mudanças de outras abas
             setInterval(() => {
                 const operacao = sistemaAbas.getOperacaoAtual();
                 const lastUpdateKey = 'last_update_' + operacao;
@@ -3581,16 +3548,13 @@
                     console.log('📡 Mudança detectada em outra aba, recarregando...');
                     localStorage.setItem('last_check_' + operacao, lastUpdate);
                     
-                    // Recarregar dados
                     const cacheManager = sistemaAbas.getCacheManagerAtual();
                     cacheManager.syncWithFirestore().then(() => {
                         atualizarTabela();
                     });
                 }
-            }, 3000); // Verificar a cada 3 segundos
+            }, 3000);
         }
-        
-        // ✅ FUNÇÕES DE INTERFACE
         
         function showLogin() {
             loginContainer.style.display = 'flex';
@@ -3613,9 +3577,7 @@
             avisoQuemNotificou.value = displayName;
         }
         
-        // ✅ SISTEMA DE ABAS
         function ativarAba(operacao) {
-            // Desativar todas as abas
             document.querySelectorAll('.operacao-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -3624,7 +3586,6 @@
                 content.classList.remove('active');
             });
             
-            // Ativar aba selecionada
             const tabElement = document.querySelector(`.operacao-tab[data-tab="${operacao}"]`);
             const contentElement = document.getElementById(`tab${operacao.charAt(0).toUpperCase() + operacao.slice(1)}`);
             
@@ -3632,16 +3593,9 @@
                 tabElement.classList.add('active');
                 contentElement.classList.add('active');
                 
-                // Atualizar indicador visual
                 updateTabIndicator(tabElement);
-                
-                // Atualizar sistema
                 sistemaAbas.setOperacaoAtual(operacao);
-                
-                // Atualizar interface
                 atualizarInterfaceParaOperacao(operacao);
-                
-                // Carregar dados da aba
                 performanceManager.loadChecklistsWithProgressiveUI();
             }
         }
@@ -3655,20 +3609,14 @@
             tabIndicator.style.width = `${tabRect.width}px`;
             tabIndicator.style.left = `${tabRect.left - tabsRect.left}px`;
             
-            // Definir cor baseada na operação
             const operacao = tabElement.dataset.tab;
             tabIndicator.style.background = operacao === 'rondolog' ? 
                 'var(--rondolog-primary)' : 'var(--saster-secondary)';
         }
         
         function atualizarInterfaceParaOperacao(operacao) {
-            // Atualizar texto no footer
             operacaoAtualElement.textContent = `Operação: ${operacao.toUpperCase()}`;
-            
-            // Atualizar campo oculto no formulário
             editOperacao.value = operacao;
-            
-            // Aplicar tema visual se necessário
             aplicarTemaOperacao(operacao);
         }
         
@@ -3681,7 +3629,6 @@
             }
         }
         
-        // ✅ FUNÇÕES DE UI AUXILIARES
         function showLoadingMessage(operacao) {
             let noDataMessage;
             if (operacao === 'rondolog') {
@@ -3736,7 +3683,6 @@
             noDataMessage.style.display = 'block';
         }
         
-        // ✅ LOGIN
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -3765,7 +3711,6 @@
             }
         });
         
-        // ✅ LOGOUT
         logoutBtn.addEventListener('click', async function() {
             try {
                 await auth.signOut();
@@ -3776,7 +3721,6 @@
             }
         });
         
-        // ✅ MODO ESCURO
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark-mode', isDarkMode);
@@ -3788,7 +3732,6 @@
         
         btnDarkMode.addEventListener('click', toggleDarkMode);
         
-        // ✅ EVENTOS DAS ABAS
         document.querySelectorAll('.operacao-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const operacao = this.dataset.tab;
@@ -3796,9 +3739,7 @@
             });
         });
         
-        // Atalhos de teclado para alternar entre abas
         document.addEventListener('keydown', function(e) {
-            // Ctrl+1 = RONDOLOG, Ctrl+2 = SASTER
             if (e.ctrlKey) {
                 if (e.key === '1') {
                     e.preventDefault();
@@ -3810,18 +3751,15 @@
             }
         });
         
-        // ✅ FUNÇÕES AUXILIARES DE DATA
-        
         function parseDateBrasil(dateStr) {
             if (!dateStr || typeof dateStr !== 'string') return null;
             
             dateStr = dateStr.trim();
             
-            // CORREÇÃO 1: Tratar casos especiais de status
             if (dateStr.includes('Não OK') || dateStr.includes('Checklist Não OK') || 
                 dateStr.includes('Vencido') || dateStr.includes('Checklist Vencido') ||
                 dateStr.includes('OK até EMBARQUE')) {
-                return null; // Não é uma data válida para cálculo
+                return null;
             }
             
             try {
@@ -3853,7 +3791,6 @@
             
             validadeStr = validadeStr.trim();
             
-            // CORREÇÃO 1: Tratar casos de status textual primeiro
             if (validadeStr.includes('Não OK') || validadeStr.includes('Checklist Não OK') || 
                 validadeStr.includes('Vencido') || validadeStr.includes('Checklist Vencido')) {
                 return 'vencido';
@@ -3867,10 +3804,8 @@
                 return 'ok';
             }
             
-            // Tentar analisar como data
             const dataValidade = parseDateBrasil(validadeStr);
             if (!dataValidade) {
-                // Tentar extrair data simples
                 const matchSimple = validadeStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
                 if (matchSimple) {
                     const [, day, month, year] = matchSimple;
@@ -3879,7 +3814,7 @@
                         return calcularStatusData(data);
                     }
                 }
-                return 'ok'; // Se não conseguir analisar, considerar OK
+                return 'ok';
             }
             
             return calcularStatusData(dataValidade);
@@ -3926,11 +3861,9 @@
             });
         }
         
-        // ✅ FUNÇÃO GLOBAL PARA FILTRAR CHECKLISTS
         function getFilteredChecklists(checklists, operacao) {
             const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
             
-            // Obter elementos de filtro específicos da operação
             let tipoFiltro, statusFiltro;
             if (operacao === 'rondolog') {
                 tipoFiltro = filterTipoRondolog ? filterTipoRondolog.value : '';
@@ -3978,7 +3911,6 @@
             });
         }
         
-        // ✅ ATUALIZAR TABELA COM CACHE
         function atualizarTabelaComCache(checklists) {
             const operacao = sistemaAbas.getOperacaoAtual();
             const filteredChecklists = getFilteredChecklists(checklists, operacao);
@@ -4013,13 +3945,11 @@
                     if (statusValidade === 'vencido') row.classList.add('vencido');
                     if (statusValidade === 'proximo') row.classList.add('proximo-vencer');
                     
-                    // Adicionar indicador de dados offline
                     if (checklist.localOnly) {
                         row.setAttribute('title', 'Dados salvos localmente (modo offline)');
                         row.style.borderRight = '3px solid #f59e0b';
                     }
                     
-                    // Adicionar classes de destaque
                     if (statusValidade === 'vencido' && !temAvisoChecklist) {
                         row.classList.add('destaque-urgente');
                     } else if (statusValidade === 'proximo') {
@@ -4100,7 +4030,6 @@
                     
                     tableBody.appendChild(row);
                     
-                    // Adicionar eventos de clique aos botões
                     const buttons = row.querySelectorAll('.btn-table');
                     buttons[0].addEventListener('click', () => window.registrarAviso(index));
                     buttons[1].addEventListener('click', () => window.editarChecklist(index));
@@ -4113,7 +4042,6 @@
             atualizarBadgeSidebar();
         }
         
-        // ✅ ATUALIZAR TABELA
         function atualizarTabela() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4122,7 +4050,6 @@
             atualizarTabelaComCache(checklists);
         }
         
-        // ✅ ATUALIZAR BADGES - FUNÇÃO CORRIGIDA
         function atualizarBadges() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4197,7 +4124,6 @@
                 </div>
             `;
             
-            // Adicionar eventos de clique aos cards
             statusBadges.querySelectorAll('.summary-card.avisados').forEach(card => {
                 card.addEventListener('click', () => {
                     if (operacao === 'rondolog') {
@@ -4221,7 +4147,6 @@
             });
         }
         
-        // ✅ FUNÇÕES PARA INTERAGIR COM CHECKLISTS
         window.editarChecklist = async function(index) {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4272,10 +4197,8 @@
                 'Excluir Checklist',
                 `Tem certeza que deseja excluir o checklist da placa ${checklist.placa}?`,
                 async () => {
-                    // Remover do cache
                     cacheManager.delete(checklist.id);
                     
-                    // CORREÇÃO 2: Remover também do Firestore
                     if (!performanceManager.offlineMode && checklist.id && !checklist.id.startsWith('temp_')) {
                         try {
                             const colecao = `checklists_${operacao}`;
@@ -4285,10 +4208,8 @@
                         }
                     }
                     
-                    // Notificar outras abas
                     performanceManager.notifyOtherTabs(operacao);
                     
-                    // Atualizar UI
                     atualizarTabela();
                     showNotification('Checklist excluído com sucesso!', 'success');
                 }
@@ -4327,7 +4248,6 @@
             avisoModal.style.display = 'flex';
         };
         
-        // ✅ IMPORTAR EXCEL
         fileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -4356,7 +4276,6 @@
             reader.readAsArrayBuffer(file);
         });
         
-        // ✅ SALVAR CHECKLIST
         salvarChecklistBtn.addEventListener('click', async function() {
             if (!checklistForm.checkValidity()) {
                 showNotification('Preencha todos os campos obrigatórios!', 'error');
@@ -4400,7 +4319,6 @@
             
             try {
                 if (editingIndex === -1) {
-                    // NOVO CHECKLIST
                     const id = performanceManager.generateId();
                     const checklistCompleto = {
                         id,
@@ -4414,12 +4332,25 @@
                         localOnly: performanceManager.offlineMode
                     };
                     
-                    // Salvar no cache híbrido
                     cacheManager.set(id, checklistCompleto);
+                    
+                    if (!performanceManager.offlineMode) {
+                        try {
+                            const result = await performanceManager.saveToFirestore(checklistCompleto, operacao, false);
+                            if (result.success) {
+                                checklistCompleto.synced = true;
+                                checklistCompleto.localOnly = false;
+                                checklistCompleto.id = result.firestoreId;
+                                cacheManager.set(result.firestoreId, checklistCompleto);
+                            }
+                        } catch (error) {
+                            console.error('Erro ao salvar no Firestore:', error);
+                        }
+                    }
+                    
                     showNotification('Checklist criado com sucesso!', 'success');
                     
                 } else {
-                    // EDITAR CHECKLIST EXISTENTE
                     const checklists = cacheManager.getAll();
                     const checklist = checklists[editingIndex];
                     
@@ -4428,11 +4359,8 @@
                 }
                 
                 editModal.style.display = 'none';
-                
-                // Notificar outras abas
                 performanceManager.notifyOtherTabs(operacao);
                 
-                // Se estiver na mesma operação, atualizar a tabela
                 if (operacao === sistemaAbas.getOperacaoAtual()) {
                     atualizarTabela();
                 }
@@ -4446,7 +4374,6 @@
             }
         });
         
-        // ✅ REGISTRAR AVISO
         registrarAvisoBtn.addEventListener('click', async function() {
             if (!avisoForm.checkValidity()) {
                 showNotification('Preencha todos os campos obrigatórios!', 'error');
@@ -4493,7 +4420,6 @@
             }
         });
         
-        // ✅ REMOVER DUPLICADOS (por operação) - FUNÇÃO CORRIGIDA
         removerDuplicadosBtn.addEventListener('click', async function() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4513,7 +4439,6 @@
                     console.log(`📊 Iniciando remoção de duplicados (${operacao})...`);
                     console.log(`Total antes: ${checklists.length}`);
                     
-                    // Agrupar por placa normalizada
                     const checklistsPorPlaca = {};
                     
                     checklists.forEach(checklist => {
@@ -4530,7 +4455,6 @@
                         });
                     });
                     
-                    // Identificar quais serão mantidos (mais recentes) e quais serão removidos
                     const checklistsParaManter = [];
                     const checklistsParaRemover = [];
                     
@@ -4538,20 +4462,15 @@
                         const lista = checklistsPorPlaca[placa];
                         
                         if (lista.length > 1) {
-                            // Ordenar por data mais recente
                             lista.sort((a, b) => b.dataRealizacao - a.dataRealizacao);
-                            
-                            // Manter o mais recente
                             checklistsParaManter.push(lista[0].checklist);
                             
-                            // Remover os duplicados (todos menos o primeiro)
                             for (let i = 1; i < lista.length; i++) {
                                 checklistsParaRemover.push(lista[i].checklist);
                             }
                             
                             console.log(`Placa ${placa}: ${lista.length} registros, mantendo o mais recente`);
                         } else {
-                            // Apenas um registro, manter
                             checklistsParaManter.push(lista[0].checklist);
                         }
                     });
@@ -4564,7 +4483,6 @@
                         return;
                     }
                     
-                    // 1. Remover os duplicados do cache local
                     checklistsParaRemover.forEach(checklist => {
                         if (checklist.id) {
                             console.log(`Removendo do cache: ${checklist.placa} (ID: ${checklist.id})`);
@@ -4572,20 +4490,17 @@
                         }
                     });
                     
-                    // 2. Remover duplicados do Firestore (se online) - CORREÇÃO 2
                     let removidosFirestore = 0;
                     
                     if (!performanceManager.offlineMode) {
                         removidosFirestore = await performanceManager.syncRemovalsToFirestore(checklistsParaRemover, operacao);
                     }
                     
-                    // 3. Atualizar UI
                     atualizarTabela();
                     atualizarBadges();
                     
                     hideProgressBar();
                     
-                    // 4. Mostrar resultado
                     showNotification(
                         `✅ Remoção de duplicados concluída!<br>` +
                         `• Operação: ${operacao.toUpperCase()}<br>` +
@@ -4596,13 +4511,11 @@
                         'success'
                     );
                     
-                    // Notificar outras abas
                     performanceManager.notifyOtherTabs(operacao);
                 }
             );
         });
         
-        // ✅ EXPORTAR COMPLETO (por operação)
         exportCompletoBtn.addEventListener('click', function() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4654,7 +4567,6 @@
             showNotification(`Arquivo exportado com sucesso! (${operacao.toUpperCase()})`, 'success');
         });
         
-        // ✅ ATUALIZAR CONTADORES
         function atualizarContadores(filtered = null) {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -4663,7 +4575,6 @@
             filteredCount.textContent = filtered !== null ? filtered : checklists.length;
         }
         
-        // ✅ FILTROS ATIVOS
         function atualizarFiltrosAtivos() {
             const operacao = sistemaAbas.getOperacaoAtual();
             let container;
@@ -4726,14 +4637,11 @@
                 container.appendChild(badge);
             });
             
-            // Mostrar/ocultar container
             container.style.display = filtros.length > 0 ? 'flex' : 'none';
         }
         
-        // ✅ EVENTOS DE FILTRO
         searchInput.addEventListener('input', atualizarTabela);
         
-        // Eventos de filtro específicos por operação
         if (filterTipoRondolog) {
             filterTipoRondolog.addEventListener('change', function() {
                 if (sistemaAbas.getOperacaoAtual() === 'rondolog') {
@@ -4781,7 +4689,6 @@
             atualizarTabela();
         });
         
-        // ✅ FUNÇÕES AUXILIARES DE UI
         function mostrarConfirmacao(titulo, mensagem, callback) {
             confirmacaoTitulo.textContent = titulo;
             confirmacaoMensagem.innerHTML = mensagem;
@@ -4947,7 +4854,6 @@
             historicoAvisos.style.display = 'block';
         }
         
-        // ✅ NOVO CHECKLIST
         novoChecklistBtn.addEventListener('click', function() {
             editingIndex = -1;
             editingOperacao = sistemaAbas.getOperacaoAtual();
@@ -4974,7 +4880,6 @@
             editModal.style.display = 'flex';
         });
         
-        // ✅ SIDEBAR DE RELATÓRIOS
         sidebarToggle.addEventListener('click', function(e) {
             e.stopPropagation();
             sidebarReports.classList.toggle('expanded');
@@ -4988,7 +4893,6 @@
             }
         });
         
-        // Fechar sidebar ao clicar fora
         document.addEventListener('click', function(e) {
             if (!sidebarReports.contains(e.target) && 
                 !sidebarToggle.contains(e.target) &&
@@ -4999,14 +4903,12 @@
             }
         });
         
-        // Prevenir que eventos do conteúdo fechem a sidebar
         if (sidebarContent) {
             sidebarContent.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         }
         
-        // ✅ ATUALIZAR BADGE DA SIDEBAR
         function atualizarBadgeSidebar() {
             const operacao = sistemaAbas.getOperacaoAtual();
             const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -5024,7 +4926,6 @@
             }
         }
         
-        // ✅ EVENTOS DE FILTRO RÁPIDO
         document.querySelectorAll('[data-filter]').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -5060,19 +4961,16 @@
             atualizarTabela();
         }
         
-        // ✅ CORREÇÃO 3: NOVO SISTEMA DE LIMPAR DADOS COM OPÇÕES
         limparTudoBtn.addEventListener('click', function() {
             abrirModalLimparDados();
         });
         
         function abrirModalLimparDados() {
-            // Resetar seleção
             document.querySelectorAll('.opcao-limpar').forEach(opcao => {
                 opcao.style.border = '2px solid var(--border-color)';
                 opcao.style.background = '';
             });
             
-            // Resetar confirmação
             document.getElementById('confirmacaoOpcao').style.display = 'none';
             confirmarLimparBtn.style.display = 'none';
             confirmacaoInputOpcao.value = '';
@@ -5082,22 +4980,18 @@
             limparDadosModal.style.display = 'flex';
         }
         
-        // Eventos das opções de limpar
         document.querySelectorAll('.opcao-limpar').forEach(opcao => {
             opcao.addEventListener('click', function() {
-                // Remover seleção anterior
                 document.querySelectorAll('.opcao-limpar').forEach(o => {
                     o.style.border = '2px solid var(--border-color)';
                     o.style.background = '';
                 });
                 
-                // Selecionar nova opção
                 this.style.border = '2px solid #dc2626';
                 this.style.background = '#fef2f2';
                 
                 opcaoSelecionada = this.dataset.opcao;
                 
-                // Mostrar confirmação
                 mostrarConfirmacaoOpcao(opcaoSelecionada);
             });
         });
@@ -5128,7 +5022,6 @@
             confirmacaoInputOpcao.focus();
         }
         
-        // Confirmar limpeza
         confirmarLimparBtn.addEventListener('click', async function() {
             if (!opcaoSelecionada) {
                 showNotification('Selecione uma opção primeiro', 'error');
@@ -5142,31 +5035,25 @@
                 return;
             }
             
-            // Executar limpeza conforme opção
             await executarLimpezaOpcao(opcaoSelecionada);
             
-            // Fechar modal
             limparDadosModal.style.display = 'none';
         });
         
-        // Cancelar limpeza
         cancelarLimparBtn.addEventListener('click', function() {
             limparDadosModal.style.display = 'none';
         });
         
-        // Fechar modal
         fecharLimparDadosModal.addEventListener('click', function() {
             limparDadosModal.style.display = 'none';
         });
         
-        // ✅ FUNÇÃO PARA EXECUTAR LIMPEZA POR OPÇÃO
         async function executarLimpezaOpcao(opcao) {
             showProgressBar('Limpando dados...');
             
             try {
                 let operacoesParaLimpar = [];
                 
-                // Definir quais operações serão limpas
                 switch(opcao) {
                     case 'rondolog':
                         operacoesParaLimpar = ['rondolog'];
@@ -5182,25 +5069,21 @@
                 let totalRemovido = 0;
                 let totalFirestore = 0;
                 
-                // Processar cada operação
                 for (const operacao of operacoesParaLimpar) {
                     const cacheManager = sistemaAbas.getCacheManager(operacao);
                     const checklists = cacheManager.getAll();
                     
                     console.log(`🗑️ Iniciando limpeza: ${operacao.toUpperCase()} (${checklists.length} checklists)`);
                     
-                    // 1. Remover do cache local
                     const removidosLocal = checklists.length;
                     cacheManager.clear();
                     totalRemovido += removidosLocal;
                     
-                    // 2. Remover do Firestore (se online)
                     if (!performanceManager.offlineMode) {
                         const removidosFirestore = await performanceManager.syncRemovalsToFirestore(checklists, operacao);
                         totalFirestore += removidosFirestore;
                     }
                     
-                    // 3. Notificar outras abas
                     performanceManager.notifyOtherTabs(operacao);
                     
                     updateProgress(
@@ -5210,7 +5093,6 @@
                     );
                 }
                 
-                // Limpar dados adicionais se for "todos"
                 if (opcao === 'todos') {
                     localStorage.removeItem('ultima_operacao');
                     localStorage.removeItem('last_update_rondolog');
@@ -5220,13 +5102,11 @@
                     performanceManager.pendingOperations = [];
                 }
                 
-                // Atualizar interface
                 setTimeout(() => {
                     atualizarTabela();
                     atualizarBadges();
                     hideProgressBar();
                     
-                    // Mostrar notificação de sucesso
                     let mensagem = `✅ Limpeza concluída!<br>`;
                     
                     if (opcao === 'todos') {
@@ -5257,7 +5137,6 @@
             }
         }
         
-        // ✅ LIMPAR CACHE
         limparCacheBtn.addEventListener('click', function() {
             mostrarConfirmacao(
                 'Limpar Cache',
@@ -5271,12 +5150,9 @@
             );
         });
         
-        // ✅ INICIALIZAR MELHORIAS DE USABILIDADE
         function inicializarMelhoriasUsabilidade() {
-            // Verificar notificações periodicamente
             setInterval(atualizarBadgeSidebar, 60000);
             
-            // Atualizar filtros ativos quando os filtros mudarem
             searchInput.addEventListener('input', atualizarFiltrosAtivos);
             
             if (filterTipoRondolog) {
@@ -5295,7 +5171,6 @@
                 filterStatusSaster.addEventListener('change', atualizarFiltrosAtivos);
             }
             
-            // Botão de debug para testar funcionalidades
             debugBtn.addEventListener('click', function() {
                 const operacao = sistemaAbas.getOperacaoAtual();
                 const cacheManager = sistemaAbas.getCacheManagerAtual();
@@ -5312,9 +5187,6 @@
             });
         }
         
-        // ✅ EVENTOS GLOBAIS
-        
-        // Fechar modais
         fecharModal.addEventListener('click', () => { 
             editModal.style.display = 'none'; 
             editingIndex = -1; 
@@ -5361,7 +5233,6 @@
             }
         });
         
-        // Fechar modais ao clicar fora
         window.addEventListener('click', function(e) {
             if (e.target === editModal) {
                 editModal.style.display = 'none';
@@ -5384,14 +5255,11 @@
             }
         });
         
-        // Adicionar dispositivo
         addDispositivoBtn.addEventListener('click', function() {
             adicionarDispositivoInput();
         });
         
-        // ✅ INICIALIZAR
         window.addEventListener('DOMContentLoaded', function() {
-            // Adicionar estilos de animação
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes slideIn {
@@ -5413,10 +5281,8 @@
             `;
             document.head.appendChild(style);
             
-            // Iniciar app
             initApp();
             
-            // Atualizar indicador de abas após carregamento
             setTimeout(() => {
                 const activeTab = document.querySelector('.operacao-tab.active');
                 if (activeTab) {
@@ -5425,7 +5291,6 @@
             }, 100);
         });
         
-        // ✅ AJUSTAR INDICADOR DE ABAS AO REDIMENSIONAR
         window.addEventListener('resize', function() {
             const activeTab = document.querySelector('.operacao-tab.active');
             if (activeTab) {
