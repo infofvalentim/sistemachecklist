@@ -2541,14 +2541,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        // Debug do estado de autenticação
-console.log('Firebase config:', firebaseConfig);
-console.log('Firebase app inicializado:', firebase.app().name);
-
-// Verificar se há usuário logado em cache
-auth.onAuthStateChanged((user) => {
-  console.log('Estado de autenticação mudou:', user ? `Usuário: ${user.email}` : 'Nenhum usuário');
-});
 
         // Sistema de cache híbrido otimizado para multi-tab
         let persistenceEnabled = false;
@@ -4364,15 +4356,9 @@ auth.onAuthStateChanged((user) => {
         });
         
         // ✅ SALVAR CHECKLIST
-     salvarChecklistBtn.addEventListener('click', async function() {
+        salvarChecklistBtn.addEventListener('click', async function() {
   if (!checklistForm.checkValidity()) {
     showNotification('Preencha todos os campos obrigatórios!', 'error');
-    return;
-  }
-  
-  // ✅ VERIFICAR SE USUÁRIO ESTÁ LOGADO
-  if (!currentUser) {
-    showNotification('Você precisa estar logado para salvar checklists!', 'error');
     return;
   }
   
@@ -4423,14 +4409,14 @@ auth.onAuthStateChanged((user) => {
         criadoPorEmail: currentUser.email,
         criadoEm: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        synced: false,
+        synced: false, // Marcar como não sincronizado
         localOnly: false
       };
       
       // 1. Salvar no cache local
       cacheManager.set(id, checklistCompleto);
       
-      // 2. Salvar no Firestore
+      // 2. ✅ CORREÇÃO ADICIONADA: Salvar no Firestore
       await salvarNoFirestore(checklistCompleto, operacao);
       
       showNotification('Checklist criado com sucesso!', 'success');
@@ -4450,7 +4436,7 @@ auth.onAuthStateChanged((user) => {
       // 1. Atualizar cache local
       cacheManager.set(checklist.id, updatedChecklist);
       
-      // 2. Atualizar no Firestore
+      // 2. ✅ CORREÇÃO ADICIONADA: Atualizar no Firestore
       await atualizarNoFirestore(checklist.id, updatedChecklist, operacao);
       
       showNotification('Checklist atualizado com sucesso!', 'success');
