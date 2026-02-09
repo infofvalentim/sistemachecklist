@@ -4357,139 +4357,202 @@
         
         // ✅ SALVAR CHECKLIST
         salvarChecklistBtn.addEventListener('click', async function() {
-            if (!checklistForm.checkValidity()) {
-                showNotification('Preencha todos os campos obrigatórios!', 'error');
-                return;
-            }
-            
-            const operacao = editOperacao.value;
-            const cacheManager = sistemaAbas.getCacheManager(operacao);
-            const checklistData = {
-                placa: document.getElementById('editPlaca').value.toUpperCase(),
-                tipo: document.getElementById('editTipo').value,
-                dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
-                validade: converterParaFormatoSistema(document.getElementById('editValidade').value),
-                responsavel: document.getElementById('editResponsavel').value,
-                telefone: document.getElementById('editTelefone').value,
-                operador: document.getElementById('editOperador').value,
-                dispositivos: [],
-                avisos: editingIndex !== -1 ? cacheManager.getAll()[editingIndex]?.avisos || [] : []
-            };
-            
-            const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
-            dispositivoItems.forEach(item => {
-                const select = item.querySelector('.dispositivo-nome');
-                const outroInput = item.querySelector('.dispositivo-nome-outro');
-                const situacaoSelect = item.querySelector('.dispositivo-situacao');
-                
-                let nome;
-                if (select.value === 'OUTRO') {
-                    nome = outroInput.value.trim();
-                } else {
-                    nome = select.value;
-                }
-                
-                if (nome) {
-                    checklistData.dispositivos.push({
-                        nome: nome,
-                        situacao: situacaoSelect.value
-                    });
-                }
-            });
-            
-            try {
-                if (editingIndex === -1) {
-                    // NOVO CHECKLIST
-                    const id = performanceManager.generateId();
-                    const checklistCompleto = {
-                        id,
-                        ...checklistData,
-                        operacao: operacao,
-                        criadoPor: currentUser.uid,
-                        criadoPorEmail: currentUser.email,
-                        criadoEm: new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-                        synced: !performanceManager.offlineMode,
-                        localOnly: performanceManager.offlineMode
-                    };
-                    
-                    // Salvar no cache híbrido
-                    cacheManager.set(id, checklistCompleto);
-                    showNotification('Checklist criado com sucesso!', 'success');
-                    
-                } else {
-                    // EDITAR CHECKLIST EXISTENTE
-                    const checklists = cacheManager.getAll();
-                    const checklist = checklists[editingIndex];
-                    
-                    await performanceManager.editChecklistInstant(checklist.id, operacao, checklistData, cacheManager);
-                    showNotification('Checklist atualizado com sucesso!', 'success');
-                }
-                
-                editModal.style.display = 'none';
-                
-                // Notificar outras abas
-                performanceManager.notifyOtherTabs(operacao);
-                
-                // Se estiver na mesma operação, atualizar a tabela
-                if (operacao === sistemaAbas.getOperacaoAtual()) {
-                    atualizarTabela();
-                }
-                
-                editingIndex = -1;
-                editingOperacao = 'rondolog';
-                
-            } catch (error) {
-                console.error('Erro ao salvar:', error);
-                showNotification('Erro ao salvar checklist. Tente novamente.', 'error');
-            }
-        });
-        
-        // ✅ REGISTRAR AVISO
-        registrarAvisoBtn.addEventListener('click', async function() {
-            if (!avisoForm.checkValidity()) {
-                showNotification('Preencha todos os campos obrigatórios!', 'error');
-                return;
-            }
-            
-            const operacao = avisoOperacao;
-            const cacheManager = sistemaAbas.getCacheManager(operacao);
-            const checklists = cacheManager.getAll();
-            const filteredChecklists = getFilteredChecklists(checklists, operacao);
-            const checklist = filteredChecklists[avisoIndex];
-            
-            const novoAviso = {
-                data: avisoData.value,
-                quemNotificou: avisoQuemNotificou.value.trim(),
-                quemRecebeu: avisoQuemRecebeu.value.trim(),
-                metodo: avisoMetodo.value,
-                observacao: avisoObservacao.value.trim(),
-                registradoPor: currentUser.email,
-                registradoEm: new Date().toISOString()
-            };
-            
-            try {
-                const avisosAtualizados = checklist.avisos ? [...checklist.avisos, novoAviso] : [novoAviso];
-                const updated = { ...checklist, avisos: avisosAtualizados };
-                
-                await performanceManager.editChecklistInstant(checklist.id, operacao, { avisos: avisosAtualizados }, cacheManager);
-                
-                avisoModal.style.display = 'none';
-                avisoForm.reset();
-                
-                if (operacao === sistemaAbas.getOperacaoAtual()) {
-                    atualizarTabela();
-                }
-                
-                showNotification('Aviso registrado com sucesso!', 'success');
-                
-                avisoIndex = -1;
-                avisoOperacao = 'rondolog';
-                
-            } catch (error) {
-                console.error('Erro ao registrar aviso:', error);
-                showNotification('Erro ao registrar aviso.', 'error');
-            }
+  if (!checklistForm.checkValidity()) {
+    showNotification('Preencha todos os campos obrigatórios!', 'error');
+    return;
+  }
+  
+  const operacao = editOperacao.value;
+  const cacheManager = sistemaAbas.getCacheManager(operacao);
+  const checklistData = {
+    placa: document.getElementById('editPlaca').value.toUpperCase(),
+    tipo: document.getElementById('editTipo').value,
+    dataRealizacao: converterParaFormatoSistema(document.getElementById('editDataRealizacao').value),
+    validade: converterParaFormatoSistema(document.getElementById('editValidade').value),
+    responsavel: document.getElementById('editResponsavel').value,
+    telefone: document.getElementById('editTelefone').value,
+    operador: document.getElementById('editOperador').value,
+    dispositivos: [],
+    avisos: editingIndex !== -1 ? cacheManager.getAll()[editingIndex]?.avisos || [] : []
+  };
+  
+  const dispositivoItems = dispositivosContainer.querySelectorAll('.dispositivo-item');
+  dispositivoItems.forEach(item => {
+    const select = item.querySelector('.dispositivo-nome');
+    const outroInput = item.querySelector('.dispositivo-nome-outro');
+    const situacaoSelect = item.querySelector('.dispositivo-situacao');
+    
+    let nome;
+    if (select.value === 'OUTRO') {
+      nome = outroInput.value.trim();
+    } else {
+      nome = select.value;
+    }
+    
+    if (nome) {
+      checklistData.dispositivos.push({
+        nome: nome,
+        situacao: situacaoSelect.value
+      });
+    }
+  });
+  
+  try {
+    if (editingIndex === -1) {
+      // ✅ CORREÇÃO: NOVO CHECKLIST - Salvar no Firestore também
+      const id = performanceManager.generateId();
+      const checklistCompleto = {
+        id,
+        ...checklistData,
+        operacao: operacao,
+        criadoPor: currentUser.uid,
+        criadoPorEmail: currentUser.email,
+        criadoEm: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        synced: false, // Marcar como não sincronizado
+        localOnly: false
+      };
+      
+      // 1. Salvar no cache local
+      cacheManager.set(id, checklistCompleto);
+      
+      // 2. ✅ CORREÇÃO ADICIONADA: Salvar no Firestore
+      await salvarNoFirestore(checklistCompleto, operacao);
+      
+      showNotification('Checklist criado com sucesso!', 'success');
+      
+    } else {
+      // ✅ CORREÇÃO: EDITAR CHECKLIST EXISTENTE
+      const checklists = cacheManager.getAll();
+      const checklist = checklists[editingIndex];
+      
+      const updatedChecklist = {
+        ...checklist,
+        ...checklistData,
+        updatedAt: new Date().toISOString(),
+        synced: false
+      };
+      
+      // 1. Atualizar cache local
+      cacheManager.set(checklist.id, updatedChecklist);
+      
+      // 2. ✅ CORREÇÃO ADICIONADA: Atualizar no Firestore
+      await atualizarNoFirestore(checklist.id, updatedChecklist, operacao);
+      
+      showNotification('Checklist atualizado com sucesso!', 'success');
+    }
+    
+    editModal.style.display = 'none';
+    
+    // Notificar outras abas
+    performanceManager.notifyOtherTabs(operacao);
+    
+    // Atualizar interface
+    if (operacao === sistemaAbas.getOperacaoAtual()) {
+      atualizarTabela();
+    }
+    
+    editingIndex = -1;
+    editingOperacao = 'rondolog';
+    
+  } catch (error) {
+    console.error('Erro ao salvar:', error);
+    showNotification('Erro ao salvar checklist: ' + error.message, 'error');
+  }
+});
+
+// ✅ ADICIONAR ESTAS FUNÇÕES NOVAS:
+
+async function salvarNoFirestore(checklist, operacao) {
+  try {
+    const colecao = `checklists_${operacao}`;
+    let docRef;
+    
+    if (checklist.id && checklist.id.startsWith('temp_')) {
+      // ID temporário - criar novo documento
+      docRef = db.collection(colecao).doc();
+    } else {
+      // Usar ID existente
+      docRef = db.collection(colecao).doc(checklist.id);
+    }
+    
+    // Preparar dados para Firestore (remover campos internos)
+    const dadosFirestore = {
+      placa: checklist.placa,
+      tipo: checklist.tipo,
+      dataRealizacao: checklist.dataRealizacao,
+      validade: checklist.validade,
+      responsavel: checklist.responsavel,
+      telefone: checklist.telefone || '',
+      operador: checklist.operador,
+      dispositivos: checklist.dispositivos || [],
+      avisos: checklist.avisos || [],
+      operacao: checklist.operacao,
+      criadoPor: checklist.criadoPor,
+      criadoPorEmail: checklist.criadoPorEmail,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await docRef.set(dadosFirestore);
+    
+    // Atualizar ID no cache local com ID real do Firestore
+    if (checklist.id && checklist.id.startsWith('temp_')) {
+      const firestoreId = docRef.id;
+      const checklistAtualizado = {
+        ...checklist,
+        id: firestoreId,
+        synced: true,
+        localOnly: false
+      };
+      
+      // Remover versão antiga do cache
+      const cacheManager = sistemaAbas.getCacheManager(operacao);
+      cacheManager.delete(checklist.id);
+      cacheManager.set(firestoreId, checklistAtualizado);
+    }
+    
+    console.log('✅ Checklist salvo no Firestore:', checklist.placa);
+    return docRef.id;
+    
+  } catch (error) {
+    console.error('❌ Erro ao salvar no Firestore:', error);
+    throw error;
+  }
+}
+
+async function atualizarNoFirestore(id, checklist, operacao) {
+  try {
+    const colecao = `checklists_${operacao}`;
+    const docRef = db.collection(colecao).doc(id);
+    
+    // Preparar dados para atualização
+    const dadosAtualizacao = {
+      ...checklist,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    // Remover campos internos
+    delete dadosAtualizacao.id;
+    delete dadosAtualizacao.synced;
+    delete dadosAtualizacao.localOnly;
+    
+    await docRef.update(dadosAtualizacao);
+    
+    console.log('✅ Checklist atualizado no Firestore:', checklist.placa);
+    return true;
+    
+  } catch (error) {
+    // Se o documento não existir, criar
+    if (error.code === 'not-found') {
+      console.log('Documento não encontrado, criando novo...');
+      await salvarNoFirestore(checklist, operacao);
+    } else {
+      console.error('❌ Erro ao atualizar no Firestore:', error);
+      throw error;
+    }
+  }
+}
         });
         
         // ✅ REMOVER DUPLICADOS (por operação) - FUNÇÃO CORRIGIDA
