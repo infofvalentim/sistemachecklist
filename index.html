@@ -4356,9 +4356,15 @@
         });
         
         // ✅ SALVAR CHECKLIST
-        salvarChecklistBtn.addEventListener('click', async function() {
+     salvarChecklistBtn.addEventListener('click', async function() {
   if (!checklistForm.checkValidity()) {
     showNotification('Preencha todos os campos obrigatórios!', 'error');
+    return;
+  }
+  
+  // ✅ VERIFICAR SE USUÁRIO ESTÁ LOGADO
+  if (!currentUser) {
+    showNotification('Você precisa estar logado para salvar checklists!', 'error');
     return;
   }
   
@@ -4409,14 +4415,14 @@
         criadoPorEmail: currentUser.email,
         criadoEm: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        synced: false, // Marcar como não sincronizado
+        synced: false,
         localOnly: false
       };
       
       // 1. Salvar no cache local
       cacheManager.set(id, checklistCompleto);
       
-      // 2. ✅ CORREÇÃO ADICIONADA: Salvar no Firestore
+      // 2. Salvar no Firestore
       await salvarNoFirestore(checklistCompleto, operacao);
       
       showNotification('Checklist criado com sucesso!', 'success');
@@ -4436,7 +4442,7 @@
       // 1. Atualizar cache local
       cacheManager.set(checklist.id, updatedChecklist);
       
-      // 2. ✅ CORREÇÃO ADICIONADA: Atualizar no Firestore
+      // 2. Atualizar no Firestore
       await atualizarNoFirestore(checklist.id, updatedChecklist, operacao);
       
       showNotification('Checklist atualizado com sucesso!', 'success');
